@@ -18,6 +18,7 @@ import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Utils.ImageUtil;
 import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +55,11 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 	
 	private List<String> spinnerList = new ArrayList<String>();
 	private ArrayAdapter<String> spinnerAdapter;
+	
+	private final int SIGNIN_SUCCESS = 1;
+	private final int SIGNIN_FAILED = 0;
+	
+	private int signinResultFlag = SIGNIN_FAILED;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 		setContentView(R.layout.signin);
 		
 		initView();
+		
 	}
 
 	public void initView() {
@@ -246,7 +253,18 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 				        if (httpResponseString.equals("success|False")) {
 				        	// 登录成功
 				        	Log.d("response", "success");
-				        	hintText.setText("提示：登录成功！");
+				        	// hintText.setText("提示：登录成功！");
+				        	// 传递HttpClient
+				        	// httpClientData = (HttpClientData) getApplication();
+				        	// httpClientData.setHttpClient(httpClient);
+				        	// if (httpClientData.getHttpClient() != null) {
+				        	//	Log.d("httpClient", "success to spread");
+				        	// }
+							// 进入主功能界面
+				        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+				        	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				        	getApplicationContext().startActivity(intent);
+				        	finish();
 				        } else {
 				        	// 登录发生错误
 				        	hintText.setText("提示：" + httpResponseString);
@@ -256,7 +274,6 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 				        		getCheckcodeImage();
 				        	}
 				        }
-				        Log.d("Response", httpResponseString);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

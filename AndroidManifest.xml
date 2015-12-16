@@ -17,11 +17,17 @@
         <activity
             android:name=".Activities.SigninActivity"
             android:label="@string/SigninActivity_label" >
+            
+        </activity>
+        <activity 
+            android:name="com.duang.easyecard.Activities.MainActivity"
+            android:label="@string/MainActivity_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+    
     </application>
 
 </manifest>

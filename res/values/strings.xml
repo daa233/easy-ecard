@@ -14,4 +14,27 @@
     <string name="checkcode_input_hint">请输入验证码</string>
     <string name="signin_checkcode_image">验证码图片</string>
     <string name="signin_pic_below">登录界面下方的图片</string>
+    
+    <!-- MainActivity -->
+    <string name="MainActivity_label">EasyEcard</string>
+    
+    <!-- Tab -->
+    <string name="tab_lost">丢失</string>
+    <string name="tab_found">拾获</string>
+    <string name="tab_campus">校园</string>
+    <string name="tab_me">我</string>
+    
+    <!-- Menu -->
+    <string name="action_search">搜索</string>
+    <string name="menu_add_lost_info">添加丢失信息</string>
+    <string name="menu_add_found_info">添加拾获信息</string>
+    <string name="menu_feedback">意见反馈</string>
+    <string name="menu_exit">退出应用</string>
+
+    <!-- CampusFragment -->
+    <string name="open_webview">校园卡查询网站</string>
+    <string name="web_view">校园一卡通网站</string>
+    <string name="call_phone">拨打挂失电话</string>
+    <string name="notification">通知</string>
+    <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
 </resources>
