@@ -59,7 +59,7 @@
 	            android:layout_weight="3"
 	            android:layout_height="wrap_content"
 	            android:hint="@string/account_input_hint"
-	            android:inputType="text"
+	            android:inputType="number"
 	            android:singleLine="true" />
         </LinearLayout>
 
@@ -116,9 +116,17 @@
                 android:id="@+id/signin_checkcode_image"
                 android:layout_width="0dp"
 	            android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+            android:scaleType="fitCenter"
                 android:contentDescription="@string/signin_checkcode_image"/>
         </LinearLayout>
+        
+        <TextView 
+            android:id="@+id/signin_hint_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"/>
         
         <Button 
             android:id="@+id/signin_signin_button"
