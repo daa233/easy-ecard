@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -32,7 +33,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class SigninActivity extends BaseActivity implements OnClickListener{
+public class SigninActivity extends BaseActivity implements OnClickListener, OnFocusChangeListener {
 	
 	private HttpClientData httpClientData;
 	private HttpClient httpClient = new DefaultHttpClient();
@@ -41,6 +42,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 	private EditText accountInput;
 	private EditText passwordInput;
 	private EditText checkcodeInput;
+	private TextView accountText;
 	private TextView hintText;
 	private Button signinButton;
 	private ImageView checkcodeImage;
@@ -68,6 +70,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 		accountInput = (EditText) findViewById(R.id.signin_account_input);
 		passwordInput = (EditText) findViewById(R.id.signin_password_input);
 		checkcodeInput = (EditText) findViewById(R.id.signin_checkcode_input);
+		accountText = (TextView) findViewById(R.id.signin_account_text);
 		hintText = (TextView) findViewById(R.id.signin_hint_text);
 		signinButton = (Button) findViewById(R.id.signin_signin_button);
 		checkcodeImage = (ImageView) findViewById(R.id.signin_checkcode_image);
@@ -89,11 +92,15 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
 				// 选中响应事件
 				if (position == 0) {
+					accountText.setText("学 工 号");
+					accountInput.setHint("请输入学（工）号");
 					signtype = "SynSno";
 					hintText.setText("提示：请输入学（工）号");
 				} else if (position == 1) {
+					accountText.setText("校园卡号");
+					accountInput.setHint("请输入校园卡账号");
 					signtype = "SynCard";
-					hintText.setText("提示：请输入校园卡号");
+					hintText.setText("提示：请输入校园卡账号");
 				}
 			}
 			@Override
@@ -104,6 +111,12 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 		
 		getCheckcodeImage();  // 获取验证码
 		
+		// 监听EditText的焦点改变事件
+		accountInput.setOnFocusChangeListener(this);
+		passwordInput.setOnFocusChangeListener(this);
+		checkcodeInput.setOnFocusChangeListener(this);
+		
+		// 监听控件的点击事件
 		signinButton.setOnClickListener(this);
 		checkcodeImage.setOnClickListener(this);
 	}
@@ -117,11 +130,63 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 				// TODO Auto-generated method stub
 				if (bitmap != null) {
 					checkcodeImage.setImageBitmap(bitmap);
+					checkcodeInput.setText(null);
 				}
 			}
 		});
 	}
 
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		// 控件焦点的改变事件
+		switch (v.getId()) {
+		case R.id.signin_account_input:
+			if (!hasFocus) {
+				if (!accountInput.getText().toString().isEmpty()) {
+					if (passwordInput.getText().toString().isEmpty()) {
+						hintText.setText("提示：请输入密码");
+					}
+				}
+			}
+			break;
+		case R.id.signin_password_input:
+			if (hasFocus) {
+				if (accountInput.getText().toString().isEmpty()) {
+					if (signtype.equals("SynSno")) {
+						hintText.setText("提示：请输入学（工）号");
+					} else {
+						hintText.setText("提示：请输入校园卡账号");
+					}
+				}
+			} else {
+				// 失去焦点
+				if (!accountInput.getText().toString().isEmpty()) {
+					if (passwordInput.getText().toString().isEmpty()) {
+						hintText.setText("提示：请输入密码");
+					}
+				}
+			}
+			break;
+		case R.id.signin_checkcode_input:
+			if (hasFocus) {
+				if (accountInput.getText().toString().isEmpty()) {
+					if (signtype.equals("SynSno")) {
+						hintText.setText("提示：请输入学（工）号");
+					} else {
+						hintText.setText("提示：请输入校园卡账号");
+					}
+				} else if (passwordInput.getText().toString().isEmpty()) {
+					hintText.setText("提示：请输入密码");
+				} else {
+					hintText.setText("提示：如果看不清，试试点击图片换一张");
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
 	@Override
 	public void onClick(View v) {
 		// 控件的点击事件
@@ -144,7 +209,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 					hintText.setText("提示：请输入密码");
 				}
 			} else {
-				hintText.setText("提示：请输入学工号");
+				hintText.setText("提示：请输入学（工）号");
 			}
 			break;
 		default:
@@ -185,6 +250,11 @@ public class SigninActivity extends BaseActivity implements OnClickListener{
 				        } else {
 				        	// 登录发生错误
 				        	hintText.setText("提示：" + httpResponseString);
+				        	if (httpResponseString.contains("查询密码")) {
+				        		passwordInput.setText("");
+				        	} else if (httpResponseString.contains("验证码")) {
+				        		getCheckcodeImage();
+				        	}
 				        }
 				        Log.d("Response", httpResponseString);
 					}

@@ -111,7 +111,7 @@
                 android:inputType="number"
                 android:singleLine="true"
                 android:maxLength="4"
-                android:hint=""/>
+                android:hint="@string/checkcode_input_hint"/>
             <ImageView 
                 android:id="@+id/signin_checkcode_image"
                 android:layout_width="0dp"
