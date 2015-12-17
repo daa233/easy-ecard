@@ -32,5 +32,11 @@
         </activity>
     
     </application>
+    <application
+        android:name="com.duang.easyecard.GlobalData.HttpClientData">
+    </application>
+    <application
+        android:name="com.duang.easyecard.GlobalData.UrlConstant">
+    </application>
 
 </manifest>

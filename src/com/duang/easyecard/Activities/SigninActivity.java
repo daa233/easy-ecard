@@ -36,7 +36,7 @@ import android.widget.TextView;
 
 public class SigninActivity extends BaseActivity implements OnClickListener, OnFocusChangeListener {
 	
-	private HttpClientData httpClientData;
+	
 	private HttpClient httpClient = new DefaultHttpClient();
 	
 	private Spinner signinTypeSpinner;
@@ -55,20 +55,15 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 	
 	private List<String> spinnerList = new ArrayList<String>();
 	private ArrayAdapter<String> spinnerAdapter;
-	
-	private final int SIGNIN_SUCCESS = 1;
-	private final int SIGNIN_FAILED = 0;
-	
-	private int signinResultFlag = SIGNIN_FAILED;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signin);
-		
+		// 全局变量
+		// final HttpClientData httpClientData;
 		initView();
-		
 	}
 
 	public void initView() {
@@ -254,11 +249,11 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 				        	// 登录成功
 				        	Log.d("response", "success");
 				        	// hintText.setText("提示：登录成功！");
-				        	// 传递HttpClient
+				        	// 传递全局变量http
 				        	// httpClientData = (HttpClientData) getApplication();
 				        	// httpClientData.setHttpClient(httpClient);
 				        	// if (httpClientData.getHttpClient() != null) {
-				        	//	Log.d("httpClient", "success to spread");
+				        	// 	Log.d("httpClient", "success to spread");
 				        	// }
 							// 进入主功能界面
 				        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
