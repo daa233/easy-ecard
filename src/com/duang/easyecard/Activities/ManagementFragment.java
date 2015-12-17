@@ -17,7 +17,7 @@ import android.widget.SimpleAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class QueryFragment extends Fragment implements OnItemClickListener{
+public class ManagementFragment extends Fragment implements OnItemClickListener{
 
 	private View viewFragment;
 	
@@ -27,25 +27,23 @@ public class QueryFragment extends Fragment implements OnItemClickListener{
 	
 	// ItemImage图标封装为一个数组
 	private int [] iconImage = {
-			R.drawable.web_view_icon,
-			R.drawable.phone_icon,
-			R.drawable.notifications_icon,
-			R.drawable.rules_icon,
-			R.drawable.download_icon,
-			R.drawable.help_icon
+			R.drawable.manage_basic_info,
+			R.drawable.manage_trading_inquiry,
+			R.drawable.manage_report_loss,
+			R.drawable.manage_recharge,
+			R.drawable.manage_net_charge,
+			R.drawable.manage_pay_fees,
 	};
 	// ItemText封装数组
-	private String[] iconText = {"一卡通网站", "拨打挂失电话", "通知",
-								 "规章制度",   "文件下载",  "校园卡帮助"};
+	private String[] iconText = {"基本信息", "流水查询", "校园卡挂失",
+								 "转账充值", "网费",    "待缴费"};
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		viewFragment=inflater.inflate(R.layout.fragment_query, null);
-		
 		// 实例化控件
 		gridView = (GridView) viewFragment.findViewById(R.id.grid_view);
-		
 		// 新建List
 		data_list = new ArrayList<Map<String, Object>>();
 		// 获取数据

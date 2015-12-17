@@ -81,9 +81,9 @@ OnPageChangeListener{
 							float positionOffset, int positionOffsetPixels) {
 					}
 				});
-		mPagerAdapter.addTab(QueryFragment.class, null);
-		mPagerAdapter.addTab(LostFragment.class, null);
-		mPagerAdapter.addTab(FoundFragment.class, null);
+		mPagerAdapter.addTab(ManagementFragment.class, null);
+		mPagerAdapter.addTab(LostAndFoundFragment.class, null);
+		mPagerAdapter.addTab(InformationFragment.class, null);
 		mPagerAdapter.addTab(SettingsFragment.class, null);
 		mViewPager.setAdapter(mPagerAdapter);
 		
