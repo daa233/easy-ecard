@@ -14,53 +14,61 @@
         android:layout_weight="1" >
     </android.support.v4.view.ViewPager>
 
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="#50909090" 
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/tab_bg"
         android:orientation="horizontal" >
 
-        <com.duang.easyecard.util.ChangeColorIconWithText
-            android:id="@+id/id_indicator_one"
+        <com.duang.easyecard.Utils.ChangeColorIconWithText
+            android:id="@+id/id_indicator_query"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            hyman:icon="@drawable/lost2"
-            hyman:text="@string/tab_lost"
+            hyman:icon="@drawable/main_manage"
+            hyman:text="@string/manage"
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.ohyousee.util.ChangeColorIconWithText
-            android:id="@+id/id_indicator_two"
+        <com.duang.easyecard.Utils.ChangeColorIconWithText
+            android:id="@+id/id_indicator_lost"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            hyman:icon="@drawable/found"
-            hyman:text="@string/tab_found"
+            hyman:icon="@drawable/main_lost_found"
+            hyman:text="@string/lost_found"
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.ohyousee.util.ChangeColorIconWithText
-            android:id="@+id/id_indicator_three"
+        <com.duang.easyecard.Utils.ChangeColorIconWithText
+            android:id="@+id/id_indicator_found"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            hyman:icon="@drawable/school37"
-            hyman:text="@string/tab_campus"
+            hyman:icon="@drawable/main_information"
+            hyman:text="@string/information"
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.ohyousee.util.ChangeColorIconWithText
-            android:id="@+id/id_indicator_four"
+        <com.duang.easyecard.Utils.ChangeColorIconWithText
+            android:id="@+id/id_indicator_settings"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            hyman:icon="@drawable/me2"
-            hyman:text="@string/tab_me"
+            hyman:icon="@drawable/main_settings"
+            hyman:text="@string/settings"
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
     </LinearLayout>

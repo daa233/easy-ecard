@@ -7,10 +7,6 @@ import java.util.Map;
 
 import com.duang.easyecard.R;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -66,7 +62,7 @@ public class QueryFragment extends Fragment implements OnItemClickListener{
 	}
 	
 	public List<Map<String, Object>> getData(){        
-        //cion和iconName的长度是相同的，这里任选其一都可以
+        //icon和iconName的长度是相同的，这里任选其一都可以
         for(int i = 0; i < iconImage.length; i++){
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("image", iconImage[i]);

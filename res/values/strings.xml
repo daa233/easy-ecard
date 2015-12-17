@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">EasyEcard</string>
+    <string name="app_name">Oh, you see!</string>
 
     <!-- SigninActivity -->
     <string name="SigninActivity_label">登录</string>
@@ -16,13 +16,13 @@
     <string name="signin_pic_below">登录界面下方的图片</string>
     
     <!-- MainActivity -->
-    <string name="MainActivity_label">EasyEcard</string>
+    <string name="MainActivity_label">Oh, you see!</string>
     
     <!-- Tab -->
-    <string name="tab_lost">丢失</string>
-    <string name="tab_found">拾获</string>
-    <string name="tab_campus">校园</string>
-    <string name="tab_me">我</string>
+    <string name="manage">校园卡管理</string>
+    <string name="lost_found">丢失和拾获</string>
+    <string name="information">消息通知</string>
+    <string name="settings">设置</string>
     
     <!-- Menu -->
     <string name="action_search">搜索</string>

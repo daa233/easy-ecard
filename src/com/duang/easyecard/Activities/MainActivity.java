@@ -45,6 +45,7 @@ OnPageChangeListener{
 	/**
 	 * 初始化所有事件
 	 */
+	@SuppressWarnings("deprecation")
 	private void initEvent() {
 		mViewPager.setOnPageChangeListener(this);
 	}
@@ -55,13 +56,13 @@ OnPageChangeListener{
 		mPagerAdapter = new PagerAdapter(this);
 		
 		//初始化自定义的下方的图标按钮
-		ChangeColorIconWithText one = (ChangeColorIconWithText) findViewById(R.id.id_indicator_one);
+		ChangeColorIconWithText one = (ChangeColorIconWithText) findViewById(R.id.id_indicator_query);
 		mTabIndicators.add(one);
-		ChangeColorIconWithText two = (ChangeColorIconWithText) findViewById(R.id.id_indicator_two);
+		ChangeColorIconWithText two = (ChangeColorIconWithText) findViewById(R.id.id_indicator_lost);
 		mTabIndicators.add(two);
-		ChangeColorIconWithText three = (ChangeColorIconWithText) findViewById(R.id.id_indicator_three);
+		ChangeColorIconWithText three = (ChangeColorIconWithText) findViewById(R.id.id_indicator_found);
 		mTabIndicators.add(three);
-		ChangeColorIconWithText four = (ChangeColorIconWithText) findViewById(R.id.id_indicator_four);
+		ChangeColorIconWithText four = (ChangeColorIconWithText) findViewById(R.id.id_indicator_settings);
 		mTabIndicators.add(four);
 		
 		one.setOnClickListener(this);
@@ -72,6 +73,7 @@ OnPageChangeListener{
 		one.setIconAlpha(1.0f);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initData() {
 		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
@@ -231,19 +233,19 @@ OnPageChangeListener{
 
 		switch (v.getId())
 		{
-		case R.id.id_indicator_one:
+		case R.id.id_indicator_query:
 			mTabIndicators.get(0).setIconAlpha(1.0f);
 			mViewPager.setCurrentItem(0, false);
 			break;
-		case R.id.id_indicator_two:
+		case R.id.id_indicator_lost:
 			mTabIndicators.get(1).setIconAlpha(1.0f);
 			mViewPager.setCurrentItem(1, false);
 			break;
-		case R.id.id_indicator_three:
+		case R.id.id_indicator_found:
 			mTabIndicators.get(2).setIconAlpha(1.0f);
 			mViewPager.setCurrentItem(2, false);
 			break;
-		case R.id.id_indicator_four:
+		case R.id.id_indicator_settings:
 			mTabIndicators.get(3).setIconAlpha(1.0f);
 			mViewPager.setCurrentItem(3, false);
 			break;
