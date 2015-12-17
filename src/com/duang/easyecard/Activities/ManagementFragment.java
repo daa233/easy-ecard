@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.duang.easyecard.R;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ public class ManagementFragment extends Fragment implements OnItemClickListener{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		viewFragment=inflater.inflate(R.layout.fragment_query, null);
+		viewFragment=inflater.inflate(R.layout.fragment_management, null);
 		// 实例化控件
 		gridView = (GridView) viewFragment.findViewById(R.id.grid_view);
 		// 新建List
@@ -74,7 +75,25 @@ public class ManagementFragment extends Fragment implements OnItemClickListener{
 	// Item的点击事件,根据图片ID来确定点击对象
 	@Override
 	public void onItemClick(AdapterView<?> view, View arg1, int position, long arg3) {
-		
+		switch (iconImage[position]) {
+		case R.drawable.manage_basic_info:
+			// 跳转到ManageViewBasicInfoActivity
+			Intent intent = new Intent(this.getContext(), ManageViewBasicInfoActivity.class);
+			startActivity(intent);
+			break;
+		case R.drawable.manage_trading_inquiry:
+			break;
+		case R.drawable.manage_report_loss:
+			break;
+		case R.drawable.manage_recharge:
+			break;
+		case R.drawable.manage_net_charge:
+			break;
+		case R.drawable.manage_pay_fees:
+			break;
+		default:
+			break;
+		}
 	}
 }
 

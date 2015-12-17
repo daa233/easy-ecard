@@ -6,12 +6,13 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/campus_image_view"
+        android:id="@+id/manage_campus_image_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_gravity="center"
-        android:src="@drawable/main_campus_scenery" />
+        android:src="@drawable/main_campus_scenery"
+        android:contentDescription="@string/main_top_pic" />
 
     <GridView
         android:id="@+id/grid_view"
