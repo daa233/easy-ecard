@@ -1,30 +1,32 @@
 package com.duang.easyecard.GlobalData;
 
-import java.util.List;
-
 import org.apache.http.client.HttpClient;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Application;
+import android.content.Context;
 
-public class HttpClientData extends Application {
-
-	private HttpClient httpClient;
-	// private List<Cookie> cookies;
+public class MyApplication extends Application {
+	
+	private static Context context;
+	private static HttpClient httpClient;
 	
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
+		context = getApplicationContext();
 		httpClient = new DefaultHttpClient();
-		// cookies = new List<Cookie>();
 		super.onCreate();
+	}
+
+	public static Context getContext() {
+		return context;
 	}
 	
 	public HttpClient getHttpClient() {
 		return httpClient;
 	}
 	public void setHttpClient(HttpClient httpClient) {
-		this.httpClient = httpClient;
+		MyApplication.httpClient = httpClient;
 	}
+
 }

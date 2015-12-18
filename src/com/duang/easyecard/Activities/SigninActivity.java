@@ -13,7 +13,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.duang.easyecard.R;
-import com.duang.easyecard.GlobalData.HttpClientData;
+import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Utils.ImageUtil;
 import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
@@ -21,6 +21,8 @@ import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,8 +36,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class SigninActivity extends BaseActivity implements OnClickListener, OnFocusChangeListener {
-	
+public class SigninActivity extends BaseActivity implements OnClickListener,
+OnFocusChangeListener {
 	
 	private HttpClient httpClient = new DefaultHttpClient();
 	
@@ -55,6 +57,9 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 	
 	private List<String> spinnerList = new ArrayList<String>();
 	private ArrayAdapter<String> spinnerAdapter;
+	
+	private static final int SIGNIN_SUCCESS = 1;
+	private static final int SIGNIN_FAILED = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +224,41 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 		}
 	}
 
+	// 处理从线程中传递出来的消息
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SIGNIN_SUCCESS:
+				// 登录成功
+				hintText.setText("提示：登录成功！");
+	        	// 传递全局变量http
+	        	MyApplication myApp = (MyApplication) getApplication();
+	        	myApp.setHttpClient(httpClient);
+	        	if (myApp.getHttpClient() != null) {
+	        	 	Log.d("httpClient", "success to spread");
+	        	}
+				// 进入主功能界面
+	        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+	        	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        	getApplicationContext().startActivity(intent);
+	        	finish();  // 销毁当前活动
+				break;
+			case SIGNIN_FAILED:
+				// 登录出错
+				String responseString = msg.obj + "";
+				hintText.setText("提示：" + responseString);
+	        	if (responseString.contains("查询密码")) {
+	        		passwordInput.setText("");
+	        	} else if (responseString.contains("验证码")) {
+	        		getCheckcodeImage();
+	        	}
+				break;
+			default:
+				break;
+			}
+		}
+	};
+	
 	private void sendPostRequest() {
 		// 发送POST请求
 		new Thread(new Runnable() {
@@ -245,29 +285,18 @@ public class SigninActivity extends BaseActivity implements OnClickListener, OnF
 					// 如果服务器成功地返回响应
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 				        String httpResponseString = EntityUtils.toString(httpResponse.getEntity());
-				        if (httpResponseString.equals("success|False")) {
+				        if (httpResponseString.contains("success")) {
 				        	// 登录成功
 				        	Log.d("response", "success");
-				        	// hintText.setText("提示：登录成功！");
-				        	// 传递全局变量http
-				        	// httpClientData = (HttpClientData) getApplication();
-				        	// httpClientData.setHttpClient(httpClient);
-				        	// if (httpClientData.getHttpClient() != null) {
-				        	// 	Log.d("httpClient", "success to spread");
-				        	// }
-							// 进入主功能界面
-				        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-				        	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				        	getApplicationContext().startActivity(intent);
-				        	finish();
+				        	Message message = new Message();
+				        	message.what = SIGNIN_SUCCESS;
+				        	handler.sendMessage(message);
 				        } else {
 				        	// 登录发生错误
-				        	hintText.setText("提示：" + httpResponseString);
-				        	if (httpResponseString.contains("查询密码")) {
-				        		passwordInput.setText("");
-				        	} else if (httpResponseString.contains("验证码")) {
-				        		getCheckcodeImage();
-				        	}
+				        	Message message = new Message();
+				        	message.what = SIGNIN_FAILED;
+				        	message.obj = httpResponseString;
+				        	handler.sendMessage(message);
 				        }
 					}
 				} catch (Exception e) {

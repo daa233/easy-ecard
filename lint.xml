@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <issue id="HandlerLeak">
+        <ignore path="src/com/duang/easyecard/Activities/SigninActivity.java" />
+    </issue>
     <issue id="InflateParams">
         <ignore path="src/com/duang/easyecard/Activities/ManagementFragment.java" />
         <ignore path="src/com/duang/easyecard/Activities/QueryFragment.java" />

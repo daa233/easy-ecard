@@ -23,7 +23,7 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.View.OnClickListener;
 
-public class MainActivity extends BaseFragmentActivity implements OnClickListener,
+public class MainActivity extends BaseFragmentActivity implements OnClickListener, 
 OnPageChangeListener{
 
 	private ViewPager mViewPager;

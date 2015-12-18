@@ -1,13 +1,13 @@
 package com.duang.easyecard.Activities;
 
 import com.duang.easyecard.R;
-import com.duang.easyecard.GlobalData.HttpClientData;
+import com.duang.easyecard.GlobalData.MyApplication;
 
 import android.os.Bundle;
 
 public class ManageViewBasicInfoActivity extends BaseActivity {
 	
-	HttpClientData httpClientData;
+	MyApplication httpClientData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
