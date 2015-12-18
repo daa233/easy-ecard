@@ -1,8 +1,6 @@
 package com.duang.easyecard.GlobalData;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.app.Application;
 import android.content.Context;
 
@@ -14,7 +12,6 @@ public class MyApplication extends Application {
 	@Override
 	public void onCreate() {
 		context = getApplicationContext();
-		httpClient = new DefaultHttpClient();
 		super.onCreate();
 	}
 

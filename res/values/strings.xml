@@ -35,12 +35,12 @@
     <string name="stu_id">学工号</string>
     <string name="ecard_id">校园卡号</string>
     <string name="balance">校园卡余额</string>
-    <string name="transition">过度余额</string>
+    <string name="transition">过渡余额</string>
     <string name="report_loss_state">挂失状态</string>
     <string name="freeze_state">冻结状态</string>
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
     
     <!-- ManageViewBasicInfoActivity -->
-    <string name="ManageViewBasicInfoActivity_label">校园卡管理——基本信息</string>
+    <string name="ManageViewBasicInfoActivity_label">基本信息</string>
 </resources>

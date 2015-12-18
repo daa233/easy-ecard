@@ -15,6 +15,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
         <activity
             android:name=".Activities.SigninActivity"
             android:label="@string/SigninActivity_label" >
@@ -23,15 +24,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity 
             android:name="com.duang.easyecard.Activities.MainActivity"
             android:label="@string/MainActivity_label">
         </activity>
+        
         <activity 
             android:name="com.duang.easyecard.Activities.ManageViewBasicInfoActivity"
             android:label="@string/ManageViewBasicInfoActivity_label">
         </activity>
-    
+        
     </application>
 
     <application
