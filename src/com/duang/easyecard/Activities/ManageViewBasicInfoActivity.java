@@ -18,13 +18,13 @@ import org.jsoup.select.Elements;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Utils.LogUtil;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,7 +119,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 					// 如果服务器成功地返回响应
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						responseHtml = EntityUtils.toString(httpResponse.getEntity());
-						Log.d("responseHtml", responseHtml);
+						LogUtil.d("responseHtml", responseHtml);
 						Message message = new Message();
 						message.what = RESPONSE_SUCCESS;
 						handler.sendMessage(message);
@@ -137,7 +137,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 
 		@Override
 		protected void onPreExecute() {
-		    Log.d("JsouphtmlData", "onPreExecute");
+		    LogUtil.d("JsouphtmlData", "onPreExecute");
 			super.onPreExecute();
 			// Create a progressDialog
 			mProgressDialog = new ProgressDialog(ManageViewBasicInfoActivity.this);
@@ -152,7 +152,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 		
 		@Override
 		protected Void doInBackground(Void... arg0) {
-			Log.d("JsouphtmlData", "doInBackground.");
+			LogUtil.d("JsouphtmlData", "doInBackground.");
 			// 解析返回的responseHtml
 			Document doc = null;
 			try {
@@ -161,7 +161,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 				Elements es = doc.getElementsByTag("em");
 				for (Element e : es) {
 					stringList.add(e.text());
-					Log.d("e", e.text());
+					LogUtil.d("e", e.text());
 				}
 				Message message = new Message();
 				message.what = FINISH_STRING_LIST;
@@ -174,7 +174,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 		
 		@Override
 		protected void onPostExecute(Void result) {
-			Log.d("JsouphtmlData", "onPostExecute");
+			LogUtil.d("JsouphtmlData", "onPostExecute");
 			// Close the progressDialog
 			mProgressDialog.dismiss();
 		}
@@ -182,7 +182,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 	
 	// 填充布局
 	private void initView() {
-		Log.d("ViewBasicInfo", "initView");
+		LogUtil.d("ViewBasicInfo", "initView");
 		
 		if (!stringList.isEmpty()) {
 			// 将stringList的数据与变量对应

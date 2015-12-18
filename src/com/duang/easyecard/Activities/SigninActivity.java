@@ -16,6 +16,7 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Utils.ImageUtil;
+import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
 
 import android.content.Intent;
@@ -23,7 +24,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -235,7 +235,7 @@ OnFocusChangeListener {
 	        	MyApplication myApp = (MyApplication) getApplication();
 	        	myApp.setHttpClient(httpClient);
 	        	if (myApp.getHttpClient() != null) {
-	        	 	Log.d("httpClient", "success to spread");
+	        	 	LogUtil.d("httpClient", "success to spread");
 	        	}
 				// 进入主功能界面
 	        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -287,7 +287,7 @@ OnFocusChangeListener {
 				        String httpResponseString = EntityUtils.toString(httpResponse.getEntity());
 				        if (httpResponseString.contains("success")) {
 				        	// 登录成功
-				        	Log.d("response", "success");
+				        	LogUtil.d("response", "success");
 				        	Message message = new Message();
 				        	message.what = SIGNIN_SUCCESS;
 				        	handler.sendMessage(message);
