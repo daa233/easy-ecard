@@ -7,6 +7,16 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
+        <item name="android:actionOverflowButtonStyle">@style/EasyEcardActionOverflowButtonStyle</item>
+    </style>
+    
+    <style name="EasyEcardActionOverflowButtonStyle">
+        <item name="android:src">@drawable/actionbar_add_icon</item>
+    </style>
+
+    <!-- ActionBar Back Icon -->
+    <style name="style_titlebar_normal" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:homeAsUpIndicator">@drawable/actionbar_back_icon</item>
     </style>
 
 </resources>

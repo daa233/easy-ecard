@@ -66,8 +66,7 @@ OnFocusChangeListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signin);
-		// 全局变量
-		// final HttpClientData httpClientData;
+		
 		initView();
 	}
 

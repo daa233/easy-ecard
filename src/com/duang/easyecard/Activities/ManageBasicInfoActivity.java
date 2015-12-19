@@ -25,10 +25,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ManageViewBasicInfoActivity extends BaseActivity {
+public class ManageBasicInfoActivity extends BaseActivity {
 	
 	private TextView nameText;
 	private TextView stuIdText;
@@ -60,16 +61,17 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_manage_view_basic_info);
-		
+		setContentView(R.layout.activity_manage_basic_info);
+		// 显示返回按钮
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		// 实例化控件
-		nameText = (TextView) findViewById(R.id.view_basic_info_name_text);
-		stuIdText = (TextView) findViewById(R.id.view_basic_info_stu_id_text);
-		ecardIdText = (TextView) findViewById(R.id.view_basic_info_ecard_id_text);
-		balanceText = (TextView) findViewById(R.id.view_basic_info_balance_text);
-		transitionText = (TextView) findViewById(R.id.view_basic_info_transition_text);
-		reportLossStateText = (TextView) findViewById(R.id.view_basic_info_report_loss_state_text);
-		freezeStateText = (TextView) findViewById(R.id.view_basic_info_freeze_state_text);
+		nameText = (TextView) findViewById(R.id.manage_basic_info_name_text);
+		stuIdText = (TextView) findViewById(R.id.manage_basic_info_stu_id_text);
+		ecardIdText = (TextView) findViewById(R.id.manage_basic_info_ecard_id_text);
+		balanceText = (TextView) findViewById(R.id.manage_basic_info_balance_text);
+		transitionText = (TextView) findViewById(R.id.manage_basic_info_transition_text);
+		reportLossStateText = (TextView) findViewById(R.id.manage_basic_info_report_loss_state_text);
+		freezeStateText = (TextView) findViewById(R.id.manage_basic_info_freeze_state_text);
 		// 初始化数据
 		initData();
 	}
@@ -140,7 +142,7 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 		    LogUtil.d("JsouphtmlData", "onPreExecute");
 			super.onPreExecute();
 			// Create a progressDialog
-			mProgressDialog = new ProgressDialog(ManageViewBasicInfoActivity.this);
+			mProgressDialog = new ProgressDialog(ManageBasicInfoActivity.this);
 			// Set progressDialog title
 			mProgressDialog.setTitle("从校园一卡通网站获取相关信息");
 			// Set progressDialog message
@@ -204,6 +206,18 @@ public class ManageViewBasicInfoActivity extends BaseActivity {
 		} else {
 			Toast.makeText(this, "获取失败！", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return false;
 	}
 
 }

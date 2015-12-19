@@ -26,7 +26,7 @@
         android:orientation="horizontal"
         android:background="#AAFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_name_title"
+            android:id="@+id/manage_basic_info_name_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             android:gravity="center"
             android:text="@string/name"/>
         <TextView 
-            android:id="@+id/view_basic_info_name_text"
+            android:id="@+id/manage_basic_info_name_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
         android:background="#AAFFFFFF"
         android:layout_marginTop="10dp">
         <TextView 
-            android:id="@+id/view_basic_info_stu_id_title"
+            android:id="@+id/manage_basic_info_stu_id_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:gravity="center"
             android:text="@string/stu_id"/>
         <TextView 
-            android:id="@+id/view_basic_info_stu_id_text"
+            android:id="@+id/manage_basic_info_stu_id_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
         android:layout_marginTop="10dp"
         android:background="#AAFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_ecard_id_title"
+            android:id="@+id/manage_basic_info_ecard_id_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
             android:gravity="center"
             android:text="@string/ecard_id"/>
         <TextView 
-            android:id="@+id/view_basic_info_ecard_id_text"
+            android:id="@+id/manage_basic_info_ecard_id_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
         android:layout_marginTop="10dp"
         android:background="#AAFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_balance_title"
+            android:id="@+id/manage_basic_info_balance_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
             android:gravity="center"
             android:text="@string/balance"/>
         <TextView 
-            android:id="@+id/view_basic_info_balance_text"
+            android:id="@+id/manage_basic_info_balance_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
         android:layout_marginTop="10dp"
         android:background="#AAFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_transition_title"
+            android:id="@+id/manage_basic_info_transition_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
             android:gravity="center"
             android:text="@string/transition"/>
         <TextView 
-            android:id="@+id/view_basic_info_transition_text"
+            android:id="@+id/manage_basic_info_transition_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
         android:layout_marginTop="10dp"
         android:background="#FFFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_report_loss_state_title"
+            android:id="@+id/manage_basic_info_report_loss_state_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
             android:gravity="center"
             android:text="@string/report_loss_state"/>
         <TextView 
-            android:id="@+id/view_basic_info_report_loss_state_text"
+            android:id="@+id/manage_basic_info_report_loss_state_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
         android:layout_marginTop="10dp"
         android:background="#AAFFFFFF">
         <TextView 
-            android:id="@+id/view_basic_info_freeze_state_title"
+            android:id="@+id/manage_basic_info_freeze_state_title"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
             android:gravity="center"
             android:text="@string/freeze_state"/>
         <TextView 
-            android:id="@+id/view_basic_info_freeze_state_text"
+            android:id="@+id/manage_basic_info_freeze_state_text"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

@@ -7,7 +7,7 @@
     
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="22" />
 
     <application
         android:name="com.duang.easyecard.GlobalData.MyApplication"
@@ -31,8 +31,10 @@
         </activity>
         
         <activity 
-            android:name="com.duang.easyecard.Activities.ManageViewBasicInfoActivity"
-            android:label="@string/ManageViewBasicInfoActivity_label">
+            android:name="com.duang.easyecard.Activities.ManageBasicInfoActivity"
+            android:label="@string/ManageViewBasicInfoActivity_label"
+            android:logo="@drawable/manage_basic_info"
+            android:theme="@style/style_titlebar_normal">
         </activity>
         
     </application>
