@@ -17,13 +17,12 @@
     
     <!-- MainActivity -->
     <string name="MainActivity_label">Oh, you see!</string>
-    	<!-- Tab -->
+    	<!--MainActivity Tab -->
     <string name="manage">校园卡管理</string>
     <string name="lost_found">丢失和拾获</string>
     <string name="information">消息通知</string>
     <string name="settings">设置</string>
-    
-    <!-- Menu -->
+    	<!-- MainActivity Menu -->
     <string name="action_search">搜索</string>
     <string name="menu_add_lost_info">添加丢失信息</string>
     <string name="menu_add_found_info">添加拾获信息</string>
@@ -43,4 +42,8 @@
     
     <!-- ManageViewBasicInfoActivity -->
     <string name="ManageViewBasicInfoActivity_label">基本信息</string>
+    
+    <!-- ManageTradingInquiryActivity -->
+    <string name="ManageTradingInquiryActivity_label">流水查询</string>
+    
 </resources>

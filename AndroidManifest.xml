@@ -7,7 +7,7 @@
     
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
+        android:targetSdkVersion="21" />
 
     <application
         android:name="com.duang.easyecard.GlobalData.MyApplication"
@@ -19,15 +19,13 @@
         <activity
             android:name=".Activities.SigninActivity"
             android:label="@string/SigninActivity_label" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
         
         <activity 
             android:name="com.duang.easyecard.Activities.MainActivity"
-            android:label="@string/MainActivity_label">
+            android:label="@string/MainActivity_label"
+            android:theme="@style/style_titlebar_normal">
         </activity>
         
         <activity 
@@ -35,6 +33,17 @@
             android:label="@string/ManageViewBasicInfoActivity_label"
             android:logo="@drawable/manage_basic_info"
             android:theme="@style/style_titlebar_normal">
+        </activity>
+        
+        <activity 
+            android:name="com.duang.easyecard.Activities.ManageTradingInquiryActivity"
+            android:label="@string/ManageTradingInquiryActivity_label"
+            android:logo="@drawable/manage_trading_inquiry"
+            android:theme="@style/style_titlebar_normal">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         
     </application>
