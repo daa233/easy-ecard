@@ -18,7 +18,8 @@ import android.widget.SimpleAdapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ManagementFragment extends Fragment implements OnItemClickListener{
+public class ManagementFragment extends Fragment implements 
+OnItemClickListener {
 
 	private View viewFragment;
 	
@@ -52,7 +53,8 @@ public class ManagementFragment extends Fragment implements OnItemClickListener{
 		// 新建适配器
 		String [] from = {"image", "text"};
 		int [] to = {R.id.grid_view_item_img, R.id.grid_view_item_text};
-		sim_adapter = new SimpleAdapter(this.getActivity(), data_list, R.layout.manage_grid_view_item, from, to);
+		sim_adapter = new SimpleAdapter(this.getActivity(), data_list,
+				R.layout.manage_grid_view_item, from, to);
 		// 配置适配器
 		gridView.setAdapter(sim_adapter);
 		// 设置监听器
@@ -74,14 +76,19 @@ public class ManagementFragment extends Fragment implements OnItemClickListener{
 
 	// Item的点击事件,根据图片ID来确定点击对象
 	@Override
-	public void onItemClick(AdapterView<?> view, View arg1, int position, long arg3) {
+	public void onItemClick(AdapterView<?> view, View arg1, int position,
+			long arg3) {
 		switch (iconImage[position]) {
 		case R.drawable.manage_basic_info:
 			// 跳转到ManageViewBasicInfoActivity
-			Intent intent = new Intent(this.getContext(), ManageBasicInfoActivity.class);
+			Intent intent = new Intent(this.getContext(),
+					ManageBasicInfoActivity.class);
 			startActivity(intent);
 			break;
 		case R.drawable.manage_trading_inquiry:
+			intent = new Intent(this.getContext(),
+					ManageTradingInquiryActivity.class);
+			startActivity(intent);
 			break;
 		case R.drawable.manage_report_loss:
 			break;

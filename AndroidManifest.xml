@@ -19,7 +19,10 @@
         <activity
             android:name=".Activities.SigninActivity"
             android:label="@string/SigninActivity_label" >
-            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         
         <activity 
@@ -40,10 +43,6 @@
             android:label="@string/ManageTradingInquiryActivity_label"
             android:logo="@drawable/manage_trading_inquiry"
             android:theme="@style/style_titlebar_normal">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         
     </application>
