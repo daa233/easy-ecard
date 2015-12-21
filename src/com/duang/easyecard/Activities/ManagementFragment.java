@@ -42,7 +42,7 @@ public class ManagementFragment extends Fragment implements OnItemClickListener{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		viewFragment=inflater.inflate(R.layout.fragment_management, null);
+		viewFragment = inflater.inflate(R.layout.fragment_management, null);
 		// 实例化控件
 		gridView = (GridView) viewFragment.findViewById(R.id.grid_view);
 		// 新建List
