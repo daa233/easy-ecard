@@ -6,8 +6,13 @@
     android:orientation="vertical" >
     
     <TextView 
+        android:id="@+id/fragment_trading_inquiry_history_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="历史流水2"/>
-
+    <Button
+        android:id="@+id/fragment_trading_inquiry_history_result_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 </LinearLayout>

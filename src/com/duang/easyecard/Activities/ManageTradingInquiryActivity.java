@@ -10,12 +10,18 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class ManageTradingInquiryActivity extends BaseActivity 
 implements MyCallback{
 	
-	// HISTORY_STATE用于区别TAB(0)加载的Fragment类型 {0:select time; 1:result}
+	// HISTORY_STATE用于区别Tab(0)加载的Fragment类型 {0:select time; 1:result}
 	private static int HISTORY_STATE = 0;  // 初始为选择时间Fragment
+	
+	public static String startTime;
+	public static String endTime;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +73,13 @@ implements MyCallback{
 	 */
 	@Override
 	public void onBtnClick(View v) {
-		
+		// 向搜索结果Fragment传递startTime和endTime
+		TextView startTimeText = (TextView) findViewById(R.id.history_inquiry_start_time);
+		TextView endTimeText = (TextView) findViewById(R.id.history_inquiry_end_time);
+		startTime = startTimeText.getText().toString();
+		endTime = endTimeText.getText().toString();
+		// 更换Tab(0)的布局
 		ActionBar actionBar = getActionBar();
-		
 		Tab tab = actionBar.getTabAt(0);
 		actionBar.removeTabAt(0);
 		tab.setText("历史流水")
@@ -77,6 +87,7 @@ implements MyCallback{
 				this, "历史流水", ManageTradingInquiryHistoryResultFragment.class));
 		actionBar.addTab(tab, 0);
 		actionBar.selectTab(tab);
+		
 		HISTORY_STATE = 1;  // 状态置为搜索结果Fragment
 	}
 	
@@ -109,6 +120,10 @@ implements MyCallback{
 						ManageTradingInquiryHistoryFragment.class));
 				actionBar.addTab(tab, 0);
 				actionBar.selectTab(tab);
+				// 将搜索界面选择的时间赋给startTime和endTime
+				Button btn = (Button) findViewById(R.id.fragment_trading_inquiry_history_result_btn);
+				String str = btn.getText().toString();
+				Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
 				HISTORY_STATE = 0;  // 状态置为选择时间Fragment
 			}
 		} else {

@@ -65,6 +65,7 @@ OnFocusChangeListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		setTitle("登录");
 		setContentView(R.layout.activity_signin);
 		
 		initView();
