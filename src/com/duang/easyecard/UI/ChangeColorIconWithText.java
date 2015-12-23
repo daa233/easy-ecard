@@ -1,4 +1,4 @@
-package com.duang.easyecard.Utils;
+package com.duang.easyecard.UI;
 
 import com.duang.easyecard.R;
 

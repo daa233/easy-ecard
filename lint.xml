@@ -3,8 +3,9 @@
     <issue id="HandlerLeak" severity="ignore">
         <ignore path="src/com/duang/easyecard/Activities/SigninActivity.java" />
     </issue>
-    <issue id="InflateParams">
+    <issue id="InflateParams" severity="ignore">
         <ignore path="src/com/duang/easyecard/Activities/ManagementFragment.java" />
         <ignore path="src/com/duang/easyecard/Activities/QueryFragment.java" />
     </issue>
+    <issue id="ShowToast" severity="ignore" />
 </lint>

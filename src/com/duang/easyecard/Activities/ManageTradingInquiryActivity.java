@@ -20,8 +20,8 @@ implements MyCallback{
 	// HISTORY_STATE用于区别Tab(0)加载的Fragment类型 {0:select time; 1:result}
 	private static int HISTORY_STATE = 0;  // 初始为选择时间Fragment
 	
-	public static String startTime;
-	public static String endTime;
+	protected static String startTime;
+	protected static String endTime;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,9 +121,9 @@ implements MyCallback{
 				actionBar.addTab(tab, 0);
 				actionBar.selectTab(tab);
 				// 将搜索界面选择的时间赋给startTime和endTime
-				Button btn = (Button) findViewById(R.id.fragment_trading_inquiry_history_result_btn);
-				String str = btn.getText().toString();
-				Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+				// Button btn = (Button) findViewById(R.id.fragment_trading_inquiry_history_result_btn);
+				// String str = btn.getText().toString();
+				// Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
 				HISTORY_STATE = 0;  // 状态置为选择时间Fragment
 			}
 		} else {

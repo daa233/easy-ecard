@@ -29,7 +29,7 @@
         android:background="@drawable/tab_bg"
         android:orientation="horizontal" >
 
-        <com.duang.easyecard.Utils.ChangeColorIconWithText
+        <com.duang.easyecard.UI.ChangeColorIconWithText
             android:id="@+id/id_indicator_query"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -40,7 +40,7 @@
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.easyecard.Utils.ChangeColorIconWithText
+        <com.duang.easyecard.UI.ChangeColorIconWithText
             android:id="@+id/id_indicator_lost"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -51,7 +51,7 @@
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.easyecard.Utils.ChangeColorIconWithText
+        <com.duang.easyecard.UI.ChangeColorIconWithText
             android:id="@+id/id_indicator_found"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -62,7 +62,7 @@
             hyman:text_size="12sp"
             hyman:color="#ff45c01a" />
 
-        <com.duang.easyecard.Utils.ChangeColorIconWithText
+        <com.duang.easyecard.UI.ChangeColorIconWithText
             android:id="@+id/id_indicator_settings"
             android:layout_width="0dp"
             android:layout_height="fill_parent"

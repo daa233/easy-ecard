@@ -53,7 +53,7 @@ OnClickListener{
 			throw new IllegalStateException(
 					"fragment所在的Activity必须实现Callbacks接口");
 		}
-		//把绑定的activity当成callback对象
+		// 把绑定的activity当成callback对象
 		mCallback = (MyCallback)activity;
 	}
 
@@ -125,8 +125,6 @@ OnClickListener{
 		case R.id.history_inquiry_start_time_title:
 		case R.id.history_inquiry_start_time:
 		case R.id.history_inquiry_start_time_img:
-			Toast.makeText(MyApplication.getContext(), "StartTime",
-					Toast.LENGTH_SHORT).show();
 			// 显示选择日期对话框
 			datePickerDialog = new DatePickerDialog(this.getActivity(),
 					new OnDateSetListener() {
@@ -141,6 +139,7 @@ OnClickListener{
 							"-" + startDayOfMonth);
 				}
 			}, startYear, startMonthOfYear - 1, startDayOfMonth);
+			datePickerDialog.setTitle("设置起始时间");
 			datePickerDialog.show();
 			break;
 		case R.id.history_inquiry_end_time_title:

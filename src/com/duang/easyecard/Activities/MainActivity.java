@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.UI.ChangeColorIconWithText;
 import com.duang.easyecard.Utils.ActivityCollector;
-import com.duang.easyecard.Utils.ChangeColorIconWithText;
 import com.duang.easyecard.Utils.PagerAdapter;
 
 import android.app.AlertDialog;
