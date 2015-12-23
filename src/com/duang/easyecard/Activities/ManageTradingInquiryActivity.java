@@ -20,6 +20,8 @@ implements MyCallback{
 	// HISTORY_STATE用于区别Tab(0)加载的Fragment类型 {0:select time; 1:result}
 	private static int HISTORY_STATE = 0;  // 初始为选择时间Fragment
 	
+	protected static int startYear, startMonthOfYear, startDayOfMonth, startDayOfWeek;
+	protected static int endYear, endMonthOfYear, endDayOfMonth, endDayOfWeek;
 	protected static String startTime;
 	protected static String endTime;
 	
@@ -143,5 +145,37 @@ implements MyCallback{
 			break;
 		}
 		return false;
+	}
+	
+	// 将数字转化为“周X”字符串
+	public static String dayOfWeekToString(int dayOfWeek) {
+		String strDayOfWeek;
+		switch (dayOfWeek) {
+		case 1:
+			strDayOfWeek = "周日";
+			break;
+		case 2:
+			strDayOfWeek = "周一";
+			break;
+		case 3:
+			strDayOfWeek = "周二";
+			break;
+		case 4:
+			strDayOfWeek = "周三";
+			break;
+		case 5:
+			strDayOfWeek = "周四";
+			break;
+		case 6:
+			strDayOfWeek = "周五";
+			break;
+		case 7:
+			strDayOfWeek = "周六";
+			break;
+		default:
+			strDayOfWeek = "未知";
+			break;
+		}
+		return strDayOfWeek;
 	}
 }

@@ -7,11 +7,9 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
-import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.model.Group;
 import com.duang.easyecard.model.TradingInquiry;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -42,7 +40,7 @@ OnHeaderUpdateListener {
 
 	private MyexpandableListAdapter adapter;
 
-	private View viewFragment;
+	private View viewFragment;  // 缓存Fragment的View
 	
 	private int width;
 	
@@ -54,11 +52,17 @@ OnHeaderUpdateListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
-		viewFragment =  inflater.inflate(
-				R.layout.fragment_trading_inquiry_history_result,
-				container, false);
-		
+		if (viewFragment == null) {
+			viewFragment =  inflater.inflate(
+					R.layout.fragment_trading_inquiry_history_result,
+					container, false);
+		}
+		// 缓存的rootView需要判断是否已经被加过parent，
+		// 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
+		ViewGroup parent = (ViewGroup) viewFragment.getParent();
+		if (parent != null) {
+			parent.removeView(viewFragment);
+		}
 		return viewFragment;
 	}
 	
@@ -94,14 +98,14 @@ OnHeaderUpdateListener {
 		
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
+			// 将HorizontalScrollView移动到最右边
 			mHorizontalScrollView.smoothScrollTo(width * 2, 0);
 		}
 	};
 	
 	private void initData() {
 		Handler handler = new Handler();
-		handler.postDelayed(scrollRunable, 3000);
+		handler.postDelayed(scrollRunable, 2000);
 		// TODO Auto-generated method stub
 		groupList = new ArrayList<Group>();
         Group group = null;
