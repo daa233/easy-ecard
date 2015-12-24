@@ -1,6 +1,7 @@
 package com.duang.easyecard.Activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -42,9 +43,9 @@ implements MyCallback{
 	protected static String startTime;
 	protected static String endTime;
 	
-	protected static List<String> histroyResponseString = new ArrayList<String>();
-	protected static List<String> dayResponseString = new ArrayList<String>();
-	protected static List<String> monthResponseString = new ArrayList<String>();
+	protected static ArrayList<HashMap<String, String>> historyArrayList;
+	protected static ArrayList<HashMap<String, String>> dayArrayList;
+	protected static ArrayList<HashMap<String, String>> monthArrayList;
 	
 	protected static int historyRecordCount;
 	protected static int dayRecordCount;
