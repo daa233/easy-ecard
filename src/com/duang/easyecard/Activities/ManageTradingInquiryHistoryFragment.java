@@ -114,7 +114,7 @@ OnClickListener{
 			ManageTradingInquiryActivity.endDayOfMonth =
 					calendar.get(Calendar.DAY_OF_MONTH) - 1;
 			ManageTradingInquiryActivity.endDayOfWeek = 
-					calendar.get(Calendar.DAY_OF_WEEK);
+					calendar.get(Calendar.DAY_OF_WEEK) - 1;
 			// 在endTime中连接起来，格式为"2015-12-20"
 			ManageTradingInquiryActivity.endTime =
 					ManageTradingInquiryActivity.endYear + "-"

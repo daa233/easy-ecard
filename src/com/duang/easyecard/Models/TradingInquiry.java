@@ -1,4 +1,4 @@
-package com.duang.easyecard.model;
+package com.duang.easyecard.Models;
 
 public class TradingInquiry {
 

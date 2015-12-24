@@ -161,6 +161,9 @@ implements MyCallback{
 	 */
 	@Override
 	public void onBtnClick(View v) {
+		// 更新startTime和endTime
+		startTime = startYear + "-" + startMonthOfYear + "-" + startDayOfMonth;
+		endTime = endYear + "-" + endMonthOfYear + "-" + endDayOfMonth;
 		// 更换Tab(0)的布局
 		ActionBar actionBar = getActionBar();
 		Tab tab = actionBar.getTabAt(0);

@@ -8,29 +8,31 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Models.Group;
+import com.duang.easyecard.Models.TradingInquiry;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
-import com.duang.easyecard.model.Group;
-import com.duang.easyecard.model.TradingInquiry;
+import com.duang.easyecard.Utils.LogUtil;
+import com.duang.easyecard.Utils.MyexpandableListAdapter;
 
 import android.app.Fragment;
-import android.content.Context;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,12 +46,16 @@ OnHeaderUpdateListener {
 	private ArrayList<Group> groupList;
 	private ArrayList<List<TradingInquiry>> childList;
 	private HorizontalScrollView mHorizontalScrollView;
+	private ProgressDialog mProgressDialog;
 
 	private MyexpandableListAdapter adapter;
 
 	private View viewFragment;  // 缓存Fragment的View
 	
+	private final int GET_SUCCESS_RESPONSE = 200;
 	private int width;
+	
+	private String responseString;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +94,7 @@ OnHeaderUpdateListener {
 		
 		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().findViewById(R.id.histroy_trading_inquiry_expandablelist);
 		initData();
-		adapter = new MyexpandableListAdapter(getActivity());
+		adapter = new MyexpandableListAdapter(getActivity(), groupList, childList);
         mExpandableListView.setAdapter(adapter);
 
         // 展开所有group
@@ -109,10 +115,27 @@ OnHeaderUpdateListener {
 			mHorizontalScrollView.smoothScrollTo(width * 2, 0);
 		}
 	};
+	// 处理GET请求的结果
+	Handler readResponseHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case GET_SUCCESS_RESPONSE:
+				// 已成功得到响应数据responseString
+				LogUtil.d("responseString", responseString);
+				break;
+			default:
+				break;
+			}
+		}
+	};
 	
 	private void initData() {
 		Handler scrollFootHandler = new Handler();
 		scrollFootHandler.postDelayed(scrollRunable, 2000);
+		
+		// 发送GET请求
+		sendGetRequest();
+		
 		// TODO Auto-generated method stub
 		groupList = new ArrayList<Group>();
         Group group = null;
@@ -150,148 +173,123 @@ OnHeaderUpdateListener {
             childList.add(childTemp);
         }
 	}
-	/*
 	// 发送GET请求
 	private void sendGetRequest() {
+		// 组装Url
+		UrlConstant.trjnListStartTime = ManageTradingInquiryActivity.startTime;
+		UrlConstant.trjnListEndTime = ManageTradingInquiryActivity.endTime;
+		UrlConstant.trjnListPageIndex = 1;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// 创建一个HttpGet对象
-				HttpGet httpGetRequest = new HttpGet("");
+				HttpGet httpGetRequest = new HttpGet(
+						UrlConstant.getTrjnListHistroy());
+				LogUtil.d("URL", UrlConstant.TRJN_LIST_HISTORY);
 				try {
 					// 发送GET请求
-					HttpResponse httpResponse = ManageTradingInquiryActivity.httpClient.execute(httpGetRequest);
-					
+					HttpResponse httpResponse = ManageTradingInquiryActivity
+							.httpClient.execute(httpGetRequest);
+					// 成功响应
 					if (httpResponse.getStatusLine().getStatusCode() == 200) {
 						StringBuffer stringBuffer = new StringBuffer();
 						HttpEntity entity = httpResponse.getEntity();
 						if (entity != null) {
-							// 读取服务器响应
-							BufferedReader br = new BufferedReader(new InputStreamReader(
-									entity.getContent()));
-							String line = null;
 							
+							// 读取服务器响应
+							BufferedReader br = new BufferedReader(
+								new InputStreamReader(entity.getContent()));
+							String line = null;
 							while ((line = br.readLine()) != null) {
 								stringBuffer.append(line);
-								Message message = new Message();
-								message.what = SHOW_RESPONSE;
-								message.obj = stringBuffer.toString();
-								Log.d("stringBuffer", stringBuffer.toString());
-								handler.sendMessage(message);
 							}
+							responseString = stringBuffer.toString();
+							// 发送消息到线程，已得到响应数据responseString
+							Message message = new Message();
+							message.what = GET_SUCCESS_RESPONSE;
+							readResponseHandler.sendMessage(message);
 						}
 					}
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}).start();
-	}*/
+	}
 	
+	// 解析响应数据
+	private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected void onPreExecute() {
+		    LogUtil.d("JsouphtmlData", "onPreExecute");
+			super.onPreExecute();
+			// Create a progressDialog
+			mProgressDialog = new ProgressDialog(MyApplication.getContext());
+			// Set progressDialog title
+			mProgressDialog.setTitle("从校园一卡通网站获取相关信息");
+			// Set progressDialog message
+			mProgressDialog.setMessage("正在加载并解析……");
+			mProgressDialog.setIndeterminate(false);
+			// Show progressDialog
+			mProgressDialog.show();
+		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			// 解析返回的responseString
+			Document doc = null;
+			try {
+				doc = Jsoup.parse(responseString);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			LogUtil.d("JsouphtmlData", "onPostExecute");
+			// Close the progressDialog
+			mProgressDialog.dismiss();
+		}
+	}
 	
-
 	/**
-     * 数据源适配器
-     */
-    class MyexpandableListAdapter extends BaseExpandableListAdapter {
-        private Context context;
-        private LayoutInflater inflater;
-
-        public MyexpandableListAdapter(Context context) {
-            this.context = context;
-            inflater = LayoutInflater.from(context);
-        }
-
-        // 返回父列表个数
-        @Override
-        public int getGroupCount() {
-            return groupList.size();
-        }
-
-        // 返回子列表个数
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return childList.get(groupPosition).size();
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-
-            return groupList.get(groupPosition);
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return childList.get(groupPosition).get(childPosition);
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-
-            return true;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded,
-                View convertView, ViewGroup parent) {
-            GroupHolder groupHolder = null;
-            if (convertView == null) {
-                groupHolder = new GroupHolder();
-                convertView = inflater.inflate(R.layout.trading_inquiry_group, null);
-                groupHolder.textView = (TextView) convertView
-                        .findViewById(R.id.group);
-                convertView.setTag(groupHolder);
-            } else {
-                groupHolder = (GroupHolder) convertView.getTag();
-            }
-
-            groupHolder.textView.setText(((Group) getGroup(groupPosition))
-                    .getTitle());
-            return convertView;
-        }
-
-        @Override
-        public View getChildView(int groupPosition, int childPosition,
-                boolean isLastChild, View convertView, ViewGroup parent) {
-            ChildHolder childHolder = null;
-            if (convertView == null) {
-                childHolder = new ChildHolder();
-                convertView = inflater.inflate(R.layout.trading_inquiry_child, null);
-
-                childHolder.textMerchantName = (TextView) convertView
-                        .findViewById(R.id.trading_inquiry_child_merchant_name_text);
-                childHolder.textTradingName = (TextView) convertView
-                        .findViewById(R.id.trading_inquiry_child_trading_name_text);
-                childHolder.textTransactionAmount = (TextView) convertView
-                        .findViewById(R.id.trading_inquiry_child_transaction_amount_text);
-
-                convertView.setTag(childHolder);
-            } else {
-                childHolder = (ChildHolder) convertView.getTag();
-            }
-
-            childHolder.textMerchantName.setText(((TradingInquiry) getChild(groupPosition,
-                    childPosition)).getmTradingName());
-
-            return convertView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-    }
+	 * 想用Pull解析XML一直没解析对，还是用Jsoup吧
+	 * @param xmlData
+	 *//*
+	// 解析响应数据 *失败*
+	private void parseXMLWithPull(String xmlData) {
+		try {
+			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+			XmlPullParser xmlPullParser = factory.newPullParser();
+			xmlPullParser.setInput(new StringReader(xmlData));
+			int eventType = xmlPullParser.getEventType();
+			List<String> td = new ArrayList<String>();
+			while (eventType != XmlPullParser.END_DOCUMENT) {
+				String nodeName = xmlPullParser.getName();
+				switch (eventType) {
+				case XmlPullParser.START_TAG: {
+					if ("td".equals(nodeName)) {
+						td.add(xmlPullParser.nextText());
+						LogUtil.d("XML", "td is" + xmlPullParser.nextText());
+					}
+					break;
+				}
+				case XmlPullParser.END_TAG: {
+					if ("tr".equals(nodeName)) {
+						LogUtil.d("td List", td.toString());
+					}
+					break;
+				}
+				default:
+					break;
+				}
+				eventType = xmlPullParser.next();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	*/
 
     @Override
     public boolean onGroupClick(final ExpandableListView parent, final View v,
@@ -310,16 +308,6 @@ OnHeaderUpdateListener {
         return false;
     }
 
-    class GroupHolder {
-        TextView textView;
-        ImageView imageView;
-    }
-
-    class ChildHolder {
-        TextView textMerchantName;
-        TextView textTradingName;
-        TextView textTransactionAmount;
-    }
 
     @Override
     public View getPinnedHeader() {
