@@ -40,7 +40,7 @@ OnClickListener{
 	
 	private DatePickerDialog datePickerDialog;
 	
-	private static int FIRST_INIT_FLAG = 0;
+	private int FIRST_INIT_FLAG = 0;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -115,6 +115,11 @@ OnClickListener{
 					calendar.get(Calendar.DAY_OF_MONTH) - 1;
 			ManageTradingInquiryActivity.endDayOfWeek = 
 					calendar.get(Calendar.DAY_OF_WEEK);
+			// 在endTime中连接起来，格式为"2015-12-20"
+			ManageTradingInquiryActivity.endTime =
+					ManageTradingInquiryActivity.endYear + "-"
+					+ ManageTradingInquiryActivity.endMonthOfYear + "-"
+					+ ManageTradingInquiryActivity.endDayOfMonth;
 			// 开始时间默认值为结束时间前90天，借助Calendar来处理
 			ManageTradingInquiryActivity.startYear =
 					ManageTradingInquiryActivity.endYear;
@@ -133,18 +138,19 @@ OnClickListener{
 					calendar.get(Calendar.DAY_OF_MONTH);
 			ManageTradingInquiryActivity.startDayOfWeek = 
 					calendar.get(Calendar.DAY_OF_WEEK);
+			// 在startTime中连接起来，格式为"2015-12-20"
+			ManageTradingInquiryActivity.startTime =
+					ManageTradingInquiryActivity.startYear + "-"
+					+ ManageTradingInquiryActivity.startMonthOfYear + "-"
+					+ ManageTradingInquiryActivity.startDayOfMonth;
 			FIRST_INIT_FLAG = 1; // 将首次初始化标志置1
 		}
-		
-		endTimeText.setText(ManageTradingInquiryActivity.endYear + "-" +
-				ManageTradingInquiryActivity.endMonthOfYear + "-" + 
-				ManageTradingInquiryActivity.endDayOfMonth + "  " +
+		// 显示在Text中
+		endTimeText.setText(ManageTradingInquiryActivity.endTime + "  " +
 				ManageTradingInquiryActivity.dayOfWeekToString(
 						ManageTradingInquiryActivity.endDayOfWeek));
 		
-		startTimeText.setText(ManageTradingInquiryActivity.startYear + "-" + 
-				ManageTradingInquiryActivity.startMonthOfYear + "-" + 
-				ManageTradingInquiryActivity.startDayOfMonth+ "  " +
+		startTimeText.setText(ManageTradingInquiryActivity.startTime + "  " +
 				ManageTradingInquiryActivity.dayOfWeekToString(
 						ManageTradingInquiryActivity.startDayOfWeek));
 	}
@@ -173,15 +179,18 @@ OnClickListener{
 					ManageTradingInquiryActivity.startDayOfMonth = dayOfMonth;
 					ManageTradingInquiryActivity.startDayOfWeek =
 							calendar.get(Calendar.DAY_OF_WEEK);
-					startTimeText.setText(ManageTradingInquiryActivity.startYear
-						+ "-" + ManageTradingInquiryActivity.startMonthOfYear +
-						"-" + ManageTradingInquiryActivity.startDayOfMonth +
+					ManageTradingInquiryActivity.startTime =
+						ManageTradingInquiryActivity.startYear + "-"
+						+ ManageTradingInquiryActivity.startMonthOfYear + "-"
+						+ ManageTradingInquiryActivity.startDayOfMonth;
+					startTimeText.setText(
+							ManageTradingInquiryActivity.startTime +
 						"  " + ManageTradingInquiryActivity.dayOfWeekToString(
-									ManageTradingInquiryActivity.startDayOfWeek));
+								ManageTradingInquiryActivity.startDayOfWeek));
 				}
 			}, ManageTradingInquiryActivity.startYear,
-					ManageTradingInquiryActivity.startMonthOfYear - 1,
-					ManageTradingInquiryActivity.startDayOfMonth);
+			   ManageTradingInquiryActivity.startMonthOfYear - 1,
+			   ManageTradingInquiryActivity.startDayOfMonth);
 			datePickerDialog.setTitle("设置起始时间");
 			datePickerDialog.show();
 			break;
@@ -203,15 +212,17 @@ OnClickListener{
 					ManageTradingInquiryActivity.endDayOfMonth = dayOfMonth;
 					ManageTradingInquiryActivity.endDayOfWeek =
 							calendar.get(Calendar.DAY_OF_WEEK);
-					endTimeText.setText(ManageTradingInquiryActivity.endYear
-							+ "-" + ManageTradingInquiryActivity.endMonthOfYear +
-							"-" + ManageTradingInquiryActivity.endDayOfMonth +
-							"  " + ManageTradingInquiryActivity.dayOfWeekToString(
-										ManageTradingInquiryActivity.endDayOfWeek));
+					ManageTradingInquiryActivity.endTime =
+						ManageTradingInquiryActivity.endYear + "-"
+						+ ManageTradingInquiryActivity.endMonthOfYear + "-"
+						+ ManageTradingInquiryActivity.endDayOfMonth;
+					endTimeText.setText(ManageTradingInquiryActivity.endTime +
+						"  " + ManageTradingInquiryActivity.dayOfWeekToString(
+								ManageTradingInquiryActivity.endDayOfWeek));
 				}
 			}, ManageTradingInquiryActivity.endYear,
-					ManageTradingInquiryActivity.endMonthOfYear - 1,
-					ManageTradingInquiryActivity.endDayOfMonth);
+			   ManageTradingInquiryActivity.endMonthOfYear - 1,
+	           ManageTradingInquiryActivity.endDayOfMonth);
 			datePickerDialog.setTitle("设置结束时间");
 			datePickerDialog.show();
 			break;

@@ -26,7 +26,6 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 public class ManageTradingInquiryActivity extends BaseActivity 
 implements MyCallback{
@@ -34,7 +33,7 @@ implements MyCallback{
 	// HISTORY_STATE用于区别Tab(0)加载的Fragment类型 {0:select time; 1:result}
 	private static int HISTORY_STATE = 0;  // 初始为选择时间Fragment
 	
-	private HttpClient httpClient;
+	protected static HttpClient httpClient;
 	
 	protected static int startYear, startMonthOfYear, startDayOfMonth;
 	protected static int startDayOfWeek;
@@ -42,6 +41,14 @@ implements MyCallback{
 	protected static int endDayOfWeek;
 	protected static String startTime;
 	protected static String endTime;
+	
+	protected static List<String> histroyResponseString = new ArrayList<String>();
+	protected static List<String> dayResponseString = new ArrayList<String>();
+	protected static List<String> monthResponseString = new ArrayList<String>();
+	
+	protected static int historyRecordCount;
+	protected static int dayRecordCount;
+	protected static int monthRecordCount;
 	
 	private final int POST_SUCCESS_RESPONSE = 200;
 	
@@ -92,7 +99,7 @@ implements MyCallback{
 		// 获得全局变量httpClient
 		MyApplication myApp = (MyApplication) getApplication();
 		httpClient = myApp.getHttpClient();
-		// 发送POST信息，开始流水查询
+		// 发送POST信息，开启流水查询
 		sendPostRequest();
 	}
 	// 处理从线程中传递出来的消息
@@ -154,13 +161,6 @@ implements MyCallback{
 	 */
 	@Override
 	public void onBtnClick(View v) {
-		// 向搜索结果Fragment传递startTime和endTime
-		TextView startTimeText = (TextView) findViewById(
-				R.id.history_inquiry_start_time);
-		TextView endTimeText = (TextView) findViewById(
-				R.id.history_inquiry_end_time);
-		startTime = startTimeText.getText().toString();
-		endTime = endTimeText.getText().toString();
 		// 更换Tab(0)的布局
 		ActionBar actionBar = getActionBar();
 		Tab tab = actionBar.getTabAt(0);

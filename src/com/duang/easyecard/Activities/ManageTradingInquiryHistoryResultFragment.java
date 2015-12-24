@@ -1,7 +1,13 @@
 package com.duang.easyecard.Activities;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
@@ -14,9 +20,10 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -104,8 +111,8 @@ OnHeaderUpdateListener {
 	};
 	
 	private void initData() {
-		Handler handler = new Handler();
-		handler.postDelayed(scrollRunable, 2000);
+		Handler scrollFootHandler = new Handler();
+		scrollFootHandler.postDelayed(scrollRunable, 2000);
 		// TODO Auto-generated method stub
 		groupList = new ArrayList<Group>();
         Group group = null;
@@ -143,9 +150,49 @@ OnHeaderUpdateListener {
             childList.add(childTemp);
         }
 	}
+	/*
+	// 发送GET请求
+	private void sendGetRequest() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// 创建一个HttpGet对象
+				HttpGet httpGetRequest = new HttpGet("");
+				try {
+					// 发送GET请求
+					HttpResponse httpResponse = ManageTradingInquiryActivity.httpClient.execute(httpGetRequest);
+					
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						StringBuffer stringBuffer = new StringBuffer();
+						HttpEntity entity = httpResponse.getEntity();
+						if (entity != null) {
+							// 读取服务器响应
+							BufferedReader br = new BufferedReader(new InputStreamReader(
+									entity.getContent()));
+							String line = null;
+							
+							while ((line = br.readLine()) != null) {
+								stringBuffer.append(line);
+								Message message = new Message();
+								message.what = SHOW_RESPONSE;
+								message.obj = stringBuffer.toString();
+								Log.d("stringBuffer", stringBuffer.toString());
+								handler.sendMessage(message);
+							}
+						}
+					}
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}*/
+	
+	
 
 	/**
-     * 数据源
+     * 数据源适配器
      */
     class MyexpandableListAdapter extends BaseExpandableListAdapter {
         private Context context;
@@ -288,16 +335,6 @@ OnHeaderUpdateListener {
         Group firstVisibleGroup = (Group) adapter.getGroup(firstVisibleGroupPos);
         TextView textView = (TextView) headerView.findViewById(R.id.group);
         textView.setText(firstVisibleGroup.getTitle());
-    }
-
-    public boolean giveUpTouchEvent(MotionEvent event) {
-        if (mExpandableListView.getFirstVisiblePosition() == 0) {
-            View view = mExpandableListView.getChildAt(0);
-            if (view != null && view.getTop() >= 0) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
