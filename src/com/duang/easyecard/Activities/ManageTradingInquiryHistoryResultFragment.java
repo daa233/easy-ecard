@@ -64,6 +64,8 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	private final int GET_SUCCESS_RESPONSE = 200;
 	private final int FINISH_HISTORY_ARRAY_LIST = 201;
 	private int width;
+	private int maxPageIndex = 1;  // 最大页码，默认为1
+	private int pageIndex = 1;
 	
 	private String responseString;
 	
@@ -122,10 +124,12 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				adapter = new MyExpandableListAdapter(getActivity(),
 						groupList, childList);
 		        mExpandableListView.setAdapter(adapter);
-		        // 展开所有group
-		        for (int i = 0, count = mExpandableListView.getCount();
-		        		i < count; i++) {
-		            mExpandableListView.expandGroup(i);
+		        // 如果有数据，展开所有group
+		        if (!ManageTradingInquiryActivity.historyArrayList.isEmpty()) {
+		        	for (int i = 0, count = mExpandableListView.getCount();
+			        		i < count; i++) {
+			            mExpandableListView.expandGroup(i);
+			        }
 		        }
 		        // 设置监听事件
 		        mExpandableListView.setOnHeaderUpdateListener(
@@ -268,8 +272,25 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 						ManageTradingInquiryActivity.historyArrayList.add(map);
 					}
 				}
-				LogUtil.d("arrayList", ManageTradingInquiryActivity.
+				LogUtil.d("JsoupHtmlData  arrayList", ManageTradingInquiryActivity.
 						historyArrayList.toString());
+				// 得到最大页码
+				String remainString = "";
+				for (Element page : doc.select("a[data-ajax=true]")) {
+					remainString = page.attr("href");
+				}
+				// 当记录页数少于1时，remainString为空
+				if (!remainString.isEmpty()) {
+					// remainString不为空
+					remainString = remainString.substring(
+							remainString.indexOf("pageindex=") + 10);
+					maxPageIndex = Integer.valueOf(remainString);
+					LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+				} else {
+					// remainString为空, maxIndex值保持不变
+					LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+				}
+				
 				Message message = new Message();
 				message.what = FINISH_HISTORY_ARRAY_LIST;
 				handler.sendMessage(message);
@@ -295,6 +316,23 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	}
 	// 将historyArrayList的数据导入groupList和childList
 	private void loadDataToLists() {
+		// 没有搜索到数据
+		if (ManageTradingInquiryActivity.historyArrayList.isEmpty()) {
+			// 添加默认数据
+			Group group = new Group();
+			group.setTitle("   -------- 这里空空的，一定不是因为我穷。 --------");
+			groupList.add(group);
+			ArrayList<TradingInquiry> childTempList =
+					new ArrayList<TradingInquiry>();
+			TradingInquiry tradingInquiry = new TradingInquiry();
+			tradingInquiry.setTradingTime("如果    选");
+			tradingInquiry.setMerchantName("对了时间  结果 可能");
+			tradingInquiry.setTradingName("就会    不   一");
+			tradingInquiry.setTransactionAmount("样");
+			childTempList.add(tradingInquiry);
+			childList.add(childTempList);
+			return;
+		}
 		// 导入groupList
 		String tempDate = null;
 		String tempDateFromHashMapList = null;  // 直接从HashMapList中获取的日期

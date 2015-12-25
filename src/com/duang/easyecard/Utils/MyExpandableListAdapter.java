@@ -45,7 +45,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
-
         return mGroupList.get(groupPosition);
     }
 
