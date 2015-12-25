@@ -256,8 +256,11 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 								new HashMap<String, String>();
 						// 找到每一行所包含的td
 						Elements tds = row.select("td");
+						// tempTradingTime用于打断字符串
+						String[] tempTradingTime = tds.get(0).text().split(" ");
 						// 将td添加到arraylist
-						map.put("TradingTime", tds.get(0).text());
+						map.put("TradingDate", tempTradingTime[0]);
+						map.put("TradingTime", tempTradingTime[1]);
 						map.put("MerchantName", tds.get(1).text());
 						map.put("TradingName", tds.get(2).text());
 						map.put("TransactionAmount", tds.get(3).text());
@@ -293,28 +296,26 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	// 将historyArrayList的数据导入groupList和childList
 	private void loadDataToLists() {
 		// 导入groupList
-		String[] tempTimeArrayForGroup;  // 用于存放分割后的日期
-		String tempTime = null;
-		String tempTimeFromHashMapList = null;  // 直接从HashMapList中获取的日期
+		String tempDate = null;
+		String tempDateFromHashMapList = null;  // 直接从HashMapList中获取的日期
 		// 通过循环遍历historyArrayList来得到groupList
 		for (int i = 0; i < ManageTradingInquiryActivity
 				.historyArrayList.size(); i++) {
-			tempTimeFromHashMapList = ManageTradingInquiryActivity
-					.historyArrayList.get(i).get("TradingTime");
-			tempTimeArrayForGroup = tempTimeFromHashMapList.split(" ");
+			tempDateFromHashMapList = ManageTradingInquiryActivity
+					.historyArrayList.get(i).get("TradingDate");
 			if (groupList.size() == 0) {
-				tempTime = tempTimeArrayForGroup[0];
-				LogUtil.d("tempTime", tempTime);
+				tempDate = tempDateFromHashMapList;
+				LogUtil.d("tempDate", tempDate);
 				Group group = new Group();
-				group.setTitle(tempTime);
+				group.setTitle(tempDate);
 				groupList.add(group);
 			} else if (groupList.size() > 0) {
 				// 如果日期不同，则把新日期添加到groupList
-				if (!tempTime.equals(tempTimeArrayForGroup[0])) {
-					tempTime = tempTimeArrayForGroup[0];
-					LogUtil.d("tempTime", tempTime);
+				if (!tempDate.equals(tempDateFromHashMapList)) {
+					tempDate = tempDateFromHashMapList;
+					LogUtil.d("tempDate", tempDate);
 					Group group = new Group();
-					group.setTitle(tempTime);
+					group.setTitle(tempDate);
 					groupList.add(group);
 				}
 			}
@@ -326,25 +327,26 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		// 导入childList
 		ArrayList<TradingInquiry> childTempList;
 		for (int i = 0; i < groupList.size(); i++) {
-			tempTime = groupList.get(i).getTitle();
+			tempDate = groupList.get(i).getTitle();
 			// 进入一个新的组，要有一个新的childTempList
 			childTempList = new ArrayList<TradingInquiry>();
 			for (int j = 0;
 					j < ManageTradingInquiryActivity.historyArrayList.size();
 					j++) {
-				String childTime = ManageTradingInquiryActivity
-						.historyArrayList.get(j).get("TradingTime");
-				// 如果时间相同（包含组名）则属于该组
-				if (childTime.contains(tempTime)) {
+				String childDate = ManageTradingInquiryActivity
+						.historyArrayList.get(j).get("TradingDate");
+				// 如果日期相同（包含组名）则属于该组
+				if (childDate.contains(tempDate)) {
 					TradingInquiry tradingInquiry = new TradingInquiry();
-					tradingInquiry.setmTradingTime(childTime);
-					tradingInquiry.setmMerchantName(ManageTradingInquiryActivity
+					tradingInquiry.setTradingTime(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("TradingTime"));
+					tradingInquiry.setMerchantName(ManageTradingInquiryActivity
 							.historyArrayList.get(j).get("MerchantName"));
-					tradingInquiry.setmTradingName(ManageTradingInquiryActivity
+					tradingInquiry.setTradingName(ManageTradingInquiryActivity
 							.historyArrayList.get(j).get("TradingName"));
-					tradingInquiry.setmTransactionAmount(ManageTradingInquiryActivity
+					tradingInquiry.setTransactionAmount(ManageTradingInquiryActivity
 							.historyArrayList.get(j).get("TransactionAmount"));
-					tradingInquiry.setmBalance(ManageTradingInquiryActivity
+					tradingInquiry.setBalance(ManageTradingInquiryActivity
 							.historyArrayList.get(j).get("Balance"));
 					childTempList.add(tradingInquiry);
 				}
@@ -399,13 +401,14 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 
         return false;
     }
-
+    // 子项点击事件
     @Override
     public boolean onChildClick(ExpandableListView parent, View v,
             int groupPosition, int childPosition, long id) {
-        Toast.makeText(MyApplication.getContext(),
-            childList.get(groupPosition).get(childPosition).getmTradingTime(),
-            1).show();
+    	// 点击子项显示卡余额
+        Toast.makeText(MyApplication.getContext(), "交易后卡余额为" + 
+            childList.get(groupPosition).get(childPosition).getBalance(),
+            Toast.LENGTH_SHORT).show();
 
         return false;
     }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
+	@SuppressWarnings("unused")
 	private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<Group> mGroupList;
@@ -95,28 +96,33 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             childHolder = new ChildHolder();
             convertView = mInflater.inflate(R.layout.trading_inquiry_child, null);
-
+            // 实例化childHolder的TextView
+            childHolder.textTradingTime = (TextView) convertView
+             .findViewById(R.id.trading_inquiry_child_trading_time_text);
             childHolder.textMerchantName = (TextView) convertView
-                    .findViewById(R.id.trading_inquiry_child_merchant_name_text);
+             .findViewById(R.id.trading_inquiry_child_merchant_name_text);
             childHolder.textTradingName = (TextView) convertView
-                    .findViewById(R.id.trading_inquiry_child_trading_name_text);
+             .findViewById(R.id.trading_inquiry_child_trading_name_text);
             childHolder.textTransactionAmount = (TextView) convertView
-                    .findViewById(R.id.trading_inquiry_child_transaction_amount_text);
+             .findViewById(R.id.trading_inquiry_child_transaction_amount_text);
 
             convertView.setTag(childHolder);
         } else {
             childHolder = (ChildHolder) convertView.getTag();
         }
-        // 设置显示内容
+        // 设置childHolder里TextView的显示内容
+        childHolder.textTradingTime.setText(
+        		((TradingInquiry) getChild(groupPosition,
+                childPosition)).getTradingTime());
         childHolder.textMerchantName.setText(
         		((TradingInquiry) getChild(groupPosition,
-                childPosition)).getmMerchantName());
+                childPosition)).getMerchantName());
         childHolder.textTradingName.setText(
         		((TradingInquiry) getChild(groupPosition,
-                childPosition)).getmTradingName());
+                childPosition)).getTradingName());
         childHolder.textTransactionAmount.setText(
         		((TradingInquiry) getChild(groupPosition,
-                childPosition)).getmTransactionAmount());
+                childPosition)).getTransactionAmount());
 
         return convertView;
     }
@@ -132,6 +138,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     class ChildHolder {
+    	TextView textTradingTime;
         TextView textMerchantName;
         TextView textTradingName;
         TextView textTransactionAmount;
