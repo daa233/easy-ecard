@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/history2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,18 +18,14 @@
         android:scrollbarAlwaysDrawHorizontalTrack="false" >
     </com.duang.easyecard.UI.PinnedHeaderExpandableListView>
     
-    <HorizontalScrollView
-        android:id="@+id/history_trading_inquiry_foot_scroll"
+    <LinearLayout 
+        android:id="@+id/history_trading_inquiry_foot_linear"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="none">
-    <LinearLayout 
-        android:id="@+id/history_trading_inquiry_foot_linear"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:background="@color/black_tab">
+       
         <TextView 
             android:id="@+id/history_trading_inquiry_result_start_time"
             android:layout_width="0dp"
@@ -55,16 +50,6 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="13sp"/>
-
-        <TextView 
-            android:id="@+id/history_trading_inquiry_result_foot_output"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="13sp"/>
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
@@ -72,14 +57,14 @@
             android:layout_marginBottom="5dp"
             android:background="@color/dark"/>
         <TextView 
-            android:id="@+id/history_trading_inquiry_result_foot_input"
+            android:id="@+id/history_trading_inquiry_result_foot_output"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="13sp"/>
     </LinearLayout>
-    </HorizontalScrollView>
+
 </LinearLayout>

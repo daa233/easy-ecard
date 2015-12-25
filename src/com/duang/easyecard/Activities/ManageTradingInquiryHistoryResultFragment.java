@@ -2,6 +2,7 @@ package com.duang.easyecard.Activities;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,28 +31,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ExpandableListView;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AbsListView.LayoutParams;
 
 public class ManageTradingInquiryHistoryResultFragment extends Fragment
 implements ExpandableListView.OnChildClickListener,
 ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	
 	private PinnedHeaderExpandableListView mExpandableListView;
-	private HorizontalScrollView mHorizontalScrollView;
 	private ProgressDialog mProgressDialog;
 	private TextView footStartTimeText;
 	private TextView footEndTimeText;
-	private TextView footInputText;
 	private TextView footOutputText;
 	
 	private View viewFragment;  // 缓存Fragment的View
@@ -65,7 +60,6 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	private final int FINISH_HISTORY_ARRAY_LIST = 201;
 	private final int NEED_MORE_DATA = 202;
 	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
-	private int width;
 	
 	private int maxPageIndex = 1;  // 最大页码，默认为1
 	private int pageIndex = 1;
@@ -100,15 +94,6 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		initView();
 		initData();
 	}
-	
-	private Runnable scrollRunable = new Runnable() {
-		
-		@Override
-		public void run() {
-			// 将HorizontalScrollView移动到最右边
-			mHorizontalScrollView.smoothScrollTo(width * 2, 0);
-		}
-	};
 	// 处理各种Message请求
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -159,39 +144,25 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	
 	// 初始化布局
 	private void initView() {
-		// 获取屏幕的像素宽度
-		WindowManager wm = getActivity().getWindowManager();
-		DisplayMetrics outMetrics = new DisplayMetrics();
-		wm.getDefaultDisplay().getMetrics(outMetrics);
-		width = outMetrics.widthPixels;
-		// 动态设置footLayout的宽度
-		LinearLayout footLayout = (LinearLayout) getActivity().
-				findViewById(R.id.history_trading_inquiry_foot_linear);
-		footLayout.setMinimumWidth(width * 2);
-		// 设置底部scollFoot滚动
-		Handler scrollFootHandler = new Handler();
-		scrollFootHandler.postDelayed(scrollRunable, 2000);
-		// 实例化底部HorizontalScrollListView
-		mHorizontalScrollView = (HorizontalScrollView) getActivity().
-				findViewById(R.id.history_trading_inquiry_foot_scroll);
-		// 实例化ListView
-		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().
-				findViewById(R.id.histroy_trading_inquiry_expandablelist);
 		// 实例化Foot中的TextView
 		footStartTimeText = (TextView) getActivity().findViewById(
 				R.id.history_trading_inquiry_result_start_time);
 		footEndTimeText = (TextView) getActivity().findViewById(
 				R.id.history_trading_inquiry_result_end_time);
-		footInputText = (TextView) getActivity().findViewById(
-				R.id.history_trading_inquiry_result_foot_input);
 		footOutputText = (TextView) getActivity().findViewById(
 				R.id.history_trading_inquiry_result_foot_output);
+		// 实例化ListView
+		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().
+				findViewById(R.id.histroy_trading_inquiry_expandablelist);
 	}
 	
 	private void initData() {
 		// 刷新historyArrayList
 		ManageTradingInquiryActivity.historyArrayList =
 				new ArrayList<HashMap<String, String>>();
+		// 设置底部TextView显示时间
+		footStartTimeText.setText(ManageTradingInquiryActivity.startTime);
+		footEndTimeText.setText(ManageTradingInquiryActivity.endTime);
 		// 发送GET请求，完成后会转到耗时任务，由Handler继续处理
 		sendGetRequest();
 	}
@@ -335,9 +306,19 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			}
 		}
 	}
-	// 将数据导入底部的HorizontalScrollView
+	// 将数据导入底部的布局
 	private void loadDataToFootView() {
-		
+		double sum = 0;
+		for (int i = 0; i < ManageTradingInquiryActivity
+				.historyArrayList.size(); i++) {
+			if(Double.valueOf(ManageTradingInquiryActivity
+					.historyArrayList.get(i).get("TransactionAmount")) < 0){
+				sum = sum + Double.valueOf(ManageTradingInquiryActivity
+						.historyArrayList.get(i).get("TransactionAmount"));
+			}
+		}
+		DecimalFormat df = new DecimalFormat("0.00");
+		footOutputText.setText("本段时间共支出  " + String.valueOf(df.format(-sum)) + " 元");
 	}
 	// 将historyArrayList的数据导入groupList和childList
 	private void loadDataToLists() {
@@ -401,6 +382,8 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				// 如果日期相同（包含组名）则属于该组
 				if (childDate.contains(tempDate)) {
 					TradingInquiry tradingInquiry = new TradingInquiry();
+					tradingInquiry.setTradingDate(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("TradingDate"));
 					tradingInquiry.setTradingTime(ManageTradingInquiryActivity
 							.historyArrayList.get(j).get("TradingTime"));
 					tradingInquiry.setMerchantName(ManageTradingInquiryActivity
@@ -469,10 +452,13 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
     public boolean onChildClick(ExpandableListView parent, View v,
             int groupPosition, int childPosition, long id) {
     	// 点击子项显示卡余额
-        Toast.makeText(MyApplication.getContext(), "交易后卡余额为" + 
+        Toast.makeText(MyApplication.getContext(),
+        	childList.get(groupPosition).get(childPosition).getTradingDate()
+        	+ "-" +
+        	childList.get(groupPosition).get(childPosition).getTradingTime()
+        	+ "  " + "交易后余额  " + 
             childList.get(groupPosition).get(childPosition).getBalance(),
             Toast.LENGTH_SHORT).show();
-
         return false;
     }
 

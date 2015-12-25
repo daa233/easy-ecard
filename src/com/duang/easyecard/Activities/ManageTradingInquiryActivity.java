@@ -46,11 +46,7 @@ implements MyCallback{
 	protected static ArrayList<HashMap<String, String>> historyArrayList;
 	protected static ArrayList<HashMap<String, String>> dayArrayList;
 	protected static ArrayList<HashMap<String, String>> monthArrayList;
-	
-	protected static int historyRecordCount;
-	protected static int dayRecordCount;
-	protected static int monthRecordCount;
-	
+
 	private final int POST_SUCCESS_RESPONSE = 200;
 	
 	@Override
