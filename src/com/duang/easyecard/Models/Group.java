@@ -2,13 +2,13 @@ package com.duang.easyecard.Models;
 
 public class Group {
 
-    private String title;
-
+    private String mTitle;
+    
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 }

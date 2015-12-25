@@ -15,14 +15,14 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MyexpandableListAdapter extends BaseExpandableListAdapter {
+public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
 	private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<Group> mGroupList;
 	private ArrayList<List<TradingInquiry>> mChildList;
 
-    public MyexpandableListAdapter(Context context, ArrayList<Group> groupList,
+    public MyExpandableListAdapter(Context context, ArrayList<Group> groupList,
     		ArrayList<List<TradingInquiry>> childList) {
         this.mContext = context;
         mInflater = LayoutInflater.from(context);
@@ -107,9 +107,16 @@ public class MyexpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             childHolder = (ChildHolder) convertView.getTag();
         }
-
-        childHolder.textMerchantName.setText(((TradingInquiry) getChild(groupPosition,
+        // 设置显示内容
+        childHolder.textMerchantName.setText(
+        		((TradingInquiry) getChild(groupPosition,
+                childPosition)).getmMerchantName());
+        childHolder.textTradingName.setText(
+        		((TradingInquiry) getChild(groupPosition,
                 childPosition)).getmTradingName());
+        childHolder.textTransactionAmount.setText(
+        		((TradingInquiry) getChild(groupPosition,
+                childPosition)).getmTransactionAmount());
 
         return convertView;
     }

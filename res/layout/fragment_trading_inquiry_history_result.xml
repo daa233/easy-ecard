@@ -39,8 +39,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:text="起始时间"/>
+            android:textSize="13sp"/>
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
@@ -55,19 +54,17 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:text="结束时间"/>
+            android:textSize="13sp"/>
 
         <TextView 
-            android:id="@+id/history_trading_inquiry_result_bottom_output"
+            android:id="@+id/history_trading_inquiry_result_foot_output"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:text="总支出"/>
+            android:textSize="13sp"/>
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
@@ -75,15 +72,14 @@
             android:layout_marginBottom="5dp"
             android:background="@color/dark"/>
         <TextView 
-            android:id="@+id/history_trading_inquiry_result_bottom_input"
+            android:id="@+id/history_trading_inquiry_result_foot_input"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:text="总转入"/>
+            android:textSize="13sp"/>
     </LinearLayout>
     </HorizontalScrollView>
 </LinearLayout>

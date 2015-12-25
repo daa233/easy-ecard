@@ -103,7 +103,7 @@ OnClickListener{
 	
 	// 初始化数据
 	private void initData() {
-		// 如果是首次加载，默认结束时间为
+		// 如果是首次加载，默认结束时间为当前日期前一天
 		if (FIRST_INIT_FLAG == 0) {
 			// 初始化Time
 			Calendar calendar = Calendar.getInstance();
@@ -120,13 +120,13 @@ OnClickListener{
 					ManageTradingInquiryActivity.endYear + "-"
 					+ ManageTradingInquiryActivity.endMonthOfYear + "-"
 					+ ManageTradingInquiryActivity.endDayOfMonth;
-			// 开始时间默认值为结束时间前90天，借助Calendar来处理
+			// 开始时间默认值为结束时间前7天，借助Calendar来处理
 			ManageTradingInquiryActivity.startYear =
 					ManageTradingInquiryActivity.endYear;
 			ManageTradingInquiryActivity.startMonthOfYear =
 					ManageTradingInquiryActivity.endMonthOfYear;
 			ManageTradingInquiryActivity.startDayOfMonth =
-					ManageTradingInquiryActivity.endDayOfMonth - 90;
+					ManageTradingInquiryActivity.endDayOfMonth - 7;
 			calendar.set(ManageTradingInquiryActivity.startYear,
 					ManageTradingInquiryActivity.startMonthOfYear - 1,
 					ManageTradingInquiryActivity.startDayOfMonth);
@@ -149,7 +149,6 @@ OnClickListener{
 		endTimeText.setText(ManageTradingInquiryActivity.endTime + "  " +
 				ManageTradingInquiryActivity.dayOfWeekToString(
 						ManageTradingInquiryActivity.endDayOfWeek));
-		
 		startTimeText.setText(ManageTradingInquiryActivity.startTime + "  " +
 				ManageTradingInquiryActivity.dayOfWeekToString(
 						ManageTradingInquiryActivity.startDayOfWeek));

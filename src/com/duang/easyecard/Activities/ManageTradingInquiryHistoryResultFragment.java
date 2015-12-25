@@ -22,7 +22,7 @@ import com.duang.easyecard.Models.TradingInquiry;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
 import com.duang.easyecard.Utils.LogUtil;
-import com.duang.easyecard.Utils.MyexpandableListAdapter;
+import com.duang.easyecard.Utils.MyExpandableListAdapter;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -47,17 +47,22 @@ implements ExpandableListView.OnChildClickListener,
 ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	
 	private PinnedHeaderExpandableListView mExpandableListView;
+	private HorizontalScrollView mHorizontalScrollView;
+	private ProgressDialog mProgressDialog;
+	private TextView footStartTimeText;
+	private TextView footEndTimeText;
+	private TextView footInputText;
+	private TextView footOutputText;
+	
+	private View viewFragment;  // 缓存Fragment的View
+	private MyExpandableListAdapter adapter;
+
 	private ArrayList<Group> groupList = new ArrayList<Group>();
 	private ArrayList<List<TradingInquiry>> childList =
 			new ArrayList<List<TradingInquiry>>();
-	private HorizontalScrollView mHorizontalScrollView;
-	private ProgressDialog mProgressDialog;
-
-	private MyexpandableListAdapter adapter;
-
-	private View viewFragment;  // 缓存Fragment的View
 	
 	private final int GET_SUCCESS_RESPONSE = 200;
+	private final int FINISH_HISTORY_ARRAY_LIST = 201;
 	private int width;
 	
 	private String responseString;
@@ -89,15 +94,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		
 		initView();
 		initData();
-        // 展开所有group
-        for (int i = 0, count = mExpandableListView.getCount();
-        		i < count; i++) {
-            mExpandableListView.expandGroup(i);
-        }
-        // 设置监听事件
-        mExpandableListView.setOnHeaderUpdateListener(this);
-        mExpandableListView.setOnChildClickListener(this);
-        mExpandableListView.setOnGroupClickListener(this);
+		
 	}
 	
 	private Runnable scrollRunable = new Runnable() {
@@ -109,13 +106,34 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		}
 	};
 	// 处理GET请求的结果
-	Handler readResponseHandler = new Handler() {
+	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GET_SUCCESS_RESPONSE:
 				// 已成功得到响应数据responseString
 				LogUtil.d("responseString", responseString);
 				new JsoupHtmlData().execute();
+				break;
+			case FINISH_HISTORY_ARRAY_LIST:
+				// 已得到处理好的historyArrayList
+				loadDataToFootView();
+				loadDataToLists();  // 导入groupList和ChildList
+				// 绑定适配器
+				adapter = new MyExpandableListAdapter(getActivity(),
+						groupList, childList);
+		        mExpandableListView.setAdapter(adapter);
+		        // 展开所有group
+		        for (int i = 0, count = mExpandableListView.getCount();
+		        		i < count; i++) {
+		            mExpandableListView.expandGroup(i);
+		        }
+		        // 设置监听事件
+		        mExpandableListView.setOnHeaderUpdateListener(
+		        		ManageTradingInquiryHistoryResultFragment.this);
+		        mExpandableListView.setOnChildClickListener(
+		        		ManageTradingInquiryHistoryResultFragment.this);
+		        mExpandableListView.setOnGroupClickListener(
+		        		ManageTradingInquiryHistoryResultFragment.this);
 				break;
 			default:
 				break;
@@ -134,26 +152,29 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		LinearLayout footLayout = (LinearLayout) getActivity().
 				findViewById(R.id.history_trading_inquiry_foot_linear);
 		footLayout.setMinimumWidth(width * 2);
+		// 设置底部scollFoot滚动
+		Handler scrollFootHandler = new Handler();
+		scrollFootHandler.postDelayed(scrollRunable, 2000);
 		// 实例化底部HorizontalScrollListView
 		mHorizontalScrollView = (HorizontalScrollView) getActivity().
 				findViewById(R.id.history_trading_inquiry_foot_scroll);
 		// 实例化ListView
 		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().
 				findViewById(R.id.histroy_trading_inquiry_expandablelist);
+		// 实例化Foot中的TextView
+		footStartTimeText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_start_time);
+		footEndTimeText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_end_time);
+		footInputText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_foot_input);
+		footOutputText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_foot_output);
 	}
 	
 	private void initData() {
-		Handler scrollFootHandler = new Handler();
-		scrollFootHandler.postDelayed(scrollRunable, 2000);
-		
-		// 发送GET请求
+		// 发送GET请求，完成后会转到耗时任务，由Handler继续处理
 		sendGetRequest();
-
-        loadDataToLists();
-
-        adapter = new MyexpandableListAdapter(getActivity(),
-				groupList, childList);
-        mExpandableListView.setAdapter(adapter);
 	}
 	
 	// 发送GET请求
@@ -190,7 +211,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 							// 发送消息到线程，已得到响应数据responseString
 							Message message = new Message();
 							message.what = GET_SUCCESS_RESPONSE;
-							readResponseHandler.sendMessage(message);
+							handler.sendMessage(message);
 						}
 					}
 				} catch (Exception e) {
@@ -246,6 +267,9 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				}
 				LogUtil.d("arrayList", ManageTradingInquiryActivity.
 						historyArrayList.toString());
+				Message message = new Message();
+				message.what = FINISH_HISTORY_ARRAY_LIST;
+				handler.sendMessage(message);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -262,18 +286,72 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			mProgressDialog.dismiss();
 		}
 	}
-	
+	// 将数据导入底部的HorizontalScrollView
+	private void loadDataToFootView() {
+		
+	}
+	// 将historyArrayList的数据导入groupList和childList
 	private void loadDataToLists() {
-		String[] tempTimeForGroup;
-		String tempTimeFromHashMapList;
-		int groupCount;
+		// 导入groupList
+		String[] tempTimeArrayForGroup;  // 用于存放分割后的日期
+		String tempTime = null;
+		String tempTimeFromHashMapList = null;  // 直接从HashMapList中获取的日期
+		// 通过循环遍历historyArrayList来得到groupList
 		for (int i = 0; i < ManageTradingInquiryActivity
-					.historyArrayList.size(); i++) {
+				.historyArrayList.size(); i++) {
 			tempTimeFromHashMapList = ManageTradingInquiryActivity
 					.historyArrayList.get(i).get("TradingTime");
-			tempTimeForGroup = tempTimeFromHashMapList.split(" ");
+			tempTimeArrayForGroup = tempTimeFromHashMapList.split(" ");
+			if (groupList.size() == 0) {
+				tempTime = tempTimeArrayForGroup[0];
+				LogUtil.d("tempTime", tempTime);
+				Group group = new Group();
+				group.setTitle(tempTime);
+				groupList.add(group);
+			} else if (groupList.size() > 0) {
+				// 如果日期不同，则把新日期添加到groupList
+				if (!tempTime.equals(tempTimeArrayForGroup[0])) {
+					tempTime = tempTimeArrayForGroup[0];
+					LogUtil.d("tempTime", tempTime);
+					Group group = new Group();
+					group.setTitle(tempTime);
+					groupList.add(group);
+				}
+			}
 		}
-		
+		// 打印groupList结果
+		for (int k = 0; k < groupList.size(); k ++) {
+			LogUtil.d("groupTitle", groupList.get(k).getTitle());
+		}
+		// 导入childList
+		ArrayList<TradingInquiry> childTempList;
+		for (int i = 0; i < groupList.size(); i++) {
+			tempTime = groupList.get(i).getTitle();
+			// 进入一个新的组，要有一个新的childTempList
+			childTempList = new ArrayList<TradingInquiry>();
+			for (int j = 0;
+					j < ManageTradingInquiryActivity.historyArrayList.size();
+					j++) {
+				String childTime = ManageTradingInquiryActivity
+						.historyArrayList.get(j).get("TradingTime");
+				// 如果时间相同（包含组名）则属于该组
+				if (childTime.contains(tempTime)) {
+					TradingInquiry tradingInquiry = new TradingInquiry();
+					tradingInquiry.setmTradingTime(childTime);
+					tradingInquiry.setmMerchantName(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("MerchantName"));
+					tradingInquiry.setmTradingName(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("TradingName"));
+					tradingInquiry.setmTransactionAmount(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("TransactionAmount"));
+					tradingInquiry.setmBalance(ManageTradingInquiryActivity
+							.historyArrayList.get(j).get("Balance"));
+					childTempList.add(tradingInquiry);
+				}
+			}
+			// 把这一组的childTempList添加到childList
+			childList.add(childTempList);
+		}
 	}
 	
 	/**

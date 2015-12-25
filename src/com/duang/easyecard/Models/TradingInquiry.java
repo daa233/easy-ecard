@@ -5,8 +5,8 @@ public class TradingInquiry {
 	private String mTradingTime;  // 交易时间
 	private String mMerchantName;  // 商户名称
 	private String mTradingName;  // 交易名称
-	private double mTransactionAmount;  // 交易金额
-	private double mBalance;  // 卡余额
+	private String mTransactionAmount;  // 交易金额
+	private String mBalance;  // 卡余额
 	
 	public String getmTradingTime() {
 		return mTradingTime;
@@ -26,16 +26,16 @@ public class TradingInquiry {
 	public void setmTradingName(String mTradingName) {
 		this.mTradingName = mTradingName;
 	}
-	public double getmTransactionAmount() {
+	public String getmTransactionAmount() {
 		return mTransactionAmount;
 	}
-	public void setmTransactionAmount(double mTransactionAmount) {
+	public void setmTransactionAmount(String mTransactionAmount) {
 		this.mTransactionAmount = mTransactionAmount;
 	}
-	public double getmBalance() {
+	public String getmBalance() {
 		return mBalance;
 	}
-	public void setmBalance(double mBalance) {
+	public void setmBalance(String mBalance) {
 		this.mBalance = mBalance;
 	}
 }
