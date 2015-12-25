@@ -63,7 +63,10 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	
 	private final int GET_SUCCESS_RESPONSE = 200;
 	private final int FINISH_HISTORY_ARRAY_LIST = 201;
+	private final int NEED_MORE_DATA = 202;
+	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
 	private int width;
+	
 	private int maxPageIndex = 1;  // 最大页码，默认为1
 	private int pageIndex = 1;
 	
@@ -96,7 +99,6 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		
 		initView();
 		initData();
-		
 	}
 	
 	private Runnable scrollRunable = new Runnable() {
@@ -107,7 +109,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			mHorizontalScrollView.smoothScrollTo(width * 2, 0);
 		}
 	};
-	// 处理GET请求的结果
+	// 处理各种Message请求
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -116,10 +118,20 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				LogUtil.d("responseString", responseString);
 				new JsoupHtmlData().execute();
 				break;
+			case NEED_MORE_DATA:
+				// 当前页码不是最大页码，需要获取更多数据
+				pageIndex++;
+				sendGetRequest();
+				break;
 			case FINISH_HISTORY_ARRAY_LIST:
 				// 已得到处理好的historyArrayList
 				loadDataToFootView();
 				loadDataToLists();  // 导入groupList和ChildList
+				// 显示搜索到的记录总数
+				Toast.makeText(getActivity(), "共搜索到" 
+						+ ManageTradingInquiryActivity
+						.historyArrayList.size() + "条记录",
+						Toast.LENGTH_SHORT).show();
 				// 绑定适配器
 				adapter = new MyExpandableListAdapter(getActivity(),
 						groupList, childList);
@@ -177,6 +189,9 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	}
 	
 	private void initData() {
+		// 刷新historyArrayList
+		ManageTradingInquiryActivity.historyArrayList =
+				new ArrayList<HashMap<String, String>>();
 		// 发送GET请求，完成后会转到耗时任务，由Handler继续处理
 		sendGetRequest();
 	}
@@ -186,7 +201,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		// 组装Url
 		UrlConstant.trjnListStartTime = ManageTradingInquiryActivity.startTime;
 		UrlConstant.trjnListEndTime = ManageTradingInquiryActivity.endTime;
-		UrlConstant.trjnListPageIndex = 1;
+		UrlConstant.trjnListPageIndex = pageIndex;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -231,22 +246,23 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		protected void onPreExecute() {
 		    LogUtil.d("JsouphtmlData", "onPreExecute");
 			super.onPreExecute();
-			// Create a progressDialog
-			mProgressDialog = new ProgressDialog(getActivity());
-			// Set progressDialog title
-			mProgressDialog.setTitle("从校园一卡通网站获取相关信息");
-			// Set progressDialog message
-			mProgressDialog.setMessage("正在加载并解析……");
-			mProgressDialog.setIndeterminate(false);
-			// Show progressDialog
-			mProgressDialog.show();
+			// 只有首次解析时才新建 progressDialog
+			if (FIRST_JSOUP_FLAG == 1) {
+				// Create a progressDialog
+				mProgressDialog = new ProgressDialog(getActivity());
+				// Set progressDialog title
+				mProgressDialog.setTitle("从校园一卡通网站获取相关信息");
+				// Set progressDialog message
+				mProgressDialog.setMessage("正在加载并解析……");
+				mProgressDialog.setIndeterminate(false);
+				// Show progressDialog
+				mProgressDialog.show();
+			}
 		}
 		@Override
 		protected Void doInBackground(Void... params) {
 			// 解析返回的responseString
 			Document doc = null;
-			ManageTradingInquiryActivity.historyArrayList =
-					new ArrayList<HashMap<String, String>>();
 			try {
 				if (responseString == null) {
 					LogUtil.e("resposeString", "responseString is null.");
@@ -274,26 +290,36 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				}
 				LogUtil.d("JsoupHtmlData  arrayList", ManageTradingInquiryActivity.
 						historyArrayList.toString());
-				// 得到最大页码
-				String remainString = "";
-				for (Element page : doc.select("a[data-ajax=true]")) {
-					remainString = page.attr("href");
-				}
-				// 当记录页数少于1时，remainString为空
-				if (!remainString.isEmpty()) {
-					// remainString不为空
-					remainString = remainString.substring(
-							remainString.indexOf("pageindex=") + 10);
-					maxPageIndex = Integer.valueOf(remainString);
-					LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
-				} else {
-					// remainString为空, maxIndex值保持不变
-					LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+				if (FIRST_JSOUP_FLAG == 1) {
+					// 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
+					String remainString = "";
+					for (Element page : doc.select("a[data-ajax=true]")) {
+						remainString = page.attr("href");
+					}
+					// 当记录页数少于1时，remainString为空
+					if (!remainString.isEmpty()) {
+						// remainString不为空
+						remainString = remainString.substring(
+								remainString.indexOf("pageindex=") + 10);
+						maxPageIndex = Integer.valueOf(remainString);
+						LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+					} else {
+						// remainString为空, maxIndex值保持不变
+						LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+					}
+					FIRST_JSOUP_FLAG = 0;
 				}
 				
 				Message message = new Message();
-				message.what = FINISH_HISTORY_ARRAY_LIST;
-				handler.sendMessage(message);
+				if (pageIndex < maxPageIndex) {
+					// 如果当前页码不是最大页码，发送请求，获取更多数据
+					message.what = NEED_MORE_DATA;
+					handler.sendMessage(message);
+				} else {
+					// 如果当前页码是最大页码，发送已准备好histroyArrayList的请求
+					message.what = FINISH_HISTORY_ARRAY_LIST;
+					handler.sendMessage(message);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -302,12 +328,11 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		@Override
 		protected void onPostExecute(Void result) {
 			LogUtil.d("JsouphtmlData", "onPostExecute");
-			// 显示搜索到的记录总数
-			Toast.makeText(getActivity(), "共搜索到" + ManageTradingInquiryActivity
-					.historyArrayList.size() + "条记录",
-					Toast.LENGTH_SHORT).show();
 			// Close the progressDialog
-			mProgressDialog.dismiss();
+			if (pageIndex == maxPageIndex) {
+				// 当接近结束时再关闭mProgressDialog
+				mProgressDialog.dismiss();
+			}
 		}
 	}
 	// 将数据导入底部的HorizontalScrollView
