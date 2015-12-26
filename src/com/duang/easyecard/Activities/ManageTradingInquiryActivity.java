@@ -172,8 +172,13 @@ implements MyCallback{
 				this, "历史流水", ManageTradingInquiryHistoryResultFragment.class));
 		actionBar.addTab(tab, 0);
 		actionBar.selectTab(tab);
-		
-		HISTORY_STATE = 1;  // 状态置为搜索结果Fragment
+		/*
+		 * 发生了直接查询“历史流水”后查询“当日流水”没有结果的Bug，原因在这里
+		 * 这种Tab的移除方法会导致“当日流水”的意外加载，所以要将其首次初始化标志重新置1
+		 * 解决方法，在DayResultFragment中将其INIT_FLAG置1的时间后移
+		 */
+		// LogUtil.d("DayResultFragment",
+		//		ManageTradingInquiryDayFragment.INIT_FLAG + "");
 	}
 	
 	// 监听Back按钮的点击

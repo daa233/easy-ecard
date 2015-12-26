@@ -89,10 +89,10 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		LogUtil.d("DayResultFragment", "onActivityCreated");
+		LogUtil.d("DayResultFragment", INIT_FLAG + "");
 		if (INIT_FLAG == 1) {
 			initView();
 			initData();
-			INIT_FLAG = 0;
 		}
 	}
 
@@ -162,6 +162,8 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		        		ManageTradingInquiryDayFragment.this);
 		        mExpandableListView.setOnGroupClickListener(
 		        		ManageTradingInquiryDayFragment.this);
+		        
+		        INIT_FLAG = 0;  // 将首次初始化标志置0
 				break;
 			default:
 				break;
