@@ -49,5 +49,6 @@
     <string name="end_time">结束时间</string>
     <string name="history_inquiry_confirm">确    认</string>
     <string name="history_inquiry_arrow_img">箭头</string>
-    
+    	<!-- HistoryTradingINquiryResultFragment -->
+    	<string name="history_trading_inquiry_result_foot_output">本段时间共支出    ？？？  元 </string>
 </resources>

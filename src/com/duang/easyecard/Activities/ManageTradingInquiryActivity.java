@@ -45,13 +45,12 @@ implements MyCallback{
 	
 	protected static ArrayList<HashMap<String, String>> historyArrayList;
 	protected static ArrayList<HashMap<String, String>> dayArrayList;
-	protected static ArrayList<HashMap<String, String>> monthArrayList;
+	protected static ArrayList<HashMap<String, String>> weekArrayList;
 
 	private final int POST_SUCCESS_RESPONSE = 200;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_manage_trading_inquiry);
 
@@ -84,11 +83,11 @@ implements MyCallback{
 		actionBar.addTab(tab);
 		
 		tab = actionBar.newTab()
-				.setText("当月流水")
+				.setText("最近一周")
 				.setTabListener(
-						new TabListener<ManageTradingInquiryMonthFragment>(
-								this, "当月流水",
-								ManageTradingInquiryMonthFragment.class));
+						new TabListener<ManageTradingInquiryWeekFragment>(
+								this, "最近一周",
+								ManageTradingInquiryWeekFragment.class));
 		actionBar.addTab(tab);
 	}
 
@@ -96,6 +95,9 @@ implements MyCallback{
 		// 获得全局变量httpClient
 		MyApplication myApp = (MyApplication) getApplication();
 		httpClient = myApp.getHttpClient();
+		// 将所有Fragment的首次初始化标志置1
+		ManageTradingInquiryDayFragment.INIT_FLAG = 1;
+		ManageTradingInquiryWeekFragment.INIT_FLAG = 1;
 		// 发送POST信息，开启流水查询
 		sendPostRequest();
 	}
@@ -162,6 +164,7 @@ implements MyCallback{
 		startTime = startYear + "-" + startMonthOfYear + "-" + startDayOfMonth;
 		endTime = endYear + "-" + endMonthOfYear + "-" + endDayOfMonth;
 		// 更换Tab(0)的布局
+		ManageTradingInquiryHistoryResultFragment.INIT_FLAG = 1;  // 首次初始化
 		ActionBar actionBar = getActionBar();
 		Tab tab = actionBar.getTabAt(0);
 		actionBar.removeTabAt(0);

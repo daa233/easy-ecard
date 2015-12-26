@@ -64,7 +64,8 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="13sp"/>
+            android:textSize="13sp"
+            android:text="@string/history_trading_inquiry_result_foot_output"/>
     </LinearLayout>
 
 </LinearLayout>

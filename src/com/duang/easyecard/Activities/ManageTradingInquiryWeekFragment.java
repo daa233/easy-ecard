@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,10 +40,10 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ManageTradingInquiryHistoryResultFragment extends Fragment
+public class ManageTradingInquiryWeekFragment extends Fragment
 implements ExpandableListView.OnChildClickListener,
 ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
-	
+
 	private PinnedHeaderExpandableListView mExpandableListView;
 	private ProgressDialog mProgressDialog;
 	private TextView footStartTimeText;
@@ -57,26 +58,21 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			new ArrayList<List<TradingInquiry>>();
 	
 	private final int GET_SUCCESS_RESPONSE = 200;
-	private final int FINISH_HISTORY_ARRAY_LIST = 201;
+	private final int FINISH_WEEK_ARRAY_LIST = 201;
 	private final int NEED_MORE_DATA = 202;
 	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
 	protected static int INIT_FLAG = 1;  // 首次初始化标志
 	
 	private int maxPageIndex = 1;  // 最大页码，默认为1
 	private int pageIndex = 1;
-	
+	private int startYear, startMonthOfYear, startDayOfMonth;
+	private int endYear, endMonthOfYear, endDayOfMonth;
+	private String startTime, endTime;
 	private String responseString;
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		LogUtil.d("HistoryResultFragment", "onCreate");
-		super.onCreate(savedInstanceState);
-	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		LogUtil.d("HistoryResultFragment", "onCreateView");
 		if (viewFragment == null) {
 			viewFragment =  inflater.inflate(
 					R.layout.fragment_trading_inquiry_history_result,
@@ -93,13 +89,40 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		LogUtil.d("HistoryResultFragment", "onActivityCreated");
+		LogUtil.d("WeekResultFragment", "onActivityCreated");
 		if (INIT_FLAG == 1) {
 			initView();
 			initData();
 			INIT_FLAG = 0;
 		}
 	}
+
+	private void initView() {
+		// 实例化Foot中的TextView
+		footStartTimeText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_start_time);
+		footEndTimeText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_end_time);
+		footOutputText = (TextView) getActivity().findViewById(
+				R.id.history_trading_inquiry_result_foot_output);
+		// 实例化ListView
+		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().
+				findViewById(R.id.histroy_trading_inquiry_expandablelist);
+	}
+
+	private void initData() {
+		// 初始化时间
+		initTime();
+		// 初始化weekArrayList
+		ManageTradingInquiryActivity.weekArrayList =
+				new ArrayList<HashMap<String, String>>();
+		// 设置底部TextView显示时间
+		footStartTimeText.setText(startTime);
+		footEndTimeText.setText(endTime);
+		// 发送GET请求，完成后会转到耗时任务，由Handler继续处理
+		sendGetRequest();
+	}
+	
 	// 处理各种Message请求
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -114,21 +137,21 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				pageIndex++;
 				sendGetRequest();
 				break;
-			case FINISH_HISTORY_ARRAY_LIST:
-				// 已得到处理好的historyArrayList
+			case FINISH_WEEK_ARRAY_LIST:
+				// 已得到处理好的weekArrayList
 				loadDataToFootView();
 				loadDataToLists();  // 导入groupList和ChildList
 				// 显示搜索到的记录总数
 				Toast.makeText(getActivity(), "共搜索到" 
 						+ ManageTradingInquiryActivity
-						.historyArrayList.size() + "条记录",
+						.weekArrayList.size() + "条记录",
 						Toast.LENGTH_SHORT).show();
 				// 绑定适配器
 				adapter = new MyExpandableListAdapter(getActivity(),
 						groupList, childList);
 		        mExpandableListView.setAdapter(adapter);
 		        // 如果有数据，展开所有group
-		        if (!ManageTradingInquiryActivity.historyArrayList.isEmpty()) {
+		        if (!ManageTradingInquiryActivity.weekArrayList.isEmpty()) {
 		        	for (int i = 0, count = mExpandableListView.getCount();
 			        		i < count; i++) {
 			            mExpandableListView.expandGroup(i);
@@ -136,48 +159,39 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		        }
 		        // 设置监听事件
 		        mExpandableListView.setOnHeaderUpdateListener(
-		        		ManageTradingInquiryHistoryResultFragment.this);
+		        		ManageTradingInquiryWeekFragment.this);
 		        mExpandableListView.setOnChildClickListener(
-		        		ManageTradingInquiryHistoryResultFragment.this);
+		        		ManageTradingInquiryWeekFragment.this);
 		        mExpandableListView.setOnGroupClickListener(
-		        		ManageTradingInquiryHistoryResultFragment.this);
+		        		ManageTradingInquiryWeekFragment.this);
 				break;
 			default:
 				break;
 			}
 		}
 	};
-	
-	// 初始化布局
-	private void initView() {
-		// 实例化Foot中的TextView
-		footStartTimeText = (TextView) getActivity().findViewById(
-				R.id.history_trading_inquiry_result_start_time);
-		footEndTimeText = (TextView) getActivity().findViewById(
-				R.id.history_trading_inquiry_result_end_time);
-		footOutputText = (TextView) getActivity().findViewById(
-				R.id.history_trading_inquiry_result_foot_output);
-		// 实例化ListView
-		mExpandableListView = (PinnedHeaderExpandableListView) getActivity().
-				findViewById(R.id.histroy_trading_inquiry_expandablelist);
+	// 初始化时间
+	private void initTime() {
+		Calendar calendar = Calendar.getInstance();
+		// 结束时间默认值为前一天
+		endYear = calendar.get(Calendar.YEAR);
+		endMonthOfYear = calendar.get(Calendar.MONTH) + 1;
+		endDayOfMonth =	calendar.get(Calendar.DAY_OF_MONTH) - 1;
+		// 在endTime中连接起来，格式为"2015-12-20"
+		endTime = endYear + "-"+ endMonthOfYear + "-"+ endDayOfMonth;
+		// 开始时间默认值为结束时间前7天，借助Calendar来处理
+		calendar.set(endYear, endMonthOfYear - 1, endDayOfMonth - 7);
+		startYear = calendar.get(Calendar.YEAR);
+		startMonthOfYear = calendar.get(Calendar.MONTH) + 1;
+		startDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+		// 在startTime中连接起来，格式为"2015-12-20"
+		startTime = startYear + "-" + startMonthOfYear + "-" + startDayOfMonth;
 	}
-	
-	private void initData() {
-		// 初始化historyArrayList
-		ManageTradingInquiryActivity.historyArrayList =
-				new ArrayList<HashMap<String, String>>();
-		// 设置底部TextView显示时间
-		footStartTimeText.setText(ManageTradingInquiryActivity.startTime);
-		footEndTimeText.setText(ManageTradingInquiryActivity.endTime);
-		// 发送GET请求，完成后会转到耗时任务，由Handler继续处理
-		sendGetRequest();
-	}
-	
 	// 发送GET请求
 	private void sendGetRequest() {
 		// 组装Url
-		UrlConstant.trjnListStartTime = ManageTradingInquiryActivity.startTime;
-		UrlConstant.trjnListEndTime = ManageTradingInquiryActivity.endTime;
+		UrlConstant.trjnListStartTime = startTime;
+		UrlConstant.trjnListEndTime = endTime;
 		UrlConstant.trjnListPageIndex = pageIndex;
 		new Thread(new Runnable() {
 			@Override
@@ -262,11 +276,11 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 						map.put("TradingName", tds.get(2).text());
 						map.put("TransactionAmount", tds.get(3).text());
 						map.put("Balance", tds.get(4).text());
-						ManageTradingInquiryActivity.historyArrayList.add(map);
+						ManageTradingInquiryActivity.weekArrayList.add(map);
 					}
 				}
 				LogUtil.d("JsoupHtmlData  arrayList", ManageTradingInquiryActivity.
-						historyArrayList.toString());
+						weekArrayList.toString());
 				if (FIRST_JSOUP_FLAG == 1) {
 					// 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
 					String remainString = "";
@@ -294,7 +308,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 					handler.sendMessage(message);
 				} else {
 					// 如果当前页码是最大页码，发送已准备好histroyArrayList的请求
-					message.what = FINISH_HISTORY_ARRAY_LIST;
+					message.what = FINISH_WEEK_ARRAY_LIST;
 					handler.sendMessage(message);
 				}
 			} catch (Exception e) {
@@ -316,20 +330,20 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	private void loadDataToFootView() {
 		double sum = 0;
 		for (int i = 0; i < ManageTradingInquiryActivity
-				.historyArrayList.size(); i++) {
+				.weekArrayList.size(); i++) {
 			if(Double.valueOf(ManageTradingInquiryActivity
-					.historyArrayList.get(i).get("TransactionAmount")) < 0){
+					.weekArrayList.get(i).get("TransactionAmount")) < 0){
 				sum = sum + Double.valueOf(ManageTradingInquiryActivity
-						.historyArrayList.get(i).get("TransactionAmount"));
+						.weekArrayList.get(i).get("TransactionAmount"));
 			}
 		}
 		DecimalFormat df = new DecimalFormat("0.00");
 		footOutputText.setText("本段时间共支出  " + String.valueOf(df.format(-sum)) + " 元");
 	}
-	// 将historyArrayList的数据导入groupList和childList
+	// 将weekArrayList的数据导入groupList和childList
 	private void loadDataToLists() {
 		// 没有搜索到数据
-		if (ManageTradingInquiryActivity.historyArrayList.isEmpty()) {
+		if (ManageTradingInquiryActivity.weekArrayList.isEmpty()) {
 			// 添加默认数据
 			Group group = new Group();
 			group.setTitle("   -------- 这里空空的，一定不是因为我穷。 --------");
@@ -348,11 +362,11 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		// 导入groupList
 		String tempDate = null;
 		String tempDateFromHashMapList = null;  // 直接从HashMapList中获取的日期
-		// 通过循环遍历historyArrayList来得到groupList
+		// 通过循环遍历weekArrayList来得到groupList
 		for (int i = 0; i < ManageTradingInquiryActivity
-				.historyArrayList.size(); i++) {
+				.weekArrayList.size(); i++) {
 			tempDateFromHashMapList = ManageTradingInquiryActivity
-					.historyArrayList.get(i).get("TradingDate");
+					.weekArrayList.get(i).get("TradingDate");
 			if (groupList.size() == 0) {
 				tempDate = tempDateFromHashMapList;
 				LogUtil.d("tempDate", tempDate);
@@ -381,25 +395,25 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			// 进入一个新的组，要有一个新的childTempList
 			childTempList = new ArrayList<TradingInquiry>();
 			for (int j = 0;
-					j < ManageTradingInquiryActivity.historyArrayList.size();
+					j < ManageTradingInquiryActivity.weekArrayList.size();
 					j++) {
 				String childDate = ManageTradingInquiryActivity
-						.historyArrayList.get(j).get("TradingDate");
+						.weekArrayList.get(j).get("TradingDate");
 				// 如果日期相同（包含组名）则属于该组
 				if (childDate.contains(tempDate)) {
 					TradingInquiry tradingInquiry = new TradingInquiry();
 					tradingInquiry.setTradingDate(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("TradingDate"));
+							.weekArrayList.get(j).get("TradingDate"));
 					tradingInquiry.setTradingTime(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("TradingTime"));
+							.weekArrayList.get(j).get("TradingTime"));
 					tradingInquiry.setMerchantName(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("MerchantName"));
+							.weekArrayList.get(j).get("MerchantName"));
 					tradingInquiry.setTradingName(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("TradingName"));
+							.weekArrayList.get(j).get("TradingName"));
 					tradingInquiry.setTransactionAmount(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("TransactionAmount"));
+							.weekArrayList.get(j).get("TransactionAmount"));
 					tradingInquiry.setBalance(ManageTradingInquiryActivity
-							.historyArrayList.get(j).get("Balance"));
+							.weekArrayList.get(j).get("Balance"));
 					childTempList.add(tradingInquiry);
 				}
 			}
@@ -408,46 +422,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		}
 	}
 	
-	/**
-	 * 想用Pull解析XML一直没解析对，还是用Jsoup吧
-	 * @param xmlData
-	 *//*
-	// 解析响应数据 *失败*
-	private void parseXMLWithPull(String xmlData) {
-		try {
-			XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-			XmlPullParser xmlPullParser = factory.newPullParser();
-			xmlPullParser.setInput(new StringReader(xmlData));
-			int eventType = xmlPullParser.getEventType();
-			List<String> td = new ArrayList<String>();
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				String nodeName = xmlPullParser.getName();
-				switch (eventType) {
-				case XmlPullParser.START_TAG: {
-					if ("td".equals(nodeName)) {
-						td.add(xmlPullParser.nextText());
-						LogUtil.d("XML", "td is" + xmlPullParser.nextText());
-					}
-					break;
-				}
-				case XmlPullParser.END_TAG: {
-					if ("tr".equals(nodeName)) {
-						LogUtil.d("td List", td.toString());
-					}
-					break;
-				}
-				default:
-					break;
-				}
-				eventType = xmlPullParser.next();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	*/
-
-    @Override
+	@Override
     public boolean onGroupClick(final ExpandableListView parent, final View v,
             int groupPosition, final long id) {
 
@@ -484,5 +459,4 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
         TextView textView = (TextView) headerView.findViewById(R.id.group);
         textView.setText(firstVisibleGroup.getTitle());
     }
-
 }

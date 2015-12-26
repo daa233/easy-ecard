@@ -120,16 +120,16 @@ OnClickListener{
 					ManageTradingInquiryActivity.endYear + "-"
 					+ ManageTradingInquiryActivity.endMonthOfYear + "-"
 					+ ManageTradingInquiryActivity.endDayOfMonth;
-			// 开始时间默认值为结束时间前7天，借助Calendar来处理
+			// 开始时间默认值为结束时间前15天，借助Calendar来处理
 			ManageTradingInquiryActivity.startYear =
 					ManageTradingInquiryActivity.endYear;
 			ManageTradingInquiryActivity.startMonthOfYear =
 					ManageTradingInquiryActivity.endMonthOfYear;
 			ManageTradingInquiryActivity.startDayOfMonth =
-					ManageTradingInquiryActivity.endDayOfMonth - 7;
+					ManageTradingInquiryActivity.endDayOfMonth - 15;
 			calendar.set(ManageTradingInquiryActivity.startYear,
-					ManageTradingInquiryActivity.startMonthOfYear - 1,
-					ManageTradingInquiryActivity.startDayOfMonth);
+					ManageTradingInquiryActivity.endMonthOfYear - 1,
+					ManageTradingInquiryActivity.endDayOfMonth - 15);
 			ManageTradingInquiryActivity.startYear =
 					calendar.get(Calendar.YEAR);
 			ManageTradingInquiryActivity.startMonthOfYear =

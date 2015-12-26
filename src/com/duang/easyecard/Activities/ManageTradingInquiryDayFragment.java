@@ -12,6 +12,8 @@ public class ManageTradingInquiryDayFragment extends Fragment{
 
 	private View viewFragment;
 	
+	public static int INIT_FLAG = 1;  // 首次初始化标志
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
