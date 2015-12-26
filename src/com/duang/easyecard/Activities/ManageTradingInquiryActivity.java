@@ -12,7 +12,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.duang.easyecard.R;
 import com.duang.easyecard.Activities.ManageTradingInquiryHistoryFragment.MyCallback;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
@@ -52,7 +51,6 @@ implements MyCallback{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_manage_trading_inquiry);
 
 		initView();
 		
