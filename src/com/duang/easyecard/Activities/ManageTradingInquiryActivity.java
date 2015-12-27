@@ -172,6 +172,7 @@ implements MyCallback{
 				this, "历史流水", ManageTradingInquiryHistoryResultFragment.class));
 		actionBar.addTab(tab, 0);
 		actionBar.selectTab(tab);
+		HISTORY_STATE = 1;  // 状态置为搜索结果Fragment 
 		/*
 		 * 发生了直接查询“历史流水”后查询“当日流水”没有结果的Bug，原因在这里
 		 * 这种Tab的移除方法会导致“当日流水”的意外加载，所以要将其首次初始化标志重新置1
@@ -236,6 +237,9 @@ implements MyCallback{
 	public static String dayOfWeekToString(int dayOfWeek) {
 		String strDayOfWeek;
 		switch (dayOfWeek) {
+		case 0:
+			strDayOfWeek = "周六";
+			break;
 		case 1:
 			strDayOfWeek = "周日";
 			break;

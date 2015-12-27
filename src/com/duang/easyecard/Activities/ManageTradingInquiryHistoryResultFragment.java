@@ -332,15 +332,15 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		if (ManageTradingInquiryActivity.historyArrayList.isEmpty()) {
 			// 添加默认数据
 			Group group = new Group();
-			group.setTitle("   -------- 这里空空的，一定不是因为我穷。 --------");
+			group.setTitle(" --- 这里空空的，一定不是因为我穷。--- ");
 			groupList.add(group);
 			ArrayList<TradingInquiry> childTempList =
 					new ArrayList<TradingInquiry>();
 			TradingInquiry tradingInquiry = new TradingInquiry();
-			tradingInquiry.setTradingTime("如果    选");
+			tradingInquiry.setTradingTime("如果  选");
 			tradingInquiry.setMerchantName("对了时间  结果 可能");
-			tradingInquiry.setTradingName("就会    不   一");
-			tradingInquiry.setTransactionAmount("样");
+			tradingInquiry.setTradingName("就会   不  一");
+			tradingInquiry.setTransactionAmount(" 样");
 			childTempList.add(tradingInquiry);
 			childList.add(childTempList);
 			return;
