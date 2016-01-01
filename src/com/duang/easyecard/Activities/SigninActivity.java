@@ -3,18 +3,15 @@ package com.duang.easyecard.Activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Utils.HttpUtil;
+import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Utils.ImageUtil;
 import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
@@ -35,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SigninActivity extends BaseActivity implements OnClickListener,
 OnFocusChangeListener {
@@ -60,6 +58,7 @@ OnFocusChangeListener {
 	
 	private static final int SIGNIN_SUCCESS = 1;
 	private static final int SIGNIN_FAILED = 0;
+	private static final int NETWORK_ERROR = 0x404;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -238,7 +237,8 @@ OnFocusChangeListener {
 	        	 	LogUtil.d("httpClient", "success to spread");
 	        	}
 				// 进入主功能界面
-	        	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+	        	Intent intent = new Intent(getApplicationContext(),
+	        			MainActivity.class);
 	        	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	        	getApplicationContext().startActivity(intent);
 	        	finish();  // 销毁当前活动
@@ -250,8 +250,13 @@ OnFocusChangeListener {
 	        	if (responseString.contains("查询密码")) {
 	        		passwordInput.setText("");
 	        	} else if (responseString.contains("验证码")) {
-	        		getCheckcodeImage();
+	        		getCheckcodeImage();  // 刷新验证码
 	        	}
+				break;
+			case NETWORK_ERROR:
+				// 网络错误
+				Toast.makeText(SigninActivity.this, "网络错误",
+						Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -260,49 +265,43 @@ OnFocusChangeListener {
 	};
 	
 	private void sendPostRequest() {
+		// 装填POST数据
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		checkcode = checkcodeInput.getText().toString();
+		username = accountInput.getText().toString();
+		password = passwordInput.getText().toString();
+		params.add(new BasicNameValuePair("checkcode", checkcode));
+		params.add(new BasicNameValuePair("IsUsedKeyPad", "False"));
+		params.add(new BasicNameValuePair("signtype", signtype));
+		params.add(new BasicNameValuePair("username", username));
+		params.add(new BasicNameValuePair("password", password));
 		// 发送POST请求
-		new Thread(new Runnable() {
+		HttpUtil.sendPostRequest(httpClient, UrlConstant.MINI_CHECK_IN, params,
+				new HttpCallbackListener() {
 			@Override
-			public void run() {
-				// 创建一个HttpPost对象
-				HttpPost httpPost = new HttpPost(UrlConstant.MINI_CHECK_IN);
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				checkcode = checkcodeInput.getText().toString();
-				username = accountInput.getText().toString();
-				password = passwordInput.getText().toString();
-				try {
-					// 装填POST数据
-					params.add(new BasicNameValuePair("checkcode", checkcode));
-					params.add(new BasicNameValuePair("IsUsedKeyPad", "False"));
-					params.add(new BasicNameValuePair("signtype", signtype));
-					params.add(new BasicNameValuePair("username", username));
-					params.add(new BasicNameValuePair("password", password));
-					
-					UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "utf-8");
-					httpPost.setEntity(entity);
-					// 执行POST请求
-					HttpResponse httpResponse = httpClient.execute(httpPost);
-					// 如果服务器成功地返回响应
-					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				        String httpResponseString = EntityUtils.toString(httpResponse.getEntity());
-				        if (httpResponseString.contains("success")) {
-				        	// 登录成功
-				        	LogUtil.d("response", "success");
-				        	Message message = new Message();
-				        	message.what = SIGNIN_SUCCESS;
-				        	handler.sendMessage(message);
-				        } else {
-				        	// 登录发生错误
-				        	Message message = new Message();
-				        	message.what = SIGNIN_FAILED;
-				        	message.obj = httpResponseString;
-				        	handler.sendMessage(message);
-				        }
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			public void onFinish(String response) {
+				// 成功响应
+				if (response.contains("success")) {
+		        	// 登录成功
+		        	LogUtil.d("response", "success");
+		        	Message message = new Message();
+		        	message.what = SIGNIN_SUCCESS;
+		        	handler.sendMessage(message);
+		        } else {
+		        	// 登录发生错误
+		        	Message message = new Message();
+		        	message.what = SIGNIN_FAILED;
+		        	message.obj = response;
+		        	handler.sendMessage(message);
+		        }
 			}
-		}).start();
+			@Override
+			public void onError(Exception e) {
+				// 网络错误
+				Message message = new Message();
+	        	message.what = NETWORK_ERROR;
+	        	handler.sendMessage(message);
+			}
+		});
 	}
 }

@@ -38,11 +38,11 @@ public class HttpUtil {
 							while ((line = br.readLine()) != null) {
 								responseString.append(line);
 							}
+							if (listener != null) {
+								// Callback onFinish()
+								listener.onFinish(responseString.toString());
+							}
 						}
-					}
-					if (listener != null) {
-						// Callback onFinish()
-						listener.onFinish(responseString.toString());
 					}
 				} catch (Exception e) {
 					if (listener != null) {

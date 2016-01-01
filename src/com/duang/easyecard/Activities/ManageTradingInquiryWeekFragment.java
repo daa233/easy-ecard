@@ -1,16 +1,11 @@
 package com.duang.easyecard.Activities;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,8 +18,10 @@ import com.duang.easyecard.Models.Group;
 import com.duang.easyecard.Models.TradingInquiry;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView;
 import com.duang.easyecard.UI.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
+import com.duang.easyecard.Utils.HttpUtil;
 import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.MyExpandableListAdapter;
+import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -60,6 +57,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	private final int GET_SUCCESS_RESPONSE = 200;
 	private final int FINISH_WEEK_ARRAY_LIST = 201;
 	private final int NEED_MORE_DATA = 202;
+	private final int NETWORK_ERROR = 0x404;
 	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
 	protected static int INIT_FLAG = 1;  // 首次初始化标志
 	
@@ -165,6 +163,11 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		        mExpandableListView.setOnGroupClickListener(
 		        		ManageTradingInquiryWeekFragment.this);
 				break;
+			case NETWORK_ERROR:
+				// 网络错误
+				Toast.makeText(getActivity(), "网络错误",
+						Toast.LENGTH_SHORT).show();
+				break;
 			default:
 				break;
 			}
@@ -173,10 +176,16 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	// 初始化时间
 	private void initTime() {
 		Calendar calendar = Calendar.getInstance();
-		// 结束时间默认值为前一天
+		// 结束时间默认值为前一天，借助Calendar来处理
 		endYear = calendar.get(Calendar.YEAR);
 		endMonthOfYear = calendar.get(Calendar.MONTH) + 1;
-		endDayOfMonth =	calendar.get(Calendar.DAY_OF_MONTH) - 1;
+		endDayOfMonth =	calendar.get(Calendar.DAY_OF_MONTH);
+		// 导入Calendar
+		calendar.set(endYear, endMonthOfYear - 1, endDayOfMonth - 1);
+		// 得到前一天的时间
+		endYear = calendar.get(Calendar.YEAR);
+		endMonthOfYear = calendar.get(Calendar.MONTH) + 1;
+		endDayOfMonth =	calendar.get(Calendar.DAY_OF_MONTH);
 		// 在endTime中连接起来，格式为"2015-12-20"
 		endTime = endYear + "-"+ endMonthOfYear + "-"+ endDayOfMonth;
 		// 开始时间默认值为结束时间前7天，借助Calendar来处理
@@ -193,42 +202,25 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		UrlConstant.trjnListStartTime = startTime;
 		UrlConstant.trjnListEndTime = endTime;
 		UrlConstant.trjnListPageIndex = pageIndex;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// 创建一个HttpGet对象
-				HttpGet httpGetRequest = new HttpGet(
-						UrlConstant.getTrjnListHistroy());
-				LogUtil.d("URL", UrlConstant.TRJN_LIST_HISTORY);
-				try {
-					// 发送GET请求
-					HttpResponse httpResponse = ManageTradingInquiryActivity
-							.httpClient.execute(httpGetRequest);
-					// 成功响应
-					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						StringBuffer stringBuffer = new StringBuffer();
-						HttpEntity entity = httpResponse.getEntity();
-						if (entity != null) {
-							
-							// 读取服务器响应
-							BufferedReader br = new BufferedReader(
-								new InputStreamReader(entity.getContent()));
-							String line = null;
-							while ((line = br.readLine()) != null) {
-								stringBuffer.append(line);
-							}
-							responseString = stringBuffer.toString();
-							// 发送消息到线程，已得到响应数据responseString
-							Message message = new Message();
-							message.what = GET_SUCCESS_RESPONSE;
-							handler.sendMessage(message);
-						}
+		HttpUtil.sendGetRequest(ManageTradingInquiryActivity.httpClient,
+				UrlConstant.TRJN_LIST_HISTORY, new HttpCallbackListener() {
+					@Override
+					public void onFinish(String response) {
+						// 成功响应
+						responseString = response;
+						// 发送消息到线程，已得到响应数据responseString
+						Message message = new Message();
+						message.what = GET_SUCCESS_RESPONSE;
+						handler.sendMessage(message);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+					@Override
+					public void onError(Exception e) {
+						// 网络错误
+						Message message = new Message();
+						message.what = NETWORK_ERROR;
+						handler.sendMessage(message);
+					}
+				});
 	}
 	
 	// 解析响应数据        **Thanks for http://www.androidbegin.com/tutorial/.**

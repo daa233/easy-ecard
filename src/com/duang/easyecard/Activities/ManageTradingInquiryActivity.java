@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
 import com.duang.easyecard.Activities.ManageTradingInquiryHistoryFragment.MyCallback;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Utils.HttpUtil;
+import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.TabListener;
 
@@ -26,6 +23,7 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class ManageTradingInquiryActivity extends BaseActivity 
 implements MyCallback{
@@ -47,6 +45,7 @@ implements MyCallback{
 	protected static ArrayList<HashMap<String, String>> weekArrayList;
 
 	private final int POST_SUCCESS_RESPONSE = 200;
+	private final int NETWORK_ERROR = 0x404;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,50 +108,42 @@ implements MyCallback{
 				MyApplication myApp = (MyApplication) getApplication();
 				myApp.setHttpClient(httpClient);
 				break;
+			case NETWORK_ERROR:
+				// 网络错误
+				Toast.makeText(ManageTradingInquiryActivity.this, "网络错误",
+						Toast.LENGTH_SHORT).show();
+				break;
 			default:
 				break;
 			}
 		}
 	};
-	// 发送POST请求
+	// 发送POST请求到TRJN_QUERY，开始流水查询
 	private void sendPostRequest() {
-		// 发送POST信息到TRJN_QUERY，开始流水查询
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// 创建一个HttpPost对象
-				HttpPost httpPost = new HttpPost(UrlConstant.TRJN_QUERY);
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				try {
-					params.add(new BasicNameValuePair("needHeader", "false"));
-					UrlEncodedFormEntity entity = new UrlEncodedFormEntity(
-							params, "utf-8");
-					httpPost.setEntity(entity);
-					// 发送POST请求
-					HttpResponse httpResponse = httpClient.execute(httpPost);
-					// 如果服务器成功地返回响应
-					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						// 请求和响应都成功了
-						LogUtil.d("POST", "Success!");
-						// 获取返回的cookies
-				        String httpResponseString = EntityUtils.toString(
-				        		httpResponse.getEntity());
-				        Message message = new Message();
+		// 装填POST数据
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("needHeader", "false"));
+		HttpUtil.sendPostRequest(httpClient, UrlConstant.TRJN_QUERY, params,
+				new HttpCallbackListener() {
+					@Override
+					public void onFinish(String response) {
+						// 响应成功
+						Message message = new Message();
 						message.what = POST_SUCCESS_RESPONSE;
-						message.obj = httpResponseString;
+						message.obj = response;
 						handler.sendMessage(message);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+					@Override
+					public void onError(Exception e) {
+						// 网络错误
+						Message message = new Message();
+						message.what = NETWORK_ERROR;
+						handler.sendMessage(message);
+					}
+				});
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * @see com.duang.easyecard.Activities.ManageTradingInquiryHistoryFragment
-	 * .MyCallback#onBtnClick(android.view.View)
 	 * 在ManageTradingInquiryHistoryFragment中定义的Callback接口
 	 * 用于返回Fragment中的按钮点击事件，并重新加载该Tab
 	 */

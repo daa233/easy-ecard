@@ -107,14 +107,24 @@ OnClickListener{
 		if (FIRST_INIT_FLAG == 0) {
 			// 初始化Time
 			Calendar calendar = Calendar.getInstance();
-			// 结束时间默认值为前一天
+			// 结束时间默认值为前一天，借助Calendar来处理
 			ManageTradingInquiryActivity.endYear = calendar.get(Calendar.YEAR);
 			ManageTradingInquiryActivity.endMonthOfYear =
 					calendar.get(Calendar.MONTH) + 1;
 			ManageTradingInquiryActivity.endDayOfMonth =
-					calendar.get(Calendar.DAY_OF_MONTH) - 1;
+					calendar.get(Calendar.DAY_OF_MONTH);
+			// 减去1天后重新导入Calendar
+			calendar.set(ManageTradingInquiryActivity.endYear,
+					ManageTradingInquiryActivity.endMonthOfYear - 1,
+					ManageTradingInquiryActivity.endDayOfMonth - 1);
+			// 得到处理后的结果
+			ManageTradingInquiryActivity.endYear = calendar.get(Calendar.YEAR);
+			ManageTradingInquiryActivity.endMonthOfYear =
+					calendar.get(Calendar.MONTH) + 1;
+			ManageTradingInquiryActivity.endDayOfMonth =
+					calendar.get(Calendar.DAY_OF_MONTH);
 			ManageTradingInquiryActivity.endDayOfWeek = 
-					calendar.get(Calendar.DAY_OF_WEEK) - 1;
+					calendar.get(Calendar.DAY_OF_WEEK);
 			// 在endTime中连接起来，格式为"2015-12-20"
 			ManageTradingInquiryActivity.endTime =
 					ManageTradingInquiryActivity.endYear + "-"
@@ -127,9 +137,11 @@ OnClickListener{
 					ManageTradingInquiryActivity.endMonthOfYear;
 			ManageTradingInquiryActivity.startDayOfMonth =
 					ManageTradingInquiryActivity.endDayOfMonth - 15;
+			// 减去15天后重新导入Calendar
 			calendar.set(ManageTradingInquiryActivity.startYear,
 					ManageTradingInquiryActivity.endMonthOfYear - 1,
 					ManageTradingInquiryActivity.endDayOfMonth - 15);
+			// 得到处理后的结果
 			ManageTradingInquiryActivity.startYear =
 					calendar.get(Calendar.YEAR);
 			ManageTradingInquiryActivity.startMonthOfYear =

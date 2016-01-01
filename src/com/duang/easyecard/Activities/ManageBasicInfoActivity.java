@@ -3,13 +3,9 @@ package com.duang.easyecard.Activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,6 +14,8 @@ import org.jsoup.select.Elements;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Utils.HttpUtil;
+import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Utils.LogUtil;
 
 import android.app.ProgressDialog;
@@ -52,6 +50,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
 	
 	private static final int RESPONSE_SUCCESS = 1;
 	private static final int FINISH_STRING_LIST = 2;
+	private static final int NETWORK_ERROR = 0x404;
 	
 	private ProgressDialog mProgressDialog;
 	
@@ -89,12 +88,17 @@ public class ManageBasicInfoActivity extends BaseActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case RESPONSE_SUCCESS:
-				// 确保responseHtml已成功赋值
+				// 确保responseHtml已成功赋值后解析
 				new JsoupHtmlData().execute();
 				break;
 			case FINISH_STRING_LIST:
 				// 将数据填充到布局
 				initView();
+				break;
+			case NETWORK_ERROR:
+				// 网络错误
+				Toast.makeText(ManageBasicInfoActivity.this, "网络错误",
+						Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -103,36 +107,27 @@ public class ManageBasicInfoActivity extends BaseActivity {
 	};
 	// 发送POST请求
 	private void sendRequest() {
-		new Thread(new Runnable() {
-
+		// 装填POST数据
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("needHeader", "false"));
+		HttpUtil.sendPostRequest(httpClient, UrlConstant.BASIC_INFO, params,
+				new HttpCallbackListener() {
 			@Override
-			public void run() {
-				// 创建一个HttpPost对象
-				HttpPost httpPost = new HttpPost(UrlConstant.BASIC_INFO);
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				try {
-					// 装填POST数据
-					params.add(new BasicNameValuePair("needHeader", "false"));
-					
-					UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "utf-8");
-					httpPost.setEntity(entity);
-					// 执行POST请求
-					HttpResponse httpResponse = httpClient.execute(httpPost);
-					// 如果服务器成功地返回响应
-					if (httpResponse.getStatusLine().getStatusCode() == 200) {
-						responseHtml = EntityUtils.toString(httpResponse.getEntity());
-						LogUtil.d("responseHtml", responseHtml);
-						Message message = new Message();
-						message.what = RESPONSE_SUCCESS;
-						handler.sendMessage(message);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			public void onFinish(String response) {
+				// 成功响应
+				responseHtml = response;
+				Message message = new Message();
+				message.what = RESPONSE_SUCCESS;
+				handler.sendMessage(message);
 			}
-			
-		}).start();
-		
+			@Override
+			public void onError(Exception e) {
+				// 网络错误
+				Message message = new Message();
+				message.what = NETWORK_ERROR;
+				handler.sendMessage(message);
+			}
+		});
 	}
 	// 通过网站返回的html文本解析数据
 	private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
