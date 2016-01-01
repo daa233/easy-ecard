@@ -51,4 +51,11 @@
     <string name="history_inquiry_arrow_img">箭头</string>
     	<!-- HistoryTradingINquiryResultFragment -->
     	<string name="history_trading_inquiry_result_foot_output">本段时间共支出    ？？？  元 </string>
+    	
+    <!-- ManageReportLossActivity -->
+    <string name="ManageReportLossActivity_label">挂失校园卡</string>
+    <string name="report_loss_password_hint">请点击图片对应数字</string>
+    <string name="report_loss_password_img_desc">挂失密码键盘图片</string>
+    <string name="report_loss_checkcode_image">挂失验证码图片</string>
+    <string name="report_loss">挂      失</string>
 </resources>

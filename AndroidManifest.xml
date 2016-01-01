@@ -44,7 +44,13 @@
             android:label="@string/ManageTradingInquiryActivity_label"
             android:logo="@drawable/manage_trading_inquiry"
             android:theme="@style/style_titlebar_normal">
-            
+        </activity>
+        
+        <activity 
+            android:name=".Activities.ManageReportLossActivity"
+            android:label="@string/ManageReportLossActivity_label"
+            android:logo="@drawable/manage_report_loss"
+            android:theme="@style/style_titlebar_normal">
         </activity>
         
     </application>

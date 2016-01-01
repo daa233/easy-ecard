@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.duang.easyecard.R;
-import com.duang.easyecard.GlobalData.MyApplication;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -21,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -99,7 +96,7 @@ OnItemClickListener {
 			break;
 		case R.drawable.manage_report_loss:
 			final String[] arrayDialogItems = new String[] {"通过校园卡电子服务平台",
-					"通过拨打挂失电话  (6678-2221)"};
+					"通过拨打挂失电话 6678-2221"};
 			Dialog alertDialog = new AlertDialog.Builder(getActivity()).
 				setTitle("请选择挂失方式：").
 				setIcon(R.drawable.manage_report_loss)
@@ -107,9 +104,10 @@ OnItemClickListener {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == 0) {
-							// 跳转到挂失界面
-							Toast.makeText(getActivity(), "跳转到挂失界面",
-									Toast.LENGTH_SHORT).show();
+							// 跳转到ManageReportLossActivity
+							Intent intent = new Intent(getActivity(),
+									ManageReportLossActivity.class);
+							startActivity(intent);
 						} else {
 							// 拨打挂失电话
 							AlertDialog.Builder callDialog = new AlertDialog.
