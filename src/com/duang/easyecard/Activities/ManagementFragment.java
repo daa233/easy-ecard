@@ -6,7 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.GlobalData.MyApplication;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -91,6 +98,52 @@ OnItemClickListener {
 			startActivity(intent);
 			break;
 		case R.drawable.manage_report_loss:
+			final String[] arrayDialogItems = new String[] {"通过校园卡电子服务平台",
+					"通过拨打挂失电话  (6678-2221)"};
+			Dialog alertDialog = new AlertDialog.Builder(getActivity()).
+				setTitle("请选择挂失方式：").
+				setIcon(R.drawable.manage_report_loss)
+				.setItems(arrayDialogItems, new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == 0) {
+							// 跳转到挂失界面
+							Toast.makeText(getActivity(), "跳转到挂失界面",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							// 拨打挂失电话
+							AlertDialog.Builder callDialog = new AlertDialog.
+									Builder(getActivity());
+							callDialog.setTitle("提示");
+							callDialog.setMessage("您确定要拨打挂失电话\n"
+									+ "(0532-6678-2221)吗？");
+							callDialog.setIcon(R.drawable.manage_report_loss);
+							callDialog.setPositiveButton("确定",
+									new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// 通过Intent调用拨打电话程序
+									Intent intent = new Intent(
+											Intent.ACTION_CALL,
+											Uri.parse("tel:" + "053266782221"));
+									startActivity(intent);
+								}
+							});
+							callDialog.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {}
+							});
+							callDialog.show();
+						}
+					}
+				}).setNegativeButton("取消", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {}
+				}).create();
+			alertDialog.show();
 			break;
 		case R.drawable.manage_recharge:
 			break;
