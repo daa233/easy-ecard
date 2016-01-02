@@ -35,7 +35,6 @@
             android:layout_weight="5"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="吴彦祖"
             android:textSize="16sp" />
     </LinearLayout>
     <!-- 分割线 -->
@@ -76,7 +75,6 @@
             android:layout_weight="5"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="13020021005"
             android:textSize="16sp" />
     </LinearLayout>
     <!-- 分割线 -->
@@ -117,7 +115,6 @@
             android:layout_weight="5"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="23788"
             android:textSize="16sp" />
     </LinearLayout>
     <!-- 分割线 -->
@@ -175,11 +172,10 @@
     <ImageView 
         android:id="@+id/report_loss_password_img"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:layout_marginTop="5dp"
         android:scaleType="centerCrop"
         android:visibility="invisible"
-        android:src="@drawable/get_num_key_pad_img"
         android:contentDescription="@string/report_loss_password_img_desc"/>
     
     <!-- 验证码 -->
@@ -215,6 +211,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:singleLine="true"
+            android:gravity="end"
             android:maxLength="4"
             android:hint="@string/checkcode_input_hint"/>
         <ImageView 

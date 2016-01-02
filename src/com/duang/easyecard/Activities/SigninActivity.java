@@ -129,11 +129,10 @@ OnFocusChangeListener {
 	
 	private void getCheckcodeImage() {
 		// 获取验证码图片
-		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient, new OnLoadImageListener() {
-			
+		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient,
+				new OnLoadImageListener() {
 			@Override
 			public void OnLoadImage(Bitmap bitmap, String bitmapPath) {
-				// TODO Auto-generated method stub
 				if (bitmap != null) {
 					checkcodeImage.setImageBitmap(bitmap);
 					checkcodeInput.setText(null);

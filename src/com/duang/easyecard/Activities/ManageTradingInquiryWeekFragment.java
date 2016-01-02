@@ -165,7 +165,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
-				Toast.makeText(getActivity(), "一周流水网络错误",
+				Toast.makeText(getActivity(), "查找一周流水网络错误",
 						Toast.LENGTH_SHORT).show();
 				break;
 			default:
