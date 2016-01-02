@@ -159,6 +159,7 @@
             android:gravity="end"
             android:inputType="textPassword"
             android:maxLength="6"
+            android:focusable="false"
             android:hint="@string/report_loss_password_hint"
             android:textSize="16sp" />
     </LinearLayout>
@@ -177,6 +178,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:scaleType="centerCrop"
+        android:visibility="invisible"
         android:src="@drawable/get_num_key_pad_img"
         android:contentDescription="@string/report_loss_password_img_desc"/>
     
@@ -222,6 +224,7 @@
             android:layout_height="match_parent"
             android:clickable="true"
         	android:scaleType="fitCenter"
+        	android:src="@drawable/default_checkcode_img"
             android:contentDescription="@string/report_loss_checkcode_image"/>
     </LinearLayout>
     <!-- 分割线 -->

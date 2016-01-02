@@ -7,7 +7,7 @@
     <string name="signin_type">登录类型</string>
     <string name="account">学 工 号</string>
     <string name="signin">登      录</string>
-    <string name="password">密    码</string>
+    <string name="password">查询密码</string>
     <string name="account_input_hint">请输入学（工）号</string>
     <string name="password_input_hint">请输入校园卡查询密码</string>
     <string name="checkcode">验 证 码</string>
@@ -54,7 +54,7 @@
     	
     <!-- ManageReportLossActivity -->
     <string name="ManageReportLossActivity_label">挂失校园卡</string>
-    <string name="report_loss_password_hint">请点击图片对应数字</string>
+    <string name="report_loss_password_hint">请输入校园卡查询密码</string>
     <string name="report_loss_password_img_desc">挂失密码键盘图片</string>
     <string name="report_loss_checkcode_image">挂失验证码图片</string>
     <string name="report_loss">挂      失</string>

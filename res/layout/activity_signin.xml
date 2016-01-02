@@ -118,7 +118,8 @@
 	            android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:clickable="true"
-            android:scaleType="fitCenter"
+            	android:scaleType="fitCenter"
+            	android:src="@drawable/default_checkcode_img"
                 android:contentDescription="@string/signin_checkcode_image"/>
         </LinearLayout>
         
