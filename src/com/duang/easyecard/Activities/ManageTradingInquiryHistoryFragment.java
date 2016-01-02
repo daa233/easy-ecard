@@ -74,6 +74,7 @@ OnClickListener{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		ManageTradingInquiryActivity.ENABLE_DAY_INIT_FLAG = 1;  // 允许“当日流水”初始化
 		// 初始化控件，一定要在定义好视图后才来初始化控件，不能放在onCreat()里面
 		confirmButton = (Button) viewFragment.findViewById(
 				R.id.history_inquiry_confirm_btn);

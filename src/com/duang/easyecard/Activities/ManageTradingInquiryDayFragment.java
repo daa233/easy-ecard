@@ -87,10 +87,17 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		LogUtil.d("DayResultFragment", "onActivityCreated");
-		LogUtil.d("DayResultFragment", INIT_FLAG + "");
-		if (INIT_FLAG == 1) {
-			initView();
-			initData();
+		LogUtil.d("DayResultFragment",  "INIT_FLAG = " + INIT_FLAG);
+		LogUtil.d("DayResultFragment",  "ENABLE_DAY_INIT_FLAG = " + 
+				ManageTradingInquiryActivity.ENABLE_DAY_INIT_FLAG);
+		// 判断当前状态是否允许初始化
+		if (ManageTradingInquiryActivity.ENABLE_DAY_INIT_FLAG == 1)
+		{
+			// 判断是否为首次初始化
+			if (INIT_FLAG == 1) {
+				initView();
+				initData();
+			}
 		}
 	}
 
@@ -165,7 +172,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
-				Toast.makeText(getActivity(), "网络错误",
+				Toast.makeText(getActivity(), "当日流水网络错误",
 						Toast.LENGTH_SHORT).show();
 				break;
 			default:

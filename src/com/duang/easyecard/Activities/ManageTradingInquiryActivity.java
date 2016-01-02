@@ -30,6 +30,7 @@ implements MyCallback{
 	
 	// HISTORY_STATE用于区别Tab(0)加载的Fragment类型 {0:select time; 1:result}
 	private static int HISTORY_STATE = 0;  // 初始为选择时间Fragment
+	protected static int ENABLE_DAY_INIT_FLAG = 1;  // 允许“当日流水”初始化标志
 	
 	protected static HttpClient httpClient;
 	
@@ -149,6 +150,7 @@ implements MyCallback{
 	 */
 	@Override
 	public void onBtnClick(View v) {
+		ENABLE_DAY_INIT_FLAG = 0;  // 不允许“当日流水”初始化
 		// 更新startTime和endTime
 		startTime = startYear + "-" + startMonthOfYear + "-" + startDayOfMonth;
 		endTime = endYear + "-" + endMonthOfYear + "-" + endDayOfMonth;
@@ -159,15 +161,17 @@ implements MyCallback{
 		actionBar.removeTabAt(0);
 		tab.setText("历史流水")
 		.setTabListener(new TabListener<
-				ManageTradingInquiryHistoryResultFragment>(
-				this, "历史流水", ManageTradingInquiryHistoryResultFragment.class));
+			ManageTradingInquiryHistoryResultFragment>(
+			this, "历史流水", ManageTradingInquiryHistoryResultFragment.class));
 		actionBar.addTab(tab, 0);
 		actionBar.selectTab(tab);
-		HISTORY_STATE = 1;  // 状态置为搜索结果Fragment 
+		HISTORY_STATE = 1;  // 状态置为搜索结果Fragment
 		/*
 		 * 发生了直接查询“历史流水”后查询“当日流水”没有结果的Bug，原因在这里
 		 * 这种Tab的移除方法会导致“当日流水”的意外加载，所以要将其首次初始化标志重新置1
 		 * 解决方法，在DayResultFragment中将其INIT_FLAG置1的时间后移
+		 * 新问题：INIT_FLAG置1后移会报“网络错误”
+		 * 解决办法：设置ENABLE_DAY_INIT_FLAG，在切换“历史流水”布局的过程中不允许“当日流水”初始化
 		 */
 		// LogUtil.d("DayResultFragment",
 		//		ManageTradingInquiryDayFragment.INIT_FLAG + "");
@@ -194,6 +198,7 @@ implements MyCallback{
 			if (HISTORY_STATE == 0) {
 				finish();
 			} else {
+				ENABLE_DAY_INIT_FLAG = 0;  // 不允许“当日流水”初始化
 				// 位于搜索结果界面，回退到选择时间界面
 				actionBar.removeTabAt(0);
 				tab.setText("历史流水")
@@ -202,7 +207,6 @@ implements MyCallback{
 						ManageTradingInquiryHistoryFragment.class));
 				actionBar.addTab(tab, 0);
 				actionBar.selectTab(tab);
-				// 将搜索界面选择的时间赋给startTime和endTime
 				HISTORY_STATE = 0;  // 状态置为选择时间Fragment
 			}
 		} else {

@@ -69,6 +69,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	public void onCreate(Bundle savedInstanceState) {
 		LogUtil.d("HistoryResultFragment", "onCreate");
 		super.onCreate(savedInstanceState);
+		ManageTradingInquiryActivity.ENABLE_DAY_INIT_FLAG = 1;  // 允许“当日流水”初始化
 	}
 	
 	@Override
@@ -142,7 +143,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
-				Toast.makeText(getActivity(), "网络错误",
+				Toast.makeText(getActivity(), "历史流水网络错误",
 						Toast.LENGTH_SHORT).show();
 				break;
 			default:
@@ -183,7 +184,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		UrlConstant.trjnListEndTime = ManageTradingInquiryActivity.endTime;
 		UrlConstant.trjnListPageIndex = pageIndex;
 		HttpUtil.sendGetRequest(ManageTradingInquiryActivity.httpClient,
-				UrlConstant.TRJN_LIST_HISTORY, new HttpCallbackListener() {
+				UrlConstant.getTrjnListHistroy(), new HttpCallbackListener() {
 					@Override
 					public void onFinish(String response) {
 						// 成功响应

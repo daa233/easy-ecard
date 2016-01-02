@@ -165,7 +165,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
-				Toast.makeText(getActivity(), "网络错误",
+				Toast.makeText(getActivity(), "一周流水网络错误",
 						Toast.LENGTH_SHORT).show();
 				break;
 			default:
@@ -203,7 +203,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		UrlConstant.trjnListEndTime = endTime;
 		UrlConstant.trjnListPageIndex = pageIndex;
 		HttpUtil.sendGetRequest(ManageTradingInquiryActivity.httpClient,
-				UrlConstant.TRJN_LIST_HISTORY, new HttpCallbackListener() {
+				UrlConstant.getTrjnListHistroy(), new HttpCallbackListener() {
 					@Override
 					public void onFinish(String response) {
 						// 成功响应
