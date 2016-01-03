@@ -27,6 +27,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ OnFocusChangeListener {
 	private HttpClient httpClient = new DefaultHttpClient();
 	
 	private Spinner signinTypeSpinner;
-	private EditText accountInput;
+	private AutoCompleteTextView accountInput;
 	private EditText passwordInput;
 	private EditText checkcodeInput;
 	private TextView accountText;
@@ -73,7 +74,8 @@ OnFocusChangeListener {
 	public void initView() {
 		// 实例化控件
 		signinTypeSpinner = (Spinner) findViewById(R.id.signin_type_spinner);
-		accountInput = (EditText) findViewById(R.id.signin_account_input);
+		accountInput = (AutoCompleteTextView) 
+				findViewById(R.id.signin_account_input);
 		passwordInput = (EditText) findViewById(R.id.signin_password_input);
 		checkcodeInput = (EditText) findViewById(R.id.signin_checkcode_input);
 		accountText = (TextView) findViewById(R.id.signin_account_text);
@@ -86,16 +88,19 @@ OnFocusChangeListener {
 		spinnerList.add("学工号");
 		spinnerList.add("校园卡账号");
 		// 新建适配器，利用系统内置的layout
-		spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerList);
+		spinnerAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, spinnerList);
 		// 设置下拉菜单样式，利用系统内置的layout
-		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinnerAdapter.setDropDownViewResource(
+				android.R.layout.simple_spinner_dropdown_item);
 		// 绑定适配器到控件
 		signinTypeSpinner.setAdapter(spinnerAdapter);
 		// 设置选择响应事件
 		signinTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
 				// 选中响应事件
 				if (position == 0) {
 					accountText.setText("学 工 号");
