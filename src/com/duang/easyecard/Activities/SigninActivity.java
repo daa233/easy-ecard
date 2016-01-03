@@ -56,6 +56,8 @@ OnFocusChangeListener {
 	
 	private List<String> spinnerList = new ArrayList<String>();
 	private ArrayAdapter<String> spinnerAdapter;
+	private ArrayAdapter<String> autoCompleteAdapter;
+	private static String[] autoCompleteStringArray = {"曾经登录成功的账号", ""};
 	
 	private static final int SIGNIN_SUCCESS = 1;
 	private static final int SIGNIN_FAILED = 0;
@@ -97,7 +99,6 @@ OnFocusChangeListener {
 		signinTypeSpinner.setAdapter(spinnerAdapter);
 		// 设置选择响应事件
 		signinTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
@@ -119,6 +120,11 @@ OnFocusChangeListener {
 				// 什么都没选中
 			}
 		});
+		
+		// 设置帐号自动填充的适配器
+		autoCompleteAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, autoCompleteStringArray);
+		accountInput.setAdapter(autoCompleteAdapter);
 		
 		getCheckcodeImage();  // 获取验证码
 		
@@ -286,7 +292,9 @@ OnFocusChangeListener {
 			public void onFinish(String response) {
 				// 成功响应
 				if (response.contains("success")) {
-		        	// 登录成功
+					// 记录登录成功的帐号
+					autoCompleteStringArray[1] = username;
+					// 发送登录成功的消息
 		        	LogUtil.d("response", "success");
 		        	Message message = new Message();
 		        	message.what = SIGNIN_SUCCESS;
