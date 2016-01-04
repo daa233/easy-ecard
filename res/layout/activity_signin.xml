@@ -128,7 +128,7 @@
             android:id="@+id/signin_hint_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"/>
+            android:gravity="end"/>
         
         <Button 
             android:id="@+id/signin_signin_button"
