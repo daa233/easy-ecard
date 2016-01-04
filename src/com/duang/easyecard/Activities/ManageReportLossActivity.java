@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -298,16 +299,20 @@ OnClickListener{
 	}
 	// 解析POST请求的响应并获得结果
 	private void parsingPostResponseAndGetResult(String response){
-		while (response.contains(":")) {
-			response = response.substring(response.indexOf(":") + 2);
+		// 由于响应的数据时JSON格式的，所以这里采用JSONObject进行解析
+		String result = null;
+		try {
+			JSONObject jsonObject = new JSONObject(response);
+			result = jsonObject.getString("msg");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		response = response.substring(0, response.indexOf("}") - 1);
-		LogUtil.d("ManageReportLossActivity", "result = " + response);
+		LogUtil.d("ManageReportLossActivity", "result = " + result);
 		// 通过对话框显示结果，且如果挂失成功，销毁此活动
 		AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		builder.setTitle("提示");
 		builder.setIcon(R.drawable.manage_report_loss);
-		builder.setMessage(response);
+		builder.setMessage(result);
 		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
