@@ -1,7 +1,9 @@
 package com.duang.easyecard.Activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -16,6 +18,9 @@ import com.duang.easyecard.Utils.ImageUtil;
 import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.ImageUtil.OnLoadImageListener;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -25,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -57,11 +63,15 @@ OnFocusChangeListener {
 	private List<String> spinnerList = new ArrayList<String>();
 	private ArrayAdapter<String> spinnerAdapter;
 	private ArrayAdapter<String> autoCompleteAdapter;
-	private static String[] autoCompleteStringArray = {"曾经登录成功的账号", ""};
+	private static String[] autoCompleteStringArray = {"最近登录成功的账号", ""};
+	private static Map<String, String> rememberedPassword =
+			new HashMap<String, String>();
 	
 	private static final int SIGNIN_SUCCESS = 1;
 	private static final int SIGNIN_FAILED = 0;
 	private static final int NETWORK_ERROR = 0x404;
+	
+	private static int DONT_DISPLAY_AGAIN_FLAG = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,10 +131,19 @@ OnFocusChangeListener {
 			}
 		});
 		
-		// 设置帐号自动填充的适配器
+		// 设置账号自动填充的适配器
 		autoCompleteAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, autoCompleteStringArray);
 		accountInput.setAdapter(autoCompleteAdapter);
+		accountInput.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// 选中了自动填充文本，将记住的密码输入
+				passwordInput.setText(rememberedPassword
+						.get(autoCompleteStringArray[1]));
+			}
+		});
 		
 		getCheckcodeImage();  // 获取验证码
 		
@@ -246,12 +265,24 @@ OnFocusChangeListener {
 	        	if (myApp.getHttpClient() != null) {
 	        	 	LogUtil.d("httpClient", "success to spread");
 	        	}
-				// 进入主功能界面
-	        	Intent intent = new Intent(getApplicationContext(),
-	        			MainActivity.class);
-	        	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	        	getApplicationContext().startActivity(intent);
-	        	finish();  // 销毁当前活动
+	        	// 记录登录成功的账号
+				autoCompleteStringArray[1] = username;
+				// 弹出是否记住密码对话框
+				if (rememberedPassword.isEmpty()) {
+					// 初次使用此客户端登录
+					popRememberPasswordDialog();
+				} else if (!rememberedPassword.containsKey(username)) {
+					// 切换用户登录
+					popRememberPasswordDialog();
+				} else if (DONT_DISPLAY_AGAIN_FLAG == 0) {
+					popRememberPasswordDialog();
+				} else {
+					// 直接跳转到主界面
+					Intent intent = new Intent(MyApplication.getContext(),
+							MainActivity.class);
+					startActivity(intent);
+					finish();  // 销毁活动
+				}
 				break;
 			case SIGNIN_FAILED:
 				// 登录出错
@@ -292,8 +323,6 @@ OnFocusChangeListener {
 			public void onFinish(String response) {
 				// 成功响应
 				if (response.contains("success")) {
-					// 记录登录成功的帐号
-					autoCompleteStringArray[1] = username;
 					// 发送登录成功的消息
 		        	LogUtil.d("response", "success");
 		        	Message message = new Message();
@@ -315,5 +344,43 @@ OnFocusChangeListener {
 	        	handler.sendMessage(message);
 			}
 		});
+	}
+	
+	private void popRememberPasswordDialog() {
+		AlertDialog.Builder dialog = new AlertDialog
+    			.Builder(SigninActivity.this);
+    	String[] dialogItems = {"记住密码", "不再提示"};
+    	dialog.setTitle("提示");
+    	dialog.setMultiChoiceItems(dialogItems, null,
+    			new OnMultiChoiceClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog,
+					int which, boolean isChecked) {
+				// Item被选中的响应事件
+				switch (which) {
+				case 0:
+					// 选中了“记住密码”
+					rememberedPassword.put(username, password);
+					break;
+				case 1:
+					// 选中了“不再提示”
+					DONT_DISPLAY_AGAIN_FLAG = 1;
+					break;
+				default:
+					break;
+				}
+			}
+		});
+    	dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 跳转到主界面
+				Intent intent = new Intent(MyApplication.getContext(),
+						MainActivity.class);
+				startActivity(intent);
+				finish();  // 销毁活动
+			}
+    	});
+    	dialog.show();
 	}
 }
