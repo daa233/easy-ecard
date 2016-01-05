@@ -8,6 +8,7 @@
     android:background="@color/background" >
     
     <LinearLayout 
+        android:id="@+id/lost_and_found_fragment_lost_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -27,6 +28,7 @@
     </LinearLayout>
     
     <LinearLayout 
+        android:id="@+id/lost_and_found_fragment_found_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
