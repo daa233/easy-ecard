@@ -235,6 +235,10 @@ OnFocusChangeListener {
 			if (!accountInput.getText().toString().isEmpty()) {
 				if (!passwordInput.getText().toString().isEmpty()) {
 					if (!checkcodeInput.getText().toString().isEmpty()) {
+						// 屏蔽登录按钮的点击功能
+						signinButton.setClickable(false);
+						// 登录按钮显示“正在登录”
+						signinButton.setText("正在登录...");
 						// 发送POST请求
 						sendPostRequest();
 					} else {
@@ -259,6 +263,7 @@ OnFocusChangeListener {
 			case SIGNIN_SUCCESS:
 				// 登录成功
 				hintText.setText("提示：登录成功！");
+				signinButton.setText("登录成功");
 	        	// 传递全局变量http
 	        	MyApplication myApp = (MyApplication) getApplication();
 	        	myApp.setHttpClient(httpClient);
@@ -286,6 +291,7 @@ OnFocusChangeListener {
 				break;
 			case SIGNIN_FAILED:
 				// 登录出错
+				signinButton.setText("登      录");  // 登录按钮恢复“登录”字样
 				String responseString = msg.obj + "";
 				hintText.setText("提示：" + responseString);
 	        	if (responseString.contains("查询密码")) {
@@ -293,6 +299,8 @@ OnFocusChangeListener {
 	        	} else if (responseString.contains("验证码")) {
 	        		getCheckcodeImage();  // 刷新验证码
 	        	}
+	        	// 恢复登录按钮的点击功能
+	        	signinButton.setClickable(true);
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
