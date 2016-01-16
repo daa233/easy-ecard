@@ -194,8 +194,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	}
 	// 发送GET请求
 	private void sendGetRequest() {
-		// 组装Url
-		UrlConstant.trjnListPageIndex = pageIndex;
+		UrlConstant.trjnListPageIndex = pageIndex;  // 组装Url
 		HttpUtil.sendGetRequest(ManageTradingInquiryActivity.httpClient,
 				UrlConstant.TRJN_LIST_DAY, new HttpCallbackListener() {
 					@Override

@@ -7,6 +7,8 @@ public class LostInfo {
 	private String stuId;
 	private String account;
 	private String contact;
+	private String lostPlace;
+	private String description;
 	private String publishTime;
 	private String state;
 	private String foundTime;
@@ -53,6 +55,22 @@ public class LostInfo {
 
 	public void setContact(String contact) {
 		this.contact = contact;
+	}
+
+	public String getLostPlace() {
+		return lostPlace;
+	}
+
+	public void setLostPlace(String lostPlace) {
+		this.lostPlace = lostPlace;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getPublishTime() {
