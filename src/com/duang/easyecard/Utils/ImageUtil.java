@@ -21,6 +21,7 @@ public class ImageUtil {
 			final HttpClient httpClient,
 			final OnLoadImageListener onLoadImageListener) {
 		final Handler handler = new Handler() {
+			@Override
 			public void handleMessage(Message msg) {
 				onLoadImageListener.OnLoadImage((Bitmap) msg.obj, null);
 			}

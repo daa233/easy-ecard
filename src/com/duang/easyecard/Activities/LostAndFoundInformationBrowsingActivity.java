@@ -1,12 +1,18 @@
 package com.duang.easyecard.Activities;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.UI.XListView;
 
 import android.os.Bundle;
+import android.widget.CheckBox;
 
 public class LostAndFoundInformationBrowsingActivity extends BaseActivity {
 	
+	private XListView xListView;
+	private CheckBox notFoundedCheckBox;
+	private CheckBox foundedCheckBox;
 	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lost_and_found_information_browsing);

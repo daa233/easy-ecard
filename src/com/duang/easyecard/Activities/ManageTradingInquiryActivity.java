@@ -101,6 +101,7 @@ implements MyCallback{
 	}
 	// 处理从线程中传递出来的消息
 	private Handler handler = new Handler() {
+		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case POST_SUCCESS_RESPONSE:
@@ -178,6 +179,7 @@ implements MyCallback{
 	}
 	
 	// 监听Back按钮的点击
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)	{
 			doBack();

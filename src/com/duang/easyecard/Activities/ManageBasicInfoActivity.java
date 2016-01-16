@@ -85,6 +85,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
 	}
 	// 处理从线程中传递出来的消息
 	private Handler handler = new Handler() {
+		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case RESPONSE_SUCCESS:

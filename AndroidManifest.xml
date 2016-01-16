@@ -27,20 +27,20 @@
         </activity>
         
         <activity 
-            android:name="com.duang.easyecard.Activities.MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/MainActivity_label"
             android:theme="@style/style_titlebar_normal">
         </activity>
         
         <activity 
-            android:name="com.duang.easyecard.Activities.ManageBasicInfoActivity"
+            android:name=".Activities.ManageBasicInfoActivity"
             android:label="@string/ManageViewBasicInfoActivity_label"
             android:logo="@drawable/manage_basic_info"
             android:theme="@style/style_titlebar_normal">
         </activity>
         
         <activity 
-            android:name="com.duang.easyecard.Activities.ManageTradingInquiryActivity"
+            android:name=".Activities.ManageTradingInquiryActivity"
             android:label="@string/ManageTradingInquiryActivity_label"
             android:logo="@drawable/manage_trading_inquiry"
             android:theme="@style/style_titlebar_normal">
@@ -54,7 +54,7 @@
         </activity>
         
         <activity
-            android:name=".Activities.LostAndFoundInfomationBrowsingActivity"
+            android:name=".Activities.LostAndFoundInformationBrowsingActivity"
             android:label="@string/LostAndFoundInformationBrowsingActivity_label"
             android:theme="@style/style_titlebar_normal">
         </activity>

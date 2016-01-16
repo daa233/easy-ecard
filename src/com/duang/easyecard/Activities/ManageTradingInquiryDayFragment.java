@@ -84,6 +84,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 		return viewFragment;
 	}
 	
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		LogUtil.d("DayResultFragment", "onActivityCreated");
@@ -128,6 +129,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 	}
 	// 处理各种Message请求
 	Handler handler = new Handler() {
+		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GET_SUCCESS_RESPONSE:
@@ -429,7 +431,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 
     @Override
     public View getPinnedHeader() {
-        View headerView = (ViewGroup) getActivity().getLayoutInflater().inflate(
+        View headerView = getActivity().getLayoutInflater().inflate(
         		R.layout.trading_inquiry_group, null);
         headerView.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));

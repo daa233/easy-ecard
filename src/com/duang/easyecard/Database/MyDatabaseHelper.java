@@ -31,6 +31,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 			// 操作（一般为空，不显示）
 			+ "operation text)";
 
+	@SuppressWarnings("unused")
 	private Context mContext;
 	
 	public MyDatabaseHelper(Context context, String name, CursorFactory

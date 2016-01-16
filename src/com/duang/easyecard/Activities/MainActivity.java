@@ -100,6 +100,7 @@ OnPageChangeListener{
 	}
 	
 	//设置菜单按钮的点击事件
+	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item)	{
 		switch (item.getItemId())	{
 		case R.id.action_add_lost_info:
@@ -183,6 +184,7 @@ OnPageChangeListener{
 
 	
 	// 监听Back按钮的点击
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)	{
 			//通过AlertDialog询问是否要退出应用程序

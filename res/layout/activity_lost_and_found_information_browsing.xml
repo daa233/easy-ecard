@@ -8,36 +8,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-    	<CheckBox
-            android:id="@+id/lost_info_browsing_check_box_not_founded"
-            android:layout_width="match_parent"
+        <LinearLayout 
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:clickable="true"
-            android:layout_marginLeft="25dp"
-            android:text="@string/not_founded"/>
+            android:gravity="center">
+            <CheckBox
+	            android:id="@+id/lost_info_browsing_check_box_not_founded"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:checked="true"
+	            android:clickable="true"
+	            android:text="@string/not_founded"/>
+        </LinearLayout>
+    	
         <!-- 分割线 -->
         <View 
             android:layout_width="1dp" 
 			android:layout_height="match_parent" 
-			android:background="#90909090" 
+			android:background="@color/grey" 
 			android:layout_marginRight="1dp" 
 			android:layout_marginLeft="1dp"/>
-        <CheckBox
-            android:id="@+id/lost_info_browsing_check_box_founded"
-            android:layout_width="match_parent"
+        <LinearLayout 
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:layout_marginLeft="25dp"
-            android:text="@string/founded"/>
+            android:gravity="center">
+            <CheckBox
+	            android:id="@+id/lost_info_browsing_check_box_founded"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="end"
+	            android:checked="true"
+	            android:text="@string/founded"/>
+        </LinearLayout>
     </LinearLayout>
     <!-- 分割线 -->
     <View 
         android:layout_width="match_parent" 
 		android:layout_height="1dp" 
-		android:background="#90909090" 
+		android:background="@color/grey"
 		android:layout_marginRight="1dp" 
 		android:layout_marginLeft="1dp"/>
     
