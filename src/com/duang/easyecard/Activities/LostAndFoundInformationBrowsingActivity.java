@@ -1,7 +1,6 @@
 package com.duang.easyecard.Activities;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
@@ -60,10 +59,9 @@ implements IXListViewListener, OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lost_and_found_information_browsing);
-		
 		initData();
-		initView();
 	}
+	
 	// 初始化View
 	private void initView() {
 		xListView = (XListView) findViewById(
@@ -103,6 +101,8 @@ implements IXListViewListener, OnItemClickListener{
 						"总页数" + maxPageIndex + "  总记录数" + allLostInfoNumber
 						+ "  招领数" + foundedLostInfoNumber,
 						Toast.LENGTH_LONG).show();
+				lostInfoList.addAll(tempLostInfoList);
+				initView();
 				break;
 			case NEED_MORE_DATA:
 				break;
@@ -148,19 +148,48 @@ implements IXListViewListener, OnItemClickListener{
 		// TODO Auto-generated method stub
 		
 	}
-
+	// 刷新
 	@Override
 	public void onRefresh() {
-		// TODO Auto-generated method stub
-		
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				lostInfoList.clear();
+				initData();
+				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
+						lostInfoList,
+						R.layout.lost_and_found_info_browsing_list_item);
+				xListView.setAdapter(mAdapter);
+				onLoad();
+			}
+		}, 2000);
 	}
-
+	// 加载更多
 	@Override
 	public void onLoadMore() {
-		// TODO Auto-generated method stub
-		
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				// 先判断是否已经访问到尾页
+				if (pageIndex < maxPageIndex) {
+					pageIndex++;
+					initData();
+				} else {
+					Toast.makeText(
+							LostAndFoundInformationBrowsingActivity.this,
+							"没有更多内容了",
+							Toast.LENGTH_SHORT).show();
+				}
+				mAdapter.notifyDataSetChanged();
+				onLoad();
+			}
+		}, 2000);
 	}
-	
+	private void onLoad() {
+		xListView.stopRefresh();
+		xListView.stopLoadMore();
+		xListView.setRefreshTime("刚刚");
+	}
 	// 解析响应数据
 	private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
 		@Override
@@ -185,10 +214,12 @@ implements IXListViewListener, OnItemClickListener{
 						remainString = remainString.substring(
 								remainString.indexOf("pageindex=") + 10);
 						maxPageIndex = Integer.valueOf(remainString);
-						LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+						LogUtil.d("JsoupHtmlData  maxPageIndex",
+								maxPageIndex + "");
 					} else {
 						// remainString为空, maxIndex值保持不变
-						LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+						LogUtil.d("JsoupHtmlData  maxPageIndex",
+								maxPageIndex + "");
 					}
 					// 解析当前累计丢失信息条数和已招领条数
 					for (Element div : doc.select("div[class=content]")) {
@@ -202,8 +233,10 @@ implements IXListViewListener, OnItemClickListener{
 				// 找到表格
 				for (Element table : doc.select(
 						"table[class=table_show widthtable]")) {
+					tempLostInfoList = new ArrayList<LostInfo>();
+					Elements tbody = table.select("tbody");
 					// 找到表格的所有行
-					for (Element row : table.select("tr:gt(0)")) {
+					for (Element row : tbody.select("tr")) {
 						LostInfo lostInfo = new LostInfo();
 						// 找到每一行所包含的td
 						Elements tds = row.select("td");
