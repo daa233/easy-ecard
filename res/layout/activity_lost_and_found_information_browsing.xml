@@ -4,5 +4,48 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+    	<CheckBox
+            android:id="@+id/lost_info_browsing_check_box_not_founded"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:clickable="true"
+            android:layout_marginLeft="25dp"
+            android:text="@string/not_founded"/>
+        <!-- 分割线 -->
+        <View 
+            android:layout_width="1dp" 
+			android:layout_height="match_parent" 
+			android:background="#90909090" 
+			android:layout_marginRight="1dp" 
+			android:layout_marginLeft="1dp"/>
+        <CheckBox
+            android:id="@+id/lost_info_browsing_check_box_founded"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:layout_marginLeft="25dp"
+            android:text="@string/founded"/>
+    </LinearLayout>
+    <!-- 分割线 -->
+    <View 
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="#90909090" 
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
+    
+    <com.duang.easyecard.UI.XListView
+        android:id="@+id/lost_and_found_info_browsing_xListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fastScrollEnabled="true">
+    </com.duang.easyecard.UI.XListView>
 
 </LinearLayout>

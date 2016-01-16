@@ -31,7 +31,7 @@
 
     <!-- ManagementFragment -->
     <string name="name">姓名</string>
-    <string name="stu_id">学工号</string>
+    <string name="stu_id">学工号 </string>
     <string name="ecard_id">校园卡号</string>
     <string name="balance">校园卡余额</string>
     <string name="transition">过渡余额</string>
@@ -60,7 +60,12 @@
     <string name="report_loss">挂      失</string>
     
     <!-- LostAndFoundInformationBrowsingActivity -->
-    <!-- list_item -->
+    <string name="LostAndFoundInformationBrowsingActivity_label">失卡招领信息</string>
+    <string name="not_founded">未招领</string>
+    <string name="founded">已招领</string>
+    <string name="view_detail">查看详细信息</string>
+    <string name="publish_time">发布时间</string>
+    <!-- xListView_item -->
     <string name="xlistview_header_hint_normal">下拉刷新</string>
     <string name="xlistview_header_hint_ready">松开刷新数据</string>
     <string name="xlistview_header_hint_loading">正在加载</string>
