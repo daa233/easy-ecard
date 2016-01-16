@@ -58,4 +58,14 @@
     <string name="report_loss_password_img_desc">挂失密码键盘图片</string>
     <string name="report_loss_checkcode_image">挂失验证码图片</string>
     <string name="report_loss">挂      失</string>
+    
+    <!-- LostAndFoundInformationBrowsingActivity -->
+    <!-- list_item -->
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    
 </resources>
