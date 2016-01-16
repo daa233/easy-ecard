@@ -2,6 +2,7 @@ package com.duang.easyecard.Activities;
 
 import com.duang.easyecard.R;
 import com.duang.easyecard.UI.XListView;
+import com.duang.easyecard.Utils.LostInfoAdapter;
 
 import android.os.Bundle;
 import android.widget.CheckBox;
@@ -11,6 +12,8 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity {
 	private XListView xListView;
 	private CheckBox notFoundedCheckBox;
 	private CheckBox foundedCheckBox;
+	
+	private LostInfoAdapter mAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
