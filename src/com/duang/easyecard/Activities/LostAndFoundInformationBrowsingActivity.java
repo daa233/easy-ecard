@@ -20,10 +20,13 @@ import com.duang.easyecard.Utils.LogUtil;
 import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Utils.LostInfoAdapter;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -38,6 +41,7 @@ implements IXListViewListener, OnItemClickListener{
 	private XListView xListView;
 	private CheckBox notFoundedCheckBox;
 	private CheckBox foundedCheckBox;
+	private ProgressDialog mProgressDialog;
 	
 	private LostInfoAdapter mAdapter;
 	private Handler mHandler;
@@ -67,6 +71,13 @@ implements IXListViewListener, OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lost_and_found_information_browsing);
+		// 显示返回按钮
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mProgressDialog.setMessage("正在努力加载... o(>﹏<)o");
+		mProgressDialog.setIndeterminate(false);
+		mProgressDialog.show();
 		initData();
 	}
 	
@@ -89,9 +100,11 @@ implements IXListViewListener, OnItemClickListener{
 		xListView.setXListViewListener(this);
 		xListView.setOnItemClickListener(this);
 		// CheckBox的选择事件
-		notFoundedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		notFoundedCheckBox.setOnCheckedChangeListener(
+				new OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				if (isChecked) {
 					DISPLAY_NOT_FOUNDED_FLAG = 1;
 				} else {
@@ -100,9 +113,11 @@ implements IXListViewListener, OnItemClickListener{
 				updateView();
 			}
 		});
-		foundedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		foundedCheckBox.setOnCheckedChangeListener(
+				new OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				if (isChecked) {
 					DISPLAY_FOUNDED_FLAG = 1;
 				} else {
@@ -192,9 +207,16 @@ implements IXListViewListener, OnItemClickListener{
 	}
 	// 子项点击事件
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+	public void onItemClick(AdapterView<?> view, View arg1, int position,
 			long arg3) {
-		
+		mHandler.postDelayed(null, 2000);
+		// 跳转到查看详细信息界面
+		Intent intent = new Intent(MyApplication.getContext(),
+				LostInfoBrowsingViewDetailActivity.class);
+		int lostInfoId = ((LostInfo) 
+				view.getItemAtPosition(position)).getId();
+		intent.putExtra("LOST_INFO_ID", lostInfoId);
+		startActivity(intent);
 	}
 	// 更新View
 	public void updateView() {
@@ -237,6 +259,7 @@ implements IXListViewListener, OnItemClickListener{
 		}
 		xListView.setAdapter(mAdapter);
 		mAdapter.notifyDataSetChanged();
+		onLoad();
 	}
 	// 刷新
 	@Override
@@ -258,7 +281,7 @@ implements IXListViewListener, OnItemClickListener{
 				xListView.setAdapter(mAdapter);
 				onLoad();
 			}
-		}, 1500);
+		}, 2000);
 	}
 	// 加载更多
 	@Override
@@ -272,6 +295,7 @@ implements IXListViewListener, OnItemClickListener{
 								LostAndFoundInformationBrowsingActivity.this,
 								"全部加载完成",
 								Toast.LENGTH_SHORT).show();
+						mProgressDialog.dismiss();
 					} else {
 						Toast.makeText(
 								LostAndFoundInformationBrowsingActivity.this,
@@ -289,7 +313,7 @@ implements IXListViewListener, OnItemClickListener{
 				}
 				onLoad();
 			}
-		}, 1500);
+		}, 500);
 	}
 	private void onLoad() {
 		xListView.stopRefresh();
@@ -405,5 +429,17 @@ implements IXListViewListener, OnItemClickListener{
 				handler.sendMessage(message);
 			}
 		});
+	}
+	// 返回键的点击
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		default:
+			break;
+		}
+		return false;
 	}
 }

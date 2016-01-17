@@ -59,6 +59,12 @@
             android:theme="@style/style_titlebar_normal">
         </activity>
         
+        <activity
+            android:name=".Activities.LostInfoBrowsingViewDetailActivity"
+            android:label="@string/LostInfoBrowsingViewDetailActivity_label"
+            android:theme="@style/style_titlebar_normal">
+        </activity>
+        
     </application>
 
     <application

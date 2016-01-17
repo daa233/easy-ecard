@@ -73,4 +73,13 @@
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
     
+    <!-- LostInfoBrowsingViewDetail -->
+    <string name="LostInfoBrowsingViewDetailActivity_label">失卡招领详细信息</string>
+    <string name="contact">联系方式</string>
+    <string name="lost_place">丢卡地点</string>
+    <string name="description">说明</string>
+    <string name="state">招领状态</string>
+    <string name="found_time">招领时间</string>
+    <string name="send_message_to_ta">向  Ta  发  送  消  息</string>
+    
 </resources>
