@@ -43,9 +43,13 @@ implements IXListViewListener, OnItemClickListener{
 	private final int READY_TO_SEND_GET_REQUEST = 100;
 	private final int GET_SUCCESS_RESPONSE = 200;
 	private final int FINISH_TEMP_LIST = 201;
+	private final int FINISH_ALL_LIST = 500;
 	private final int NEED_MORE_DATA = 300;
 	private final int NETWORK_ERROR = 404;
+	
 	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
+	private int ALL_DATA_GOT_FLAG = 0;  // 已获取全部数据标志
+	private int ALL_LOADED_FLAG = 0;  // 已全部加载标志
 	
 	private HttpClient httpClient;
 	private List<LostInfo> lostInfoList = new ArrayList<LostInfo>();
@@ -64,6 +68,14 @@ implements IXListViewListener, OnItemClickListener{
 	
 	// 初始化View
 	private void initView() {
+		notFoundedCheckBox = (CheckBox) findViewById(
+				R.id.lost_info_browsing_check_box_not_founded);
+		foundedCheckBox = (CheckBox) findViewById(
+				R.id.lost_info_browsing_check_box_founded);
+		notFoundedCheckBox.setText("未招领 （" + 
+				(allLostInfoNumber - foundedLostInfoNumber) + "）");
+		foundedCheckBox.setText("已招领 （" + foundedLostInfoNumber + "）");
+		
 		xListView = (XListView) findViewById(
 				R.id.lost_and_found_info_browsing_xListView);
 		xListView.setPullLoadEnable(true);
@@ -97,14 +109,23 @@ implements IXListViewListener, OnItemClickListener{
 				new JsoupHtmlData().execute();
 				break;
 			case FINISH_TEMP_LIST:
-				Toast.makeText(LostAndFoundInformationBrowsingActivity.this,
-						"总页数" + maxPageIndex + "  总记录数" + allLostInfoNumber
-						+ "  招领数" + foundedLostInfoNumber,
-						Toast.LENGTH_LONG).show();
 				lostInfoList.addAll(tempLostInfoList);
-				initView();
+				// 先显示第一页的内容
+				if (FIRST_JSOUP_FLAG == 1) {
+					initView();
+					FIRST_JSOUP_FLAG = 0;
+				}
 				break;
 			case NEED_MORE_DATA:
+				// 获取更多数据
+				pageIndex++;
+				sendGETRequest();
+				break;
+			case FINISH_ALL_LIST:
+				// 已获取全部数据
+				ALL_DATA_GOT_FLAG = 1;
+				onLoadMore();
+				ALL_LOADED_FLAG = 1;
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
@@ -141,11 +162,10 @@ implements IXListViewListener, OnItemClickListener{
 			}
 		});
 	}
-	
+	// 子项点击事件
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
-		// TODO Auto-generated method stub
 		
 	}
 	// 刷新
@@ -154,15 +174,19 @@ implements IXListViewListener, OnItemClickListener{
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
+				FIRST_JSOUP_FLAG = 1;
+				pageIndex = 1;
 				lostInfoList.clear();
-				initData();
+				ALL_DATA_GOT_FLAG = 0;
+				ALL_LOADED_FLAG = 0;
+				sendGETRequest();
 				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
 						lostInfoList,
 						R.layout.lost_and_found_info_browsing_list_item);
 				xListView.setAdapter(mAdapter);
 				onLoad();
 			}
-		}, 2000);
+		}, 1500);
 	}
 	// 加载更多
 	@Override
@@ -170,20 +194,30 @@ implements IXListViewListener, OnItemClickListener{
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				// 先判断是否已经访问到尾页
-				if (pageIndex < maxPageIndex) {
-					pageIndex++;
-					initData();
+				if (ALL_LOADED_FLAG == 1) {
+					if (ALL_DATA_GOT_FLAG == 1) {
+						Toast.makeText(
+								LostAndFoundInformationBrowsingActivity.this,
+								"全部加载完成",
+								Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(
+								LostAndFoundInformationBrowsingActivity.this,
+								"正在获取更多数据",
+								Toast.LENGTH_SHORT).show();
+					}
 				} else {
-					Toast.makeText(
-							LostAndFoundInformationBrowsingActivity.this,
-							"没有更多内容了",
-							Toast.LENGTH_SHORT).show();
+					if (ALL_DATA_GOT_FLAG == 1) {
+						mAdapter = new LostInfoAdapter(
+								MyApplication.getContext(),
+								lostInfoList,
+								R.id.lost_and_found_info_browsing_xListView);
+						mAdapter.notifyDataSetChanged();
+					}
 				}
-				mAdapter.notifyDataSetChanged();
 				onLoad();
 			}
-		}, 2000);
+		}, 1500);
 	}
 	private void onLoad() {
 		xListView.stopRefresh();
@@ -228,7 +262,6 @@ implements IXListViewListener, OnItemClickListener{
 						span = div.getElementById("lblClaimCount");
 						foundedLostInfoNumber = Integer.valueOf(span.text());
 					}
-					FIRST_JSOUP_FLAG = 0;
 				}
 				// 找到表格
 				for (Element table : doc.select(
@@ -241,20 +274,40 @@ implements IXListViewListener, OnItemClickListener{
 						// 找到每一行所包含的td
 						Elements tds = row.select("td");
 						// 将数据按照顺序填入LostInfo对象
-						lostInfo.setName(tds.get(0).text());
-						lostInfo.setStuId(tds.get(1).text());
-						lostInfo.setAccount(tds.get(2).text());
-						lostInfo.setPublishTime(tds.get(3).text());
-						lostInfo.setContact(tds.get(4).text());
-						lostInfo.setState(tds.get(5).text());
-						lostInfo.setFoundTime(tds.get(6).text());
-						tempLostInfoList.add(lostInfo);
+						if (!tds.get(0).text().isEmpty()) {
+							// 通过字符串截取获得丢失信息ID
+							String lostInfoIdString = tds.get(0).toString();
+							lostInfoIdString = lostInfoIdString.substring(
+									lostInfoIdString.indexOf("(") + 1);
+							lostInfoIdString = lostInfoIdString.substring(
+									0, lostInfoIdString.indexOf(")"));
+							lostInfo.setId(Integer.valueOf(lostInfoIdString));
+							lostInfo.setName(tds.get(0).text());
+							lostInfo.setStuId(tds.get(1).text());
+							lostInfo.setAccount(tds.get(2).text());
+							lostInfo.setPublishTime(tds.get(3).text());
+							lostInfo.setContact(tds.get(4).text());
+							lostInfo.setState(tds.get(5).text());
+							lostInfo.setFoundTime(tds.get(6).text());
+							tempLostInfoList.add(lostInfo);
+						}
 					}
 				}
-				// 发送完成信息
+				// 发送完成一页信息
 				Message message = new Message();
 				message.what = FINISH_TEMP_LIST;
 				handler.sendMessage(message);
+				// 判断是否还有信息
+				message = new Message();
+				if (pageIndex < maxPageIndex) {
+					// 如果当前页码不是最大页码，发送请求，获取更多数据
+					message.what = NEED_MORE_DATA;
+					handler.sendMessage(message);
+				} else {
+					// 如果当前页码是最大页码，已获取到全部数据
+					message.what = FINISH_ALL_LIST;
+					handler.sendMessage(message);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

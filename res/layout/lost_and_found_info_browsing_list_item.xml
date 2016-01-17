@@ -13,10 +13,16 @@
 		android:layout_marginTop="10dp"
 		android:layout_marginRight="1dp" 
 		android:layout_marginLeft="1dp"/>
-    <LinearLayout 
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:background="@color/white">
+        <LinearLayout 
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -25,72 +31,58 @@
 
         <TextView
             android:id="@+id/lost_and_found_info_list_item_name"
-            android:layout_width="0dp"
-            android:layout_weight="5"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:gravity="center"
+            android:text="吴彦祖"
             android:textSize="20sp"/>
-        
-        <TextView
-            android:id="@+id/lost_and_found_info_list_item_stu_id_title"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:textSize="14sp"
-            android:text="@string/stu_id"/>
-
         <TextView 
             android:id="@+id/lost_and_found_info_list_item_stu_id"
-            android:layout_width="0dp"
-            android:layout_weight="7"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
+            android:paddingBottom="10dp"
+            android:gravity="center"
+            android:text="13020021005"
             android:textSize="20sp"/>
     </LinearLayout>
 
     <LinearLayout 
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:background="@color/white">
+        <TextView
+            android:id="@+id/lost_and_found_info_list_item_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:text="No.29"
+            android:textSize="14sp"
+            android:layout_gravity="center"/>
         <TextView 
             android:id="@+id/lost_and_found_info_list_item_state"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:gravity="center"
-            android:textSize="16sp"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="@string/view_detail"/>
-    </LinearLayout>
-
-    <LinearLayout 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:gravity="end"
-        android:background="@color/white">
-        <TextView 
-            android:id="@+id/lost_and_found_info_list_item_publish_time_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/publish_time"/>
+            android:textSize="18sp"
+            android:text="丢失卡，未招领"/>
         <TextView 
             android:id="@+id/lost_and_found_info_list_item_publish_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:paddingTop="10dp"
+            android:textSize="15sp"
+            android:text="2016-01-05 11:30"/>
+    </LinearLayout>
     </LinearLayout>
     <!-- 分割线 -->
     <View 

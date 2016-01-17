@@ -24,6 +24,8 @@ public class LostInfoAdapter extends CommonAdapter<LostInfo> {
 					  lostInfo.getStuId())
 			  .setText(R.id.lost_and_found_info_list_item_state,
 					  lostInfo.getState())
+			  .setText(R.id.lost_and_found_info_list_item_id,
+					  "No." + lostInfo.getId())
 			  .setText(R.id.lost_and_found_info_list_item_publish_time,
 					  lostInfo.getPublishTime());
 	}
