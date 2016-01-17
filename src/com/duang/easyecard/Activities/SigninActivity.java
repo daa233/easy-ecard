@@ -359,7 +359,6 @@ OnFocusChangeListener {
 		AlertDialog.Builder dialog = new AlertDialog
     			.Builder(SigninActivity.this);
     	String[] dialogItems = {"记住密码", "不再提示"};
-    	dialog.setTitle("提示");
     	dialog.setMultiChoiceItems(dialogItems, null,
     			new OnMultiChoiceClickListener() {
 			@Override

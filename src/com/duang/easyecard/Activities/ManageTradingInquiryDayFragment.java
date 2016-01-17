@@ -226,10 +226,8 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 			if (FIRST_JSOUP_FLAG == 1) {
 				// Create a progressDialog
 				mProgressDialog = new ProgressDialog(getActivity());
-				// Set progressDialog title
-				mProgressDialog.setTitle("从校园一卡通网站获取相关信息");
 				// Set progressDialog message
-				mProgressDialog.setMessage("正在加载并解析……");
+				mProgressDialog.setMessage("正在努力加载并解析... o(>﹏<)o");
 				mProgressDialog.setIndeterminate(false);
 				// Show progressDialog
 				mProgressDialog.show();

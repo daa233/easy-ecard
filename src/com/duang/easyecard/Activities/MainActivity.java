@@ -117,8 +117,7 @@ OnPageChangeListener{
 		case R.id.action_exit:
 			//通过AlertDialog询问是否要退出应用程序
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setTitle("提示");
-			dialog.setMessage("退出应用？");
+			dialog.setMessage("确定退出？");
 			dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 				
 				@Override
@@ -189,8 +188,7 @@ OnPageChangeListener{
 		if (keyCode == KeyEvent.KEYCODE_BACK)	{
 			//通过AlertDialog询问是否要退出应用程序
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setTitle("提示");
-			dialog.setMessage("退出应用？");
+			dialog.setMessage("确定退出？");
 			dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 				
 				@Override
