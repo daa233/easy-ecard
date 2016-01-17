@@ -36,7 +36,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:gravity="center"
-            android:text="吴彦祖"
+            android:textColor="@color/black"
             android:textSize="20sp"/>
         <TextView 
             android:id="@+id/lost_and_found_info_list_item_stu_id"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:gravity="center"
-            android:text="13020021005"
+            android:textColor="@color/black"
             android:textSize="20sp"/>
     </LinearLayout>
 
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:text="No.29"
+            android:textColor="@color/black"
             android:textSize="14sp"
             android:layout_gravity="center"/>
         <TextView 
@@ -73,7 +73,7 @@
             android:paddingTop="10dp"
             android:gravity="center"
             android:textSize="18sp"
-            android:text="丢失卡，未招领"/>
+            android:textColor="@color/black"/>
         <TextView 
             android:id="@+id/lost_and_found_info_list_item_publish_time"
             android:layout_width="match_parent"
@@ -81,7 +81,7 @@
             android:gravity="end"
             android:paddingTop="10dp"
             android:textSize="15sp"
-            android:text="2016-01-05 11:30"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
     </LinearLayout>
     <!-- 分割线 -->

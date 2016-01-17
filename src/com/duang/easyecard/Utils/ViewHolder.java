@@ -13,6 +13,7 @@ import android.widget.TextView;
 public class ViewHolder {
 
 	private SparseArray<View> mViews;
+	@SuppressWarnings("unused")
 	private int mPosition;
 	private View mConvertView;
 	
@@ -44,6 +45,7 @@ public class ViewHolder {
 	 * @param viewId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends View> T getView(int viewId)
 	{
 		View view = mViews.get(viewId);

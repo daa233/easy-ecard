@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -50,6 +52,8 @@ implements IXListViewListener, OnItemClickListener{
 	private int FIRST_JSOUP_FLAG = 1;  // 首次解析标志
 	private int ALL_DATA_GOT_FLAG = 0;  // 已获取全部数据标志
 	private int ALL_LOADED_FLAG = 0;  // 已全部加载标志
+	private int DISPLAY_FOUNDED_FLAG = 1;  // 显示已招领信息标志
+	private int DISPLAY_NOT_FOUNDED_FLAG = 1;  // 显示未招领信息
 	
 	private HttpClient httpClient;
 	private List<LostInfo> lostInfoList = new ArrayList<LostInfo>();
@@ -84,6 +88,30 @@ implements IXListViewListener, OnItemClickListener{
 		xListView.setAdapter(mAdapter);
 		xListView.setXListViewListener(this);
 		xListView.setOnItemClickListener(this);
+		// CheckBox的选择事件
+		notFoundedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					DISPLAY_NOT_FOUNDED_FLAG = 1;
+				} else {
+					DISPLAY_NOT_FOUNDED_FLAG = 0;
+				}
+				updateView();
+			}
+		});
+		foundedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					DISPLAY_FOUNDED_FLAG = 1;
+				} else {
+					DISPLAY_FOUNDED_FLAG = 0;
+				}
+				updateView();
+			}
+		});
+		
 		mHandler = new Handler();
 	}
 
@@ -168,6 +196,48 @@ implements IXListViewListener, OnItemClickListener{
 			long arg3) {
 		
 	}
+	// 更新View
+	public void updateView() {
+		List<LostInfo> lostInfoRefreshList = new ArrayList<LostInfo>();
+		if (DISPLAY_FOUNDED_FLAG == 1) {
+			if (DISPLAY_NOT_FOUNDED_FLAG == 1) {
+				// 均显示
+				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
+						lostInfoList,
+						R.layout.lost_and_found_info_browsing_list_item);
+			}
+			else {
+				// 仅显示已招领
+				for (int i = 0; i < lostInfoList.size(); i++) {
+					if (lostInfoList.get(i).getState().contains("已招领")) {
+						lostInfoRefreshList.add(lostInfoList.get(i));
+					}
+				}
+				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
+						lostInfoRefreshList,
+						R.layout.lost_and_found_info_browsing_list_item);
+			}
+		} else {
+			if (DISPLAY_NOT_FOUNDED_FLAG == 1) {
+				// 仅显示未招领
+				for (int i = 0; i < lostInfoList.size(); i++) {
+					if (lostInfoList.get(i).getState().contains("丢失卡")) {
+						lostInfoRefreshList.add(lostInfoList.get(i));
+					}
+				}
+				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
+						lostInfoRefreshList,
+						R.layout.lost_and_found_info_browsing_list_item);
+			} else {
+				// 均不显示
+				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
+						lostInfoRefreshList,
+						R.layout.lost_and_found_info_browsing_list_item);
+			}
+		}
+		xListView.setAdapter(mAdapter);
+		mAdapter.notifyDataSetChanged();
+	}
 	// 刷新
 	@Override
 	public void onRefresh() {
@@ -179,6 +249,8 @@ implements IXListViewListener, OnItemClickListener{
 				lostInfoList.clear();
 				ALL_DATA_GOT_FLAG = 0;
 				ALL_LOADED_FLAG = 0;
+				foundedCheckBox.setChecked(true);
+				notFoundedCheckBox.setChecked(true);
 				sendGETRequest();
 				mAdapter = new LostInfoAdapter(MyApplication.getContext(),
 						lostInfoList,
