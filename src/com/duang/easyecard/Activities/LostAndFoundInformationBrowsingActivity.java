@@ -148,7 +148,6 @@ implements IXListViewListener, OnItemClickListener{
 				break;
 			case GET_SUCCESS_RESPONSE:
 				// 已成功得到响应数据responseString
-				LogUtil.d("responseString", responseString);
 				new JsoupHtmlData().execute();
 				break;
 			case FINISH_TEMP_LIST:
@@ -213,9 +212,10 @@ implements IXListViewListener, OnItemClickListener{
 		// 跳转到查看详细信息界面
 		Intent intent = new Intent(MyApplication.getContext(),
 				LostInfoBrowsingViewDetailActivity.class);
-		int lostInfoId = ((LostInfo) 
-				view.getItemAtPosition(position)).getId();
-		intent.putExtra("LOST_INFO_ID", lostInfoId);
+		Bundle bundle = new Bundle();
+		LostInfo lostInfo = (LostInfo) view.getItemAtPosition(position);
+		bundle.putSerializable("LostInfo", lostInfo);
+		intent.putExtras(bundle);
 		startActivity(intent);
 	}
 	// 更新View
@@ -327,9 +327,6 @@ implements IXListViewListener, OnItemClickListener{
 			// 解析返回的responseString
 			Document doc = null;
 			try {
-				if (responseString == null) {
-					LogUtil.e("resposeString", "responseString is null.");
-				}
 				doc = Jsoup.parse(responseString);
 				// 获取总页数，当前累计丢失信息条数，已招领条数
 				if (FIRST_JSOUP_FLAG == 1) {

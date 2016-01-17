@@ -1,6 +1,13 @@
 package com.duang.easyecard.Models;
 
-public class LostInfo {
+import java.io.Serializable;
+
+public class LostInfo implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private int id;
 	private String name;

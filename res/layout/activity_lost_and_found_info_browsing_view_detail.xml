@@ -12,7 +12,7 @@
         android:layout_width="match_parent" 
 		android:layout_height="1dp" 
 		android:background="@color/grey" 
-		android:layout_marginTop="40dp"
+		android:layout_marginTop="15dp"
 		android:layout_marginRight="1dp" 
 		android:layout_marginLeft="1dp"/>
     <LinearLayout 
@@ -148,8 +148,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:gravity="end"
-            android:textColor="@color/red"/>
+            android:gravity="end"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent" 
@@ -214,8 +213,9 @@
         <TextView 
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textSize="16sp"
+            android:gravity="center_vertical"
             android:text="@string/lost_place"/>
         <TextView 
             android:id="@+id/lost_info_browsing_view_detail_lost_place"
@@ -251,8 +251,9 @@
         <TextView 
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textSize="16sp"
+            android:gravity="center_vertical"
             android:text="@string/description"/>
         <TextView 
             android:id="@+id/lost_info_browsing_view_detail_description"
@@ -346,9 +347,9 @@
     <Button
         android:id="@+id/lost_info_browsing_view_detail_send_msg_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/green_button_selector"
