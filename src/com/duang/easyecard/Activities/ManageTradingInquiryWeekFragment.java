@@ -236,7 +236,7 @@ ExpandableListView.OnGroupClickListener, OnHeaderUpdateListener {
 				// Create a progressDialog
 				mProgressDialog = new ProgressDialog(getActivity());
 				// Set progressDialog message
-				mProgressDialog.setMessage("正在努力加载并解析... o(>﹏<)o");
+				mProgressDialog.setMessage("正在努力加载... o(>﹏<)o");
 				mProgressDialog.setIndeterminate(false);
 				// Show progressDialog
 				mProgressDialog.show();

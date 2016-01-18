@@ -88,5 +88,9 @@
     
     <!-- LostAndFoundRegistrationActivity -->
     <string name="LostAndFoundRegistrationActivity_label">丢失卡登记</string>
+    <string name="save_and_submit">保 存  并  提  交</string>
+    <string name="lost_info_registration_contact_hint">必填，7—11位号码</string>
+    <string name="lost_info_registration_lost_place_hint">选填，最多128个字符</string>
+    <string name="lost_info_registration_description_hint">选填，最多256个字符</string>
     
 </resources>
