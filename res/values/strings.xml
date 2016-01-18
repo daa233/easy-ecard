@@ -58,9 +58,13 @@
     <string name="report_loss_password_img_desc">挂失密码键盘图片</string>
     <string name="report_loss_checkcode_image">挂失验证码图片</string>
     <string name="report_loss">挂      失</string>
-    
+    <!-- LostAndFoundFragment -->
+    <string name="lost_and_found_info_browsing">失卡招领信息浏览</string>
+    <string name="card_loss_registration">丢失卡登记</string>
+    <string name="lost_and_found_info_browsing_img_des">失卡招领信息浏览配图</string>
+    <string name="card_loss_registration_img_des">丢失卡登记配图</string>
     <!-- LostAndFoundInformationBrowsingActivity -->
-    <string name="LostAndFoundInformationBrowsingActivity_label">失卡招领信息</string>
+    <string name="LostAndFoundInformationBrowsingActivity_label">失卡招领信息浏览</string>
     <string name="not_founded">未招领</string>
     <string name="founded">已招领</string>
     <string name="view_detail">查看详细信息</string>
@@ -81,5 +85,8 @@
     <string name="state">招领状态</string>
     <string name="found_time">招领时间</string>
     <string name="send_message_to_ta">向  Ta  发  送  消  息</string>
+    
+    <!-- LostAndFoundRegistrationActivity -->
+    <string name="LostAndFoundRegistrationActivity_label">丢失卡登记</string>
     
 </resources>

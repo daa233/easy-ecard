@@ -56,12 +56,21 @@
         <activity
             android:name=".Activities.LostAndFoundInformationBrowsingActivity"
             android:label="@string/LostAndFoundInformationBrowsingActivity_label"
+            android:logo="@drawable/divider"
             android:theme="@style/style_titlebar_normal">
         </activity>
         
         <activity
             android:name=".Activities.LostInfoBrowsingViewDetailActivity"
             android:label="@string/LostInfoBrowsingViewDetailActivity_label"
+            android:logo="@drawable/divider"
+            android:theme="@style/style_titlebar_normal">
+        </activity>
+        
+        <activity
+            android:name=".Activities.LostAndFoundRegistrationActivity"
+            android:label="@string/LostAndFoundRegistrationActivity_label"
+            android:logo="@drawable/divider"
             android:theme="@style/style_titlebar_normal">
         </activity>
         

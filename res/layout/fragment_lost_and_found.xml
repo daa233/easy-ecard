@@ -14,17 +14,25 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@color/white">
-        <ImageView
-            android:id="@+id/lost_and_found_fragment_lost_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/actionbar_add_icon"/>
+        android:background="@color/background">
         <TextView
             android:id="@+id/lost_and_found__fragmentlost_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="失卡招领信息浏览"/>
+            android:textColor="@color/white"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:textSize="18sp"
+            android:background="@drawable/green_button_selector"
+            android:text="@string/lost_and_found_info_browsing"/>
+        <ImageView
+            android:id="@+id/lost_and_found_fragment_lost_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/lost_and_found_info_browsing"
+            android:contentDescription="@string/lost_and_found_info_browsing_img_des"/>
     </LinearLayout>
     
     <LinearLayout 
@@ -35,16 +43,24 @@
         android:orientation="vertical"
         android:gravity="center"
         android:layout_marginTop="20dp"
-        android:background="@color/white">
-        <ImageView
-            android:id="@+id/lost_and_found_fragment_found_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/actionbar_add_icon"/>
+        android:background="@color/background">
         <TextView
             android:id="@+id/lost_and_found_fragment_found_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="丢失卡登记"/>
+            android:textColor="@color/white"
+            android:background="@drawable/skyblue_button_selector"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:textSize="18sp"
+            android:text="@string/card_loss_registration"/>
+        <ImageView
+            android:id="@+id/lost_and_found_fragment_found_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/lost_and_found_registration"
+            android:contentDescription="@string/card_loss_registration_img_des"/>
     </LinearLayout>
 </LinearLayout>
