@@ -44,6 +44,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 	private final int FINISH_PARSING_GET_RESPONSE = 201;
 	private final int POST_SUCCESS_RESPONSE = 300;
 	private final int NETWORK_ERROR = 404;
+	private final int FOUND_CARD_POST_SUCCESS_RESPONSE = 301;
 	
 	private int CARD_LOSS_FLAG = 0;
 	
@@ -131,6 +132,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 									public void onClick(DialogInterface dialog,
 											int which) {}
 						});
+						alertDialog.show();
 					}
 				} else if (CARD_LOSS_FLAG == 1) {
 					// 已经登记丢失，点击招领。通过遍历失卡招领信息获得ID
@@ -142,7 +144,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 			}
 		});
 	}
-
+	// 初始化数据
 	private void initData() {
 		// 获得全局变量httpClient
 		MyApplication myApp = (MyApplication) getApplication();
@@ -166,6 +168,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 					nameText.setText(parsingData.get(2));
 					stuIdText.setText(parsingData.get(3));
 					accountText.setText(parsingData.get(1));
+					saveAndSubmitButton.setText("保 存  并  提  交");
 				} else if (CARD_LOSS_FLAG == 1) {
 					// 已经登记丢失，将解析好的数据填充到布局
 					nameText.setText(parsingData.get(2));
@@ -194,6 +197,12 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						// 点击确定按钮，通过再次发送GET请求刷新布局
 						sendGETRequest();
+						contactEditText.setText("");
+						contactEditText.setFocusable(true);
+						lostPlaceEditText.setText("");
+						lostPlaceEditText.setFocusable(true);
+						descriptionEditText.setText("");
+						descriptionEditText.setFocusable(true);
 					}
 				});
 				alertDialog.show();
@@ -203,11 +212,12 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 				new JsoupTraverseLostInfoData().execute();
 				break;
 			case TRAVERSE_FIND_ID:
-				// 已找到ID
+				// 已找到ID，发送新的POST请求，标记为已招领
 				LogUtil.d("LostInfoId", LostInfoId);
+				sendFoundPOSTRequest();
 				break;
 			case TRAVERSE_NEED_MORE_DATA:
-				// 暂时未找到，需要遍历更多数据
+				// 暂时未找到ID，需要遍历更多数据
 				pageIndex++;
 				sendTraverseLostInfoGETRequest();
 				break;
@@ -216,6 +226,42 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 				Toast.makeText(LostAndFoundRegistrationActivity.this,
 						"未知错误，操作失败",
 						Toast.LENGTH_SHORT).show();
+				break;
+			case FOUND_CARD_POST_SUCCESS_RESPONSE:
+				// 卡已找到，并已标记为“已招领
+				String displayMsg;
+				if (responseString.contains("True")) {
+					displayMsg = "操作成功";
+					AlertDialog.Builder foundAlertDialog =
+							new AlertDialog.Builder(
+							LostAndFoundRegistrationActivity.this);
+					foundAlertDialog.setMessage(displayMsg);
+					foundAlertDialog.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {
+							// 点击确定按钮，通过再次发送GET请求刷新布局
+							CARD_LOSS_FLAG = 0;
+							sendGETRequest();
+							
+						}
+					});
+					foundAlertDialog.show();
+				} else {
+					displayMsg = "操作失败";
+					AlertDialog.Builder foundAlertDialog =
+							new AlertDialog.Builder(
+							LostAndFoundRegistrationActivity.this);
+					foundAlertDialog.setMessage(displayMsg);
+					foundAlertDialog.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog,
+								int which) {}
+					});
+					foundAlertDialog.show();
+				}
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
@@ -416,6 +462,31 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
 			}
 			return null;
 		}
+	}
+	// 卡已找到，发送POST请求标记为“已招领”
+	private void sendFoundPOSTRequest() {
+		// 装填POST数据
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		HttpUtil.sendPostRequest(httpClient,
+				UrlConstant.CARD_LOSS_PICK_UP_CARD + LostInfoId,
+				params,
+				new HttpCallbackListener() {
+			@Override
+			public void onFinish(String response) {
+				// 成功响应
+				responseString = response;
+				Message message = new Message();
+				message.what = FOUND_CARD_POST_SUCCESS_RESPONSE;
+				handler.sendMessage(message);
+			}
+			@Override
+			public void onError(Exception e) {
+				// 网络错误
+				Message message = new Message();
+				message.what = NETWORK_ERROR;
+				handler.sendMessage(message);
+			}
+		});
 	}
 	// 返回键的点击
 	@Override
