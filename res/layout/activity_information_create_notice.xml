@@ -9,56 +9,137 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
-    android:paddingBottom="20dp" >
-    
+    android:paddingBottom="20dp"
+    android:background="@color/background" >
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginTop="15dp"
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
     <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:gravity="center">
         <TextView 
             android:id="@+id/information_create_notice_contacts_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
             android:text="发给"
             />
-        <EditText 
-            android:id="@+id/information_create_notice_contacts_input"
+        <FrameLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            >
+	        <EditText 
+	            android:id="@+id/information_create_notice_contacts_input"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:hint="姓名/学工号/校园卡账号，以“.”结束"
+	            />
+	        <LinearLayout 
+	            android:id="@+id/information_create_notice_contacts_linear_layout"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:orientation="vertical">
+	        </LinearLayout>
+	        <Button 
+	            android:id="@+id/information_create_notice_contacts_input_del_btn"
+	            android:layout_width="20dp"
+	            android:layout_height="20dp"
+	            android:layout_gravity="end|center_vertical"
+	            android:visibility="invisible"
+	            android:background="@drawable/input_del"/>
+        </FrameLayout>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
     
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginTop="15dp"
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
     <LinearLayout 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/white"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        >
         <TextView 
             android:id="@+id/information_create_notice_title_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:gravity="center"
             android:text="标题"
             />
-        <EditText 
-            android:id="@+id/information_create_notice_title_input"
+		<FrameLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            />
+            >
+	        <EditText
+	            android:id="@+id/information_create_notice_title_input"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:inputType="text" />
+	        <Button 
+	            android:id="@+id/information_create_notice_title_input_del_btn"
+	            android:layout_width="20dp"
+	            android:layout_height="20dp"
+	            android:layout_gravity="end"
+	            android:visibility="invisible"
+	            android:background="@drawable/input_del"/>
+        </FrameLayout>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
     
-    <LinearLayout 
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginTop="15dp"
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
+    <EditText 
+        android:id="@+id/information_create_notice_context_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText 
-            android:id="@+id/information_create_notice_context_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="正文"
-            android:minLines="10"
-            />
-    </LinearLayout>
+        android:gravity="top"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:hint="正文"
+        android:minLines="10"
+        />
+    <View
+        android:layout_width="match_parent" 
+		android:layout_height="1dp" 
+		android:background="@color/grey" 
+		android:layout_marginRight="1dp" 
+		android:layout_marginLeft="1dp"/>
     
     <Button 
         android:id="@+id/information_create_notice_send_button"

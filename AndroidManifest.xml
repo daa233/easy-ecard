@@ -74,6 +74,13 @@
             android:theme="@style/style_titlebar_normal">
         </activity>
         
+        <activity
+            android:name=".Activities.InformationCreateNoticeActivity"
+            android:label="@string/InformationCreateNoticeActivity_label"
+            android:logo="@drawable/divider"
+            android:theme="@style/style_titlebar_normal">
+        </activity>
+        
     </application>
 
     <application

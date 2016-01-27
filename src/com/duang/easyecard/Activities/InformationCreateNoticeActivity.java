@@ -16,25 +16,32 @@ import com.duang.easyecard.Utils.HttpUtil.HttpCallbackListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
-public class InformationCreateNotice extends BaseActivity {
+public class InformationCreateNoticeActivity extends BaseActivity {
 
 	private EditText contactsEditText;
 	private EditText titleEditText;
 	private EditText contextEditText;
 	private Button sendButton;
-	
-	private HttpClient httpClient;
-	private String responseString;
-	
+	private LinearLayout contactsInputParent;
+
 	private final int RESPONSE_SUCCESS = 200;
 	private final int NETWORK_ERROR = 404;
 	
 	private String noticeContacts;
 	private String noticeTitle;
 	private String noticeContext;
+	private String userSplit = "|";
+	private HttpClient httpClient;
+	private String responseString;
+	private String queryCondition;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,6 +59,13 @@ public class InformationCreateNotice extends BaseActivity {
 				R.id.information_create_notice_context_input);
 		sendButton = (Button) findViewById(
 				R.id.information_create_notice_send_button);
+		contactsInputParent = (LinearLayout) findViewById(
+				R.id.information_create_notice_contacts_linear_layout);
+		
+		// 添加两个控件
+		contactsInputParent.addView(addContactButton("吴彦祖(13020021005)"));
+		contactsInputParent.addView(addContactButton("吴彦祖(13020021005)"));
+		
 	}
 	
 	private void initData() {
@@ -101,6 +115,41 @@ public class InformationCreateNotice extends BaseActivity {
 	
 	// 发送POST请求，查找用户
 	private void sendPOSTRequestToQuery() {
-		
+		// 装填POST数据
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("condition", queryCondition));
+		HttpUtil.sendPostRequest(httpClient, UrlConstant.QUERY_USER, params,
+				new HttpCallbackListener() {
+			@Override
+			public void onFinish(String response) {
+				// 成功响应
+				responseString = response;
+				Message message = new Message();
+				message.what = RESPONSE_SUCCESS;
+				handler.sendMessage(message);
+			}
+			@Override
+			public void onError(Exception e) {
+				// 网络错误
+				Message message = new Message();
+				message.what = NETWORK_ERROR;
+				handler.sendMessage(message);
+			}
+		});
+	}
+	
+	// 动态添加Button
+	private View addContactButton(String str) {
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		LinearLayout view = new LinearLayout(this);
+		ViewGroup.LayoutParams vlp = new ViewGroup.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT);
+		Button button = new Button(this);
+		button.setLayoutParams(vlp);
+		button.setText(str);
+		view.addView(button);
+		return view;
 	}
 }

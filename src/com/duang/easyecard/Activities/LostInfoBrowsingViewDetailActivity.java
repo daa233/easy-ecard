@@ -111,7 +111,10 @@ public class LostInfoBrowsingViewDetailActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				// 跳转到发送信息界面
-				
+				Intent intent = new Intent(LostInfoBrowsingViewDetailActivity.this,
+						InformationCreateNoticeActivity.class);
+				intent.putExtra("STU_ID", lostInfo.getStuId());
+				startActivity(intent);
 			}
 		});
 	}

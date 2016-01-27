@@ -93,4 +93,6 @@
     <string name="lost_info_registration_lost_place_hint">选填，最多128个字符</string>
     <string name="lost_info_registration_description_hint">选填，最多256个字符</string>
     
+    <!-- InformationCreateNoticeActivity -->
+    <string name="InformationCreateNoticeActivity_label">发消息</string>
 </resources>
