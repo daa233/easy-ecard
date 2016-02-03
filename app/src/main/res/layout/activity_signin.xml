@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!--
+         padding 内边距   layout_margin 外边距
+  		android:layout_alignParentTop 布局的位置是否处于顶部
+    -->
+
+    <LinearLayout
+        android:id="@+id/signin_div"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="15dip"
+        android:padding="15dip" >
+
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+	            android:id="@+id/signin_type_text"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:textSize="16sp"
+	            android:gravity="center"
+	            android:layout_gravity="center"
+	            android:text="@string/signin_type" />
+	        <Spinner
+	            android:id="@+id/signin_type_spinner"
+	            android:layout_width="0dp"
+	            android:layout_weight="3"
+	            android:layout_height="wrap_content"
+	             />
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+            <TextView
+	            android:id="@+id/signin_account_text"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:textSize="16sp"
+	            android:gravity="center"
+	            android:text="@string/account" />
+	        <AutoCompleteTextView
+	            android:id="@+id/signin_account_input"
+	            android:layout_width="0dp"
+	            android:layout_weight="3"
+	            android:layout_height="wrap_content"
+	            android:hint="@string/account_input_hint"
+	            android:inputType="number"
+	            android:completionThreshold="1"
+	            android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+            <TextView
+	            android:id="@+id/signin_password_text"
+	            android:layout_width="0dp"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:textSize="16sp"
+	            android:gravity="center"
+	            android:layout_marginTop="3dp"
+	            android:text="@string/password" />
+	        <EditText
+	            android:id="@+id/signin_password_input"
+	            android:layout_width="0dp"
+	            android:layout_weight="3"
+	            android:layout_height="wrap_content"
+	            android:hint="@string/password_input_hint"
+	            android:maxLength="6"
+	            android:inputType="textPassword"
+	            android:singleLine="true" >
+	        </EditText>
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+            <TextView 
+                android:id="@+id/signin_checkcode_text"
+                android:layout_width="0dp"
+	            android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:text="@string/checkcode"
+                />
+            <EditText
+                android:id="@+id/signin_checkcode_input"
+                android:layout_width="0dp"
+	            android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLength="4"
+                android:hint="@string/checkcode_input_hint"/>
+            <ImageView 
+                android:id="@+id/signin_checkcode_image"
+                android:layout_width="0dp"
+	            android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:clickable="true"
+            	android:scaleType="fitCenter"
+            	android:src="@drawable/default_checkcode_img"
+                android:contentDescription="@string/signin_checkcode_image"/>
+        </LinearLayout>
+        
+        <TextView 
+            android:id="@+id/signin_hint_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"/>
+        
+        <Button 
+            android:id="@+id/signin_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#FFFFFFFF"
+            android:textSize="22sp"
+            android:text="@string/signin"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:contentDescription="@string/signin_pic_below"
+            android:src="@drawable/signin_pic_below" />
+
+    </RelativeLayout>
+
+</LinearLayout>
