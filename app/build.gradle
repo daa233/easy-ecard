@@ -19,13 +19,13 @@ android {
     }
     useLibrary 'org.apache.http.legacy'
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_6
-        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_7
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.0.+'
 }
