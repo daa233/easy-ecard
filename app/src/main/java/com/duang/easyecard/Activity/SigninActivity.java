@@ -35,6 +35,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -54,6 +55,7 @@ OnFocusChangeListener {
 	private TextView hintText;
 	private Button signinButton;
 	private ImageView checkcodeImage;
+	private CheckBox rememberPasswordCheckBox;
 	
 	private String signtype;  // {"SynSno", "SynCard"}
 	private String username;
@@ -66,16 +68,13 @@ OnFocusChangeListener {
 	private static String[] autoCompleteStringArray = {"最近登录成功的账号", ""};
 	private static Map<String, String> rememberedPassword =
 			new HashMap<String, String>();
-	
+
 	private static final int SIGNIN_SUCCESS = 1;
 	private static final int SIGNIN_FAILED = 0;
 	private static final int NETWORK_ERROR = 0x404;
 	
-	private static int DONT_DISPLAY_AGAIN_FLAG = 0;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setTitle("登录");
 		setContentView(R.layout.activity_signin);
@@ -94,6 +93,8 @@ OnFocusChangeListener {
 		hintText = (TextView) findViewById(R.id.signin_hint_text);
 		signinButton = (Button) findViewById(R.id.signin_signin_button);
 		checkcodeImage = (ImageView) findViewById(R.id.signin_checkcode_image);
+		rememberPasswordCheckBox = (CheckBox) findViewById(
+				R.id.signin_remember_password_check_box);
 		
 		// 设置Spinner
 		// 添加列表项
@@ -273,26 +274,27 @@ OnFocusChangeListener {
 	        	}
 	        	// 记录登录成功的账号
 				autoCompleteStringArray[1] = username;
-				// 弹出是否记住密码对话框
-				if (rememberedPassword.isEmpty()) {
-					// 初次使用此客户端登录
-					popRememberPasswordDialog();
-				} else if (!rememberedPassword.containsKey(username)) {
-					// 切换用户登录
-					popRememberPasswordDialog();
-				} else if (DONT_DISPLAY_AGAIN_FLAG == 0) {
-					popRememberPasswordDialog();
+				// 判断记住密码复选框是否被选中
+				if (rememberPasswordCheckBox.isChecked()) {
+					// 记住密码
+					rememberedPassword.put(username, password);
 				} else {
-					// 直接跳转到主界面
-					Intent intent = new Intent(MyApplication.getContext(),
-							MainActivity.class);
-					startActivity(intent);
-					finish();  // 销毁活动
+					// 不记住密码，若已经记住，需要清除记忆
+					if(rememberedPassword.containsKey(username)) {
+						rememberedPassword.remove(username);
+					}
 				}
+				// 跳转到主界面
+				/*
+				Intent intent = new Intent(MyApplication.getContext(),
+						MainActivity.class);
+				startActivity(intent);
+				finish();  // 销毁活动
+				*/
 				break;
 			case SIGNIN_FAILED:
 				// 登录出错
-				signinButton.setText("登      录");  // 登录按钮恢复“登录”字样
+				signinButton.setText("登录");  // 登录按钮恢复“登录”字样
 				String responseString = msg.obj + "";
 				hintText.setText("提示：" + responseString);
 	        	if (responseString.contains("查询密码")) {
@@ -353,42 +355,5 @@ OnFocusChangeListener {
 	        	handler.sendMessage(message);
 			}
 		});
-	}
-	
-	private void popRememberPasswordDialog() {
-		AlertDialog.Builder dialog = new AlertDialog
-    			.Builder(SigninActivity.this);
-    	String[] dialogItems = {"记住密码", "不再提示"};
-    	dialog.setMultiChoiceItems(dialogItems, null,
-    			new OnMultiChoiceClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog,
-					int which, boolean isChecked) {
-				// Item被选中的响应事件
-				switch (which) {
-				case 0:
-					// 选中了“记住密码”
-					rememberedPassword.put(username, password);
-					break;
-				case 1:
-					// 选中了“不再提示”
-					DONT_DISPLAY_AGAIN_FLAG = 1;
-					break;
-				default:
-					break;
-				}
-			}
-		});
-    	dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// 跳转到主界面
-				Intent intent = new Intent(MyApplication.getContext(),
-						MainActivity.class);
-				startActivity(intent);
-				finish();  // 销毁活动
-			}
-    	});
-    	dialog.show();
 	}
 }

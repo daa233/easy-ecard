@@ -14,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="15dip"
+        android:layout_marginTop="40dip"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:background="@drawable/background_signin_div_bg"
         android:padding="15dp" >
 
@@ -43,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="10dp">
             <TextView
                 android:id="@+id/signin_account_text"
                 android:layout_width="0dp"
@@ -59,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/account_input_hint"
                 android:inputType="number"
+                android:maxLength="15"
                 android:completionThreshold="1"
                 android:singleLine="true" />
         </LinearLayout>
@@ -67,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="10dp">
             <TextView
                 android:id="@+id/signin_password_text"
                 android:layout_width="0dp"
@@ -93,25 +96,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp">
-            <TextView
-                android:id="@+id/signin_checkcode_text"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:text="@string/checkcode"
-                />
-            <EditText
-                android:id="@+id/signin_checkcode_input"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:singleLine="true"
-                android:maxLength="4"
-                android:hint="@string/checkcode_input_hint"/>
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:paddingLeft="15dp">
+
             <ImageView
                 android:id="@+id/signin_checkcode_image"
                 android:layout_width="0dp"
@@ -121,6 +109,35 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/default_checkcode_img"
                 android:contentDescription="@string/signin_checkcode_image"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/signin_checkcode_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="3"
+                    android:maxLength="4"
+                    android:gravity="start|left"
+                    android:layout_marginLeft="15dp"
+                    android:hint="@string/checkcode_input_hint"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+                <CheckBox
+                    android:id="@+id/signin_remember_password_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:layout_marginRight="35dp"
+                    android:text="@string/remember_password"/>
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -140,17 +157,17 @@
             android:background="@drawable/green_button_selector"/>
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="30dp"
+            android:layout_height="match_parent"
+            android:gravity="end|bottom"
+            android:layout_marginBottom="20dp"
             android:contentDescription="@string/signin_pic_below"
             android:src="@drawable/signin_pic_below" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -4,13 +4,13 @@
     <string name="SigninActivity_label">登录</string>
     <string name="signin_type">登录类型</string>
     <string name="account">学 工 号</string>
-    <string name="signin">登      录</string>
+    <string name="signin">登录</string>
     <string name="password">查询密码</string>
     <string name="account_input_hint">请输入学（工）号</string>
     <string name="password_input_hint">请输入校园卡查询密码</string>
-    <string name="checkcode">验 证 码</string>
-    <string name="checkcode_input_hint">请输入验证码</string>
+    <string name="checkcode_input_hint">验证码</string>
     <string name="signin_checkcode_image">验证码图片</string>
+    <string name="remember_password">记住密码</string>
     <string name="signin_pic_below">登录界面下方的图片</string>
 
     <!-- MainActivity -->
