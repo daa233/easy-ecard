@@ -285,12 +285,10 @@ OnFocusChangeListener {
 					}
 				}
 				// 跳转到主界面
-				/*
 				Intent intent = new Intent(MyApplication.getContext(),
 						MainActivity.class);
 				startActivity(intent);
 				finish();  // 销毁活动
-				*/
 				break;
 			case SIGNIN_FAILED:
 				// 登录出错

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tab="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <com.duang.changeiconcolorwithtext.ChangeColorTab
+        android:id="@+id/main_change_color_tab"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            tab:item_color="#ff45c01a"
+            tab:item_icon="@drawable/main_tab_manage"
+            tab:item_text="tab1"
+            tab:item_text_size="12sp" />
+
+        <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:id="@+id/id_indicator_two"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            tab:item_color="@color/colorAccent"
+            tab:item_icon="@drawable/main_tab_lost_found"
+            tab:item_text="tab2"
+            tab:item_text_size="12sp" />
+
+        <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            tab:item_color="@color/colorPrimary"
+            tab:item_icon="@drawable/main_tab_information"
+            tab:item_text="tab3"
+            tab:item_text_size="12sp" />
+
+        <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            tab:item_color="#ff45c01a"
+            tab:item_icon="@drawable/main_tab_settings"
+            tab:item_text="tab4"
+            tab:item_text_size="12sp" />
+    </com.duang.changeiconcolorwithtext.ChangeColorTab>
+</LinearLayout>
