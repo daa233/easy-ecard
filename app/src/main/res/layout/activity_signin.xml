@@ -8,7 +8,6 @@
          padding 内边距   layout_margin 外边距
   		android:layout_alignParentTop 布局的位置是否处于顶部
     -->
-
     <LinearLayout
         android:id="@+id/signin_div"
         android:layout_width="match_parent"
@@ -31,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:gravity="center"
+                android:textColor="@color/black_tab"
                 android:layout_gravity="center"
                 android:text="@string/signin_type" />
             <Spinner
@@ -52,6 +52,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
+                android:textColor="@color/black_tab"
                 android:gravity="center"
                 android:text="@string/account" />
             <AutoCompleteTextView
@@ -78,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:gravity="center"
+                android:textColor="@color/black_tab"
                 android:layout_marginTop="3dp"
                 android:text="@string/password" />
             <EditText
@@ -121,7 +123,7 @@
                     android:inputType="number"
                     android:ems="3"
                     android:maxLength="4"
-                    android:gravity="start|left"
+                    android:gravity="center"
                     android:layout_marginLeft="15dp"
                     android:hint="@string/checkcode_input_hint"/>
             </LinearLayout>

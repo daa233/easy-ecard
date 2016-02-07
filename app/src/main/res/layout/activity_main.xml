@@ -3,27 +3,35 @@
     xmlns:tab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
     <android.support.v4.view.ViewPager
         android:id="@+id/main_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#50909090"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"/>
     <com.duang.changeiconcolorwithtext.ChangeColorTab
         android:id="@+id/main_change_color_tab"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="60dp"
+        android:background="@drawable/main_tab_bg">
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_management"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="#ff45c01a"
+            tab:item_color="@color/dark"
             tab:item_icon="@drawable/main_tab_manage"
-            tab:item_text="tab1"
-            tab:item_text_size="12sp" />
+            tab:item_text="@string/manage"
+            tab:item_text_size="14sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_lost_found"
@@ -31,10 +39,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/colorAccent"
+            tab:item_color="@color/dark_green"
             tab:item_icon="@drawable/main_tab_lost_found"
-            tab:item_text="tab2"
-            tab:item_text_size="12sp" />
+            tab:item_text="@string/lost_found"
+            tab:item_text_size="14sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_information"
@@ -42,10 +50,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/colorPrimary"
+            tab:item_color="@color/blue"
             tab:item_icon="@drawable/main_tab_information"
-            tab:item_text="tab3"
-            tab:item_text_size="12sp" />
+            tab:item_text="@string/information"
+            tab:item_text_size="14sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_settings"
@@ -53,9 +61,9 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="#ff45c01a"
+            tab:item_color="@color/colorAccent"
             tab:item_icon="@drawable/main_tab_settings"
-            tab:item_text="tab4"
-            tab:item_text_size="12sp" />
+            tab:item_text="@string/settings"
+            tab:item_text_size="14sp" />
     </com.duang.changeiconcolorwithtext.ChangeColorTab>
 </LinearLayout>
