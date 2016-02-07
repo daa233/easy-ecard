@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp">
         <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:id="@+id/main_indicator_management"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -25,7 +26,7 @@
             tab:item_text_size="12sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
-            android:id="@+id/id_indicator_two"
+            android:id="@+id/main_indicator_lost_found"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -36,6 +37,7 @@
             tab:item_text_size="12sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:id="@+id/main_indicator_information"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -46,6 +48,7 @@
             tab:item_text_size="12sp" />
 
         <com.duang.changeiconcolorwithtext.ChangeColorItem
+            android:id="@+id/main_indicator_settings"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"

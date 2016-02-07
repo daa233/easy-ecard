@@ -45,14 +45,11 @@ public class MainActivity extends BaseActivity {
 
     //初始化四个Fragment
     private void initData() {
-        String[] mTitles = {"First Fragment !", "Second Fragment !", "Third Fragment !", "Fourth Fragment !"};
-        for (String title : mTitles) {
-            TabFragment tabFragment = new TabFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(TabFragment.TITLE, title);
-            tabFragment.setArguments(bundle);
-            mTabFragments.add(tabFragment);
-        }
+        mTabFragments.add(new ManagementFragment());
+        mTabFragments.add(new LostAndFoundFragment());
+        mTabFragments.add(new InformationFragment());
+        mTabFragments.add(new SettingsFragment());
+
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public int getCount() {
