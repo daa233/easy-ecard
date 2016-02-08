@@ -84,7 +84,6 @@ public class ManagementFragment extends Fragment  implements
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (iconImage[position]) {
-            /*
             case R.drawable.manage_basic_info:
                 // 跳转到ManageViewBasicInfoActivity
                 Intent intent = new Intent(this.getContext(),
@@ -92,9 +91,11 @@ public class ManagementFragment extends Fragment  implements
                 startActivity(intent);
                 break;
             case R.drawable.manage_trading_inquiry:
+                /*
                 intent = new Intent(this.getContext(),
                         ManageTradingInquiryActivity.class);
                 startActivity(intent);
+                */
                 break;
             case R.drawable.manage_report_loss:
                 final String[] arrayDialogItems = new String[] {"通过校园卡电子服务平台",
@@ -107,9 +108,11 @@ public class ManagementFragment extends Fragment  implements
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
                                     // 跳转到ManageReportLossActivity
+                                    /*
                                     Intent intent = new Intent(getActivity(),
                                             ManageReportLossActivity.class);
                                     startActivity(intent);
+                                    */
                                 } else {
                                     // 拨打挂失电话
                                     AlertDialog.Builder callDialog = new AlertDialog.
@@ -153,7 +156,6 @@ public class ManagementFragment extends Fragment  implements
                 break;
             default:
                 break;
-                */
         }
     }
 }

@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- ActionBar Back Icon -->
+    <style name="style_titlebar_normal" parent="@style/AppTheme">
+        <item name="android:homeAsUpIndicator">@drawable/actionbar_back_icon</item>
+    </style>
+
 </resources>
