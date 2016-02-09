@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_centerVertical="true"
-        style="@style/content_page_large_text" />
+        style="@style/table_view_large_text" />
 
     <TextView
         android:id="@+id/table_view_custom_item_content"
@@ -23,6 +23,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
-        style="@style/content_page_large_text"/>
+        style="@style/table_view_large_text"/>
 
 </RelativeLayout>
