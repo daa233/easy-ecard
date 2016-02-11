@@ -96,7 +96,9 @@ OnFocusChangeListener {
 		rememberPasswordCheckBox = (CheckBox) findViewById(
 				R.id.signin_remember_password_check_box);
 		
-		// 设置Spinner
+		/*
+		 设置Spinner
+		  */
 		// 添加列表项
 		spinnerList.add("学工号");
 		spinnerList.add("校园卡账号");
@@ -241,7 +243,7 @@ OnFocusChangeListener {
 						// 登录按钮显示“正在登录”
 						signinButton.setText("正在登录...");
 						// 发送POST请求
-						sendPostRequest();
+						sendPOSTRequest();
 					} else {
 						hintText.setText("提示：请输入验证码");
 					}
@@ -264,44 +266,10 @@ OnFocusChangeListener {
 			switch (msg.what) {
 			case SIGNIN_SUCCESS:
 				// 登录成功
-				hintText.setText("提示：登录成功！");
-				signinButton.setText("登录成功");
-	        	// 传递全局变量http
-	        	MyApplication myApp = (MyApplication) getApplication();
-	        	myApp.setHttpClient(httpClient);
-	        	if (myApp.getHttpClient() != null) {
-	        	 	LogUtil.d("httpClient", "success to spread");
-	        	}
-	        	// 记录登录成功的账号
-				autoCompleteStringArray[1] = username;
-				// 判断记住密码复选框是否被选中
-				if (rememberPasswordCheckBox.isChecked()) {
-					// 记住密码
-					rememberedPassword.put(username, password);
-				} else {
-					// 不记住密码，若已经记住，需要清除记忆
-					if(rememberedPassword.containsKey(username)) {
-						rememberedPassword.remove(username);
-					}
-				}
-				// 跳转到主界面
-				Intent intent = new Intent(MyApplication.getContext(),
-						MainActivity.class);
-				startActivity(intent);
-				finish();  // 销毁活动
+				signinSuccess(msg);
 				break;
 			case SIGNIN_FAILED:
-				// 登录出错
-				signinButton.setText("登录");  // 登录按钮恢复“登录”字样
-				String responseString = msg.obj + "";
-				hintText.setText("提示：" + responseString);
-	        	if (responseString.contains("查询密码")) {
-	        		passwordInput.setText("");
-	        	} else if (responseString.contains("验证码")) {
-	        		getCheckcodeImage();  // 刷新验证码
-	        	}
-	        	// 恢复登录按钮的点击功能
-	        	signinButton.setClickable(true);
+				signinFailed(msg);
 				break;
 			case NETWORK_ERROR:
 				// 网络错误
@@ -313,8 +281,8 @@ OnFocusChangeListener {
 			}
 		}
 	};
-	
-	private void sendPostRequest() {
+	// 发送POST请求
+	private void sendPOSTRequest() {
 		// 装填POST数据
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		checkcode = checkcodeInput.getText().toString();
@@ -353,5 +321,48 @@ OnFocusChangeListener {
 	        	handler.sendMessage(message);
 			}
 		});
+	}
+
+	// 登录成功
+	private void signinSuccess(Message msg) {
+		hintText.setText("提示：登录成功！");
+		signinButton.setText("登录成功");
+		// 传递全局变量http
+		MyApplication myApp = (MyApplication) getApplication();
+		myApp.setHttpClient(httpClient);
+		if (myApp.getHttpClient() != null) {
+			LogUtil.d("httpClient", "success to spread");
+		}
+		// 记录登录成功的账号
+		autoCompleteStringArray[1] = username;
+		// 判断记住密码复选框是否被选中
+		if (rememberPasswordCheckBox.isChecked()) {
+			// 记住密码
+			rememberedPassword.put(username, password);
+		} else {
+			// 不记住密码，若已经记住，需要清除记忆
+			if(rememberedPassword.containsKey(username)) {
+				rememberedPassword.remove(username);
+			}
+		}
+		// 跳转到主界面
+		Intent intent = new Intent(MyApplication.getContext(),
+				MainActivity.class);
+		startActivity(intent);
+		finish();  // 销毁活动
+	}
+	// 登录失败
+	private void signinFailed(Message msg) {
+		// 登录出错
+		signinButton.setText("登录");  // 登录按钮恢复“登录”字样
+		String responseString = msg.obj + "";
+		hintText.setText("提示：" + responseString);
+		if (responseString.contains("查询密码")) {
+			passwordInput.setText("");
+		} else if (responseString.contains("验证码")) {
+			getCheckcodeImage();  // 刷新验证码
+		}
+		// 恢复登录按钮的点击功能
+		signinButton.setClickable(true);
 	}
 }
