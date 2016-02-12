@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.duang.easyecard.GlobalData.MessageConstant;
@@ -19,6 +18,7 @@ import com.duang.easyecard.Util.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Util.ImageUtil;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
+import com.loopj.android.http.AsyncHttpClient;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -41,10 +41,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+
 public class SigninActivity extends BaseActivity implements OnClickListener,
 OnFocusChangeListener {
 	
-	private HttpClient httpClient = new DefaultHttpClient();
+	private AsyncHttpClient client = new AsyncHttpClient();
+	private HttpClient httpClient = new org.apache.http.impl.client.DefaultHttpClient();
 	
 	private Spinner signinTypeSpinner;
 	private AutoCompleteTextView accountInput;
@@ -157,7 +160,7 @@ OnFocusChangeListener {
 	
 	private void getCheckcodeImage() {
 		// 获取验证码图片
-		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient,
+		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, client,
 				new OnLoadImageListener() {
 			@Override
 			public void OnLoadImage(Bitmap bitmap, String bitmapPath) {
