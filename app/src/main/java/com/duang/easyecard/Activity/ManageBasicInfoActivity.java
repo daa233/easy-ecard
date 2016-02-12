@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.HttpUtil;
 import com.duang.easyecard.Util.LogUtil;
+import com.rey.material.widget.ProgressView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -193,7 +195,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         protected void onPostExecute(Void result) {
             LogUtil.d("JsouphtmlData", "onPostExecute");
             // Close the progressDialog
-            mProgressDialog.dismiss();
+            // mProgressDialog.dismiss();
         }
     }
 

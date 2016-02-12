@@ -9,6 +9,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.duang.easyecard.GlobalData.MessageConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
@@ -18,9 +20,6 @@ import com.duang.easyecard.Util.ImageUtil;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -69,10 +68,6 @@ OnFocusChangeListener {
 	private static Map<String, String> rememberedPassword =
 			new HashMap<String, String>();
 
-	private static final int SIGNIN_SUCCESS = 1;
-	private static final int SIGNIN_FAILED = 0;
-	private static final int NETWORK_ERROR = 0x404;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -264,14 +259,14 @@ OnFocusChangeListener {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case SIGNIN_SUCCESS:
+			case MessageConstant.SIGNIN_SUCCESS:
 				// 登录成功
 				signinSuccess(msg);
 				break;
-			case SIGNIN_FAILED:
+			case MessageConstant.SIGNIN_FAILED:
 				signinFailed(msg);
 				break;
-			case NETWORK_ERROR:
+			case MessageConstant.NETWORK_ERROR:
 				// 网络错误
 				Toast.makeText(SigninActivity.this, "网络错误",
 						Toast.LENGTH_SHORT).show();
@@ -303,12 +298,12 @@ OnFocusChangeListener {
 					// 发送登录成功的消息
 		        	LogUtil.d("response", "success");
 		        	Message message = new Message();
-		        	message.what = SIGNIN_SUCCESS;
+		        	message.what = MessageConstant.SIGNIN_SUCCESS;
 		        	handler.sendMessage(message);
 		        } else {
 		        	// 登录发生错误
 		        	Message message = new Message();
-		        	message.what = SIGNIN_FAILED;
+		        	message.what = MessageConstant.SIGNIN_FAILED;
 		        	message.obj = response;
 		        	handler.sendMessage(message);
 		        }
@@ -317,7 +312,7 @@ OnFocusChangeListener {
 			public void onError(Exception e) {
 				// 网络错误
 				Message message = new Message();
-	        	message.what = NETWORK_ERROR;
+	        	message.what = MessageConstant.NETWORK_ERROR;
 	        	handler.sendMessage(message);
 			}
 		});

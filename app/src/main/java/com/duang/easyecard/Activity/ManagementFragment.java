@@ -91,11 +91,9 @@ public class ManagementFragment extends Fragment  implements
                 startActivity(intent);
                 break;
             case R.drawable.manage_trading_inquiry:
-                /*
                 intent = new Intent(this.getContext(),
                         ManageTradingInquiryActivity.class);
                 startActivity(intent);
-                */
                 break;
             case R.drawable.manage_report_loss:
                 final String[] arrayDialogItems = new String[] {"通过校园卡电子服务平台",
