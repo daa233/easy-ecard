@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.duang.easyecard.GlobalData.MessageConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
@@ -22,8 +21,6 @@ import com.rey.material.widget.Spinner;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -57,17 +54,17 @@ OnFocusChangeListener {
 	private String password;
 	private String checkcode;
 	
-	private List<String> spinnerList = new ArrayList<String>();
+	private List<String> spinnerList = new ArrayList<>();
 	private ArrayAdapter<String> spinnerAdapter;
 	private ArrayAdapter<String> autoCompleteAdapter;
-	private static String[] autoCompleteStringArray = {"最近登录成功的账号", ""};
+	private static String[] autoCompleteStringArray = {"Recent Accounts", ""};
 	private static Map<String, String> rememberedPassword =
-			new HashMap<String, String>();
+			new HashMap<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("登录");
+		setTitle(R.string.SigninActivity_label);
 		setContentView(R.layout.activity_signin);
 		
 		initView();
@@ -87,16 +84,16 @@ OnFocusChangeListener {
 		rememberPasswordCheckBox = (CheckBox) findViewById(
 				R.id.signin_remember_password_check_box);
 
-		// 初始提示
-		hintText.setText("提示：请输入学（工）号");
+		// 初始提示，输入学工号
+		hintText.setText(R.string.hint_input_stu_id);
 		/*
 		 设置Spinner
 		  */
 		// 添加列表项
-		spinnerList.add("学工号");
-		spinnerList.add("校园卡账号");
+        spinnerList.add(getResources().getString(R.string.stu_id));
+		spinnerList.add(getResources().getString(R.string.card_account));
 		// 新建适配器，利用系统内置的layout
-		spinnerAdapter = new ArrayAdapter<String>(this,
+		spinnerAdapter = new ArrayAdapter<>(this,
 				android.R.layout.simple_spinner_item, spinnerList);
 		// 设置下拉菜单样式，利用系统内置的layout
 		spinnerAdapter.setDropDownViewResource(
@@ -109,21 +106,21 @@ OnFocusChangeListener {
 			public void onItemSelected(Spinner parent, View view, int position, long id) {
 				// 选中响应事件
 				if (position == 0) {
-					accountText.setText("学 工 号");
-					accountInput.setHint("请输入学（工）号");
+					accountText.setText(R.string.stu_id);
+					accountInput.setHint(R.string.hint_input_stu_id);
 					signtype = "SynSno";
-					hintText.setText("提示：请输入学（工）号");
+					hintText.setText(R.string.hint_input_stu_id);
 				} else if (position == 1) {
-					accountText.setText("校园卡号");
-					accountInput.setHint("请输入校园卡账号");
+					accountText.setText(R.string.card_account);
+					accountInput.setHint(R.string.card_account_input_hint);
 					signtype = "SynCard";
-					hintText.setText("提示：请输入校园卡账号");
+					hintText.setText(R.string.hint_input_card_account);
 				}
 			}
 		});
 		
 		// 设置账号自动填充的适配器
-		autoCompleteAdapter = new ArrayAdapter<String>(this,
+		autoCompleteAdapter = new ArrayAdapter<>(this,
 				android.R.layout.simple_list_item_1, autoCompleteStringArray);
 		accountInput.setAdapter(autoCompleteAdapter);
 		accountInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -170,7 +167,7 @@ OnFocusChangeListener {
 			if (!hasFocus) {
 				if (!accountInput.getText().toString().isEmpty()) {
 					if (passwordInput.getText().toString().isEmpty()) {
-						hintText.setText("提示：请输入密码");
+						hintText.setText(R.string.hint_input_password);
 					}
 				}
 			}
@@ -179,16 +176,16 @@ OnFocusChangeListener {
 			if (hasFocus) {
 				if (accountInput.getText().toString().isEmpty()) {
 					if (signtype.equals("SynSno")) {
-						hintText.setText("提示：请输入学（工）号");
+						hintText.setText(R.string.hint_input_stu_id);
 					} else {
-						hintText.setText("提示：请输入校园卡账号");
+						hintText.setText(R.string.hint_input_card_account);
 					}
 				}
 			} else {
 				// 失去焦点
 				if (!accountInput.getText().toString().isEmpty()) {
 					if (passwordInput.getText().toString().isEmpty()) {
-						hintText.setText("提示：请输入密码");
+						hintText.setText(R.string.hint_input_password);
 					}
 				}
 			}
@@ -197,14 +194,14 @@ OnFocusChangeListener {
 			if (hasFocus) {
 				if (accountInput.getText().toString().isEmpty()) {
 					if (signtype.equals("SynSno")) {
-						hintText.setText("提示：请输入学（工）号");
+						hintText.setText(R.string.hint_input_stu_id);
 					} else {
-						hintText.setText("提示：请输入校园卡账号");
+						hintText.setText(R.string.hint_input_card_account);
 					}
 				} else if (passwordInput.getText().toString().isEmpty()) {
-					hintText.setText("提示：请输入密码");
+					hintText.setText(R.string.hint_input_password);
 				} else {
-					hintText.setText("提示：如果看不清，试试点击图片换一张");
+					hintText.setText(R.string.hint_click_image_if_not_clear);
 				}
 			}
 			break;
@@ -228,18 +225,26 @@ OnFocusChangeListener {
 					if (!checkcodeInput.getText().toString().isEmpty()) {
 						// 屏蔽登录按钮的点击功能
 						signinButton.setClickable(false);
-						// 登录按钮显示“正在登录”
-						signinButton.setText("正在登录...");
+						// 显示“正在登录”
+						signinButton.setText(R.string.signin_processing);
+                        hintText.setText(R.string.hint_signin_processing);
 						// 发送POST请求
 						sendPOSTRequest();
 					} else {
-						hintText.setText("提示：请输入验证码");
+                        // 提示输入验证码
+						hintText.setText(R.string.hint_input_checkcode);
 					}
 				} else {
-					hintText.setText("提示：请输入密码");
+                    // 提示输入密码
+					hintText.setText(R.string.hint_input_password);
 				}
 			} else {
-				hintText.setText("提示：请输入学（工）号");
+                // 提示输入账号
+                if (signtype.equals("SynSno")) {
+                    hintText.setText(R.string.hint_input_stu_id);
+                } else {
+                    hintText.setText(R.string.hint_input_card_account);
+                }
 			}
 			break;
 		default:
@@ -247,28 +252,6 @@ OnFocusChangeListener {
 		}
 	}
 
-	// 处理从线程中传递出来的消息
-	private Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MessageConstant.SIGNIN_SUCCESS:
-				// 登录成功
-				signinSuccess(msg);
-				break;
-			case MessageConstant.SIGNIN_FAILED:
-				signinFailed(msg);
-				break;
-			case MessageConstant.NETWORK_ERROR:
-				// 网络错误
-				Toast.makeText(SigninActivity.this, "网络错误",
-						Toast.LENGTH_SHORT).show();
-				break;
-			default:
-				break;
-			}
-		}
-	};
 	// 发送POST请求
 	private void sendPOSTRequest() {
 		// 装填POST数据
@@ -288,63 +271,27 @@ OnFocusChangeListener {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
                 if (response.contains("success")) {
-                    // 发送登录成功的消息
-                    LogUtil.d("response", "success");
-                    Message message = new Message();
-                    message.what = MessageConstant.SIGNIN_SUCCESS;
-                    handler.sendMessage(message);
+                    // 登录成功
+                    signinSuccess();
                 } else {
                     // 登录发生错误
-                    Message message = new Message();
-                    message.what = MessageConstant.SIGNIN_FAILED;
-                    message.obj = response;
-                    handler.sendMessage(message);
+                    signinFailed(response);
                 }
             }
             // 网络错误
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
-                Message message = new Message();
-                message.what = MessageConstant.NETWORK_ERROR;
-                handler.sendMessage(message);
+                Toast.makeText(SigninActivity.this, R.string.network_error,
+                        Toast.LENGTH_SHORT).show();
             }
         });
-        /*
-		HttpUtil.sendPostRequest(httpClient, UrlConstant.MINI_CHECK_IN, params,
-				new HttpCallbackListener() {
-			@Override
-			public void onFinish(String response) {
-				// 成功响应
-				if (response.contains("success")) {
-					// 发送登录成功的消息
-		        	LogUtil.d("response", "success");
-		        	Message message = new Message();
-		        	message.what = MessageConstant.SIGNIN_SUCCESS;
-		        	handler.sendMessage(message);
-		        } else {
-		        	// 登录发生错误
-		        	Message message = new Message();
-		        	message.what = MessageConstant.SIGNIN_FAILED;
-		        	message.obj = response;
-		        	handler.sendMessage(message);
-		        }
-			}
-			@Override
-			public void onError(Exception e) {
-				// 网络错误
-				Message message = new Message();
-	        	message.what = MessageConstant.NETWORK_ERROR;
-	        	handler.sendMessage(message);
-			}
-		});
-		*/
 	}
 
 	// 登录成功
-	private void signinSuccess(Message msg) {
-		hintText.setText("提示：登录成功！");
-		signinButton.setText("登录成功");
+	private void signinSuccess() {
+		hintText.setText(R.string.hint_signin_success);
+		signinButton.setText(R.string.signin_success);
 		// 传递全局变量http
 		MyApplication myApp = (MyApplication) getApplication();
 		myApp.setHttpClient(httpClient);
@@ -370,16 +317,23 @@ OnFocusChangeListener {
 		finish();  // 销毁活动
 	}
 	// 登录失败
-	private void signinFailed(Message msg) {
+	private void signinFailed(String str) {
 		// 登录出错
-		signinButton.setText("登录");  // 登录按钮恢复“登录”字样
-		String responseString = msg.obj + "";
-		hintText.setText("提示：" + responseString);
-		if (responseString.contains("查询密码")) {
+		signinButton.setText(R.string.signin);  // 登录按钮恢复“登录”字样
+        if (str.contains("帐户不存在")) {
+            hintText.setText(R.string.hint_account_not_exist);
+        } else if (str.contains("帐号查询条件不足")) {
+            hintText.setText(R.string.hint_account_query_condition_less);
+        } else if (str.contains("查询密码")) {
+            hintText.setText(R.string.hint_password_error);
 			passwordInput.setText("");
-		} else if (responseString.contains("验证码")) {
+		} else if (str.contains("验证码")) {
+            hintText.setText(R.string.hint_checkcode_error);
 			getCheckcodeImage();  // 刷新验证码
-		}
+		} else {
+            LogUtil.e("SigninActivity", str);
+            hintText.setText(R.string.hint_unknown_error);
+        }
 		// 恢复登录按钮的点击功能
 		signinButton.setClickable(true);
 	}

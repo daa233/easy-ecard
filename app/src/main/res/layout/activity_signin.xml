@@ -58,13 +58,13 @@
                 android:textSize="16sp"
                 android:textColor="@color/black_tab"
                 android:gravity="center"
-                android:text="@string/account" />
+                android:text="@string/stu_id" />
             <AutoCompleteTextView
                 android:id="@+id/signin_account_input"
                 android:layout_width="0dp"
                 android:layout_weight="3"
                 android:layout_height="50dp"
-                android:hint="@string/account_input_hint"
+                android:hint="@string/stu_id_input_hint"
                 android:inputType="number"
                 android:maxLength="15"
                 android:completionThreshold="1"

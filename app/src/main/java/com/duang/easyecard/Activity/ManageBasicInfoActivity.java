@@ -13,11 +13,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MessageConstant;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.HttpUtil;
 import com.duang.easyecard.Util.LogUtil;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.rey.material.widget.ProgressView;
 
 import org.apache.http.NameValuePair;
@@ -33,6 +37,7 @@ import java.util.List;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
+import cz.msebera.android.httpclient.Header;
 
 public class ManageBasicInfoActivity extends BaseActivity {
 
@@ -44,14 +49,10 @@ public class ManageBasicInfoActivity extends BaseActivity {
     private String reportLossState;  // 挂失状态
     private String freezeState;  // 冻结状态
 
-    private String responseHtml;
+    private String response;
 
     private List<String> stringList;
-    private HttpClient httpClient;
-
-    private static final int RESPONSE_SUCCESS = 1;
-    private static final int FINISH_STRING_LIST = 2;
-    private static final int NETWORK_ERROR = 0x404;
+    private AsyncHttpClient httpClient;
 
 	private UITableView tableView;
     private ProgressDialog mProgressDialog;
@@ -79,11 +80,9 @@ public class ManageBasicInfoActivity extends BaseActivity {
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
-        /*
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         sendPOSTRequest();  // 发送POST请求
-        */
     }
 
     // 处理从线程中传递出来的消息
@@ -91,17 +90,17 @@ public class ManageBasicInfoActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case RESPONSE_SUCCESS:
+                case MessageConstant.GET_RESPONSE_SUCCESS:
                     // 确保responseHtml已成功赋值后解析
                     new JsoupHtmlData().execute();
                     break;
-                case FINISH_STRING_LIST:
+                case MessageConstant.FINISH_LIST:
                     // 将数据填充到布局
                     createList();  // 组建列表布局
                     LogUtil.d("ManageBasicInfoActivity", "total items: " + tableView.getCount());
                     tableView.commit();  // 显示列表布局
                     break;
-                case NETWORK_ERROR:
+                case MessageConstant.NETWORK_ERROR:
                     // 网络错误
                     Toast.makeText(ManageBasicInfoActivity.this, "网络错误",
                             Toast.LENGTH_SHORT).show();
@@ -115,27 +114,28 @@ public class ManageBasicInfoActivity extends BaseActivity {
     // 发送POST请求
     private void sendPOSTRequest() {
         // 装填POST数据
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("needHeader", "false"));
-        HttpUtil.sendPostRequest(httpClient, UrlConstant.BASIC_INFO, params,
-                new HttpUtil.HttpCallbackListener() {
-                    @Override
-                    public void onFinish(String response) {
-                        // 成功响应
-                        responseHtml = response;
-                        Message message = new Message();
-                        message.what = RESPONSE_SUCCESS;
-                        handler.sendMessage(message);
-                    }
+        RequestParams params = new RequestParams();
+        params.add("needHeader", "false");
+        // 发送POST请求
+        httpClient.post(UrlConstant.BASIC_INFO, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                // 成功响应
+                response = new String(responseBody);
+                Message message = new Message();
+                message.what = MessageConstant.GET_RESPONSE_SUCCESS;
+                handler.sendMessage(message);
+            }
 
-                    @Override
-                    public void onError(Exception e) {
-                        // 网络错误
-                        Message message = new Message();
-                        message.what = NETWORK_ERROR;
-                        handler.sendMessage(message);
-                    }
-                });
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // 网络错误
+                Message message = new Message();
+                message.what = MessageConstant.NETWORK_ERROR;
+                handler.sendMessage(message);
+            }
+        });
     }
 
     // 组建列表布局
@@ -173,10 +173,10 @@ public class ManageBasicInfoActivity extends BaseActivity {
         protected Void doInBackground(Void... arg0) {
             LogUtil.d("JsouphtmlData", "doInBackground.");
             // 解析返回的responseHtml
-            Document doc = null;
+            Document doc;
             try {
-                stringList = new ArrayList<String>();
-                doc = Jsoup.parse(responseHtml);
+                stringList = new ArrayList<>();
+                doc = Jsoup.parse(response);
                 Elements es = doc.getElementsByTag("em");
                 for (Element e : es) {
                     stringList.add(e.text());
@@ -185,7 +185,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
                 // 从List获取数据，并匹配相关变量
                 getDataFromList();
                 Message message = new Message();
-                message.what = FINISH_STRING_LIST;
+                message.what = MessageConstant.FINISH_LIST;
                 handler.sendMessage(message);
             } catch (Exception e) {
                 e.printStackTrace();
