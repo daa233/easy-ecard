@@ -19,6 +19,9 @@ import com.duang.easyecard.Util.ImageUtil;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.loopj.android.http.AsyncHttpClient;
+import com.rey.material.widget.Button;
+import com.rey.material.widget.CheckBox;
+import com.rey.material.widget.Spinner;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,19 +32,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 
 public class SigninActivity extends BaseActivity implements OnClickListener,
 OnFocusChangeListener {
@@ -59,7 +55,7 @@ OnFocusChangeListener {
 	private ImageView checkcodeImage;
 	private CheckBox rememberPasswordCheckBox;
 	
-	private String signtype;  // {"SynSno", "SynCard"}
+	private String signtype = "SynSno";  // {"SynSno", "SynCard"}
 	private String username;
 	private String password;
 	private String checkcode;
@@ -93,7 +89,9 @@ OnFocusChangeListener {
 		checkcodeImage = (ImageView) findViewById(R.id.signin_checkcode_image);
 		rememberPasswordCheckBox = (CheckBox) findViewById(
 				R.id.signin_remember_password_check_box);
-		
+
+		// 初始提示
+		hintText.setText("提示：请输入学（工）号");
 		/*
 		 设置Spinner
 		  */
@@ -109,10 +107,9 @@ OnFocusChangeListener {
 		// 绑定适配器到控件
 		signinTypeSpinner.setAdapter(spinnerAdapter);
 		// 设置选择响应事件
-		signinTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+		signinTypeSpinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
+			public void onItemSelected(Spinner parent, View view, int position, long id) {
 				// 选中响应事件
 				if (position == 0) {
 					accountText.setText("学 工 号");
@@ -126,17 +123,13 @@ OnFocusChangeListener {
 					hintText.setText("提示：请输入校园卡账号");
 				}
 			}
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// 什么都没选中
-			}
 		});
 		
 		// 设置账号自动填充的适配器
 		autoCompleteAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, autoCompleteStringArray);
 		accountInput.setAdapter(autoCompleteAdapter);
-		accountInput.setOnItemClickListener(new OnItemClickListener() {
+		accountInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {

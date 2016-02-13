@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,6 +17,7 @@
         android:layout_marginTop="40dip"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
+        android:gravity="bottom"
         android:background="@drawable/background_signin_div_bg"
         android:padding="15dp" >
 
@@ -27,17 +29,19 @@
                 android:id="@+id/signin_type_text"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:textSize="16sp"
                 android:gravity="center"
                 android:textColor="@color/black_tab"
                 android:layout_gravity="center"
                 android:text="@string/signin_type" />
-            <Spinner
+            <com.rey.material.widget.Spinner
                 android:id="@+id/signin_type_spinner"
                 android:layout_width="0dp"
                 android:layout_weight="3"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                style="@style/Material.Widget.Spinner"
+                app:rd_style="@style/Material.Drawable.Ripple.Wave"
                 />
         </LinearLayout>
 
@@ -50,7 +54,7 @@
                 android:id="@+id/signin_account_text"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:textSize="16sp"
                 android:textColor="@color/black_tab"
                 android:gravity="center"
@@ -59,7 +63,7 @@
                 android:id="@+id/signin_account_input"
                 android:layout_width="0dp"
                 android:layout_weight="3"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:hint="@string/account_input_hint"
                 android:inputType="number"
                 android:maxLength="15"
@@ -76,7 +80,7 @@
                 android:id="@+id/signin_password_text"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:textSize="16sp"
                 android:gravity="center"
                 android:textColor="@color/black_tab"
@@ -86,7 +90,7 @@
                 android:id="@+id/signin_password_input"
                 android:layout_width="0dp"
                 android:layout_weight="3"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:hint="@string/password_input_hint"
                 android:maxLength="6"
                 android:inputType="textPassword"
@@ -119,7 +123,7 @@
                 <EditText
                     android:id="@+id/signin_checkcode_input"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:inputType="number"
                     android:ems="3"
                     android:maxLength="4"
@@ -130,14 +134,15 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:gravity="end">
-                <CheckBox
+                android:layout_height="50dp"
+                android:gravity="center">
+                <com.rey.material.widget.CheckBox
                     android:id="@+id/signin_remember_password_check_box"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:gravity="end|center_vertical"
-                    android:layout_marginRight="35dp"
+                    android:layout_marginRight="10dp"
+                    style="@style/Material.Drawable.CheckBox"
                     android:text="@string/remember_password"/>
             </LinearLayout>
         </LinearLayout>
@@ -146,16 +151,18 @@
             android:id="@+id/signin_hint_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="14sp"
             android:gravity="end"/>
 
-        <Button
+        <com.rey.material.widget.Button
             android:id="@+id/signin_signin_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textColor="#FFFFFFFF"
+            android:textColor="@color/white"
             android:textSize="22sp"
             android:text="@string/signin"
+            style="@style/Material.Drawable.Ripple.Wave"
             android:background="@drawable/green_button_selector"/>
     </LinearLayout>
 
