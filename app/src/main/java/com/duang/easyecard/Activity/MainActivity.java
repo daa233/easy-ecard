@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * MainActivity
+ * 应用主界面
  * Created by MrD on 2016/2/4.
  */
 public class MainActivity extends BaseActivity {

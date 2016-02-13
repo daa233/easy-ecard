@@ -4,29 +4,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.duang.easyecard.GlobalData.MessageConstant;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
-import com.duang.easyecard.Util.HttpUtil;
-import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.rey.material.widget.ProgressView;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -85,32 +74,6 @@ public class ManageBasicInfoActivity extends BaseActivity {
         sendPOSTRequest();  // 发送POST请求
     }
 
-    // 处理从线程中传递出来的消息
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MessageConstant.GET_RESPONSE_SUCCESS:
-                    // 确保responseHtml已成功赋值后解析
-                    new JsoupHtmlData().execute();
-                    break;
-                case MessageConstant.FINISH_LIST:
-                    // 将数据填充到布局
-                    createList();  // 组建列表布局
-                    LogUtil.d("ManageBasicInfoActivity", "total items: " + tableView.getCount());
-                    tableView.commit();  // 显示列表布局
-                    break;
-                case MessageConstant.NETWORK_ERROR:
-                    // 网络错误
-                    Toast.makeText(ManageBasicInfoActivity.this, "网络错误",
-                            Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     // 发送POST请求
     private void sendPOSTRequest() {
         // 装填POST数据
@@ -122,26 +85,21 @@ public class ManageBasicInfoActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
                 response = new String(responseBody);
-                Message message = new Message();
-                message.what = MessageConstant.GET_RESPONSE_SUCCESS;
-                handler.sendMessage(message);
+                // 解析response
+                new JsoupHtmlData().execute();
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
-                Message message = new Message();
-                message.what = MessageConstant.NETWORK_ERROR;
-                handler.sendMessage(message);
+                Toast.makeText(ManageBasicInfoActivity.this, R.string.network_error,
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     // 组建列表布局
 	private void createList() {
-		CustomClickListener listener = new CustomClickListener();
-		tableView.setClickListener(listener);
         generateCustomItem(tableView, "姓名", name);
         generateCustomItem(tableView, "学工号", stuId);
         generateCustomItem(tableView, "校园卡号", ecardId);
@@ -151,27 +109,16 @@ public class ManageBasicInfoActivity extends BaseActivity {
         generateCustomItem(tableView, "冻结状态", freezeState);
 	}
 
-    // 监听列表项点击事件
-	private class CustomClickListener implements UITableView.ClickListener {
-		@Override
-		public void onClick(int index) {
-			Toast.makeText(ManageBasicInfoActivity.this, "item clicked: " + index,
-                    Toast.LENGTH_SHORT).show();
-		}
-	}
-
     // 通过网站返回的html文本解析数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
-            LogUtil.d("JsouphtmlData", "onPreExecute");
             super.onPreExecute();
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            LogUtil.d("JsouphtmlData", "doInBackground.");
             // 解析返回的responseHtml
             Document doc;
             try {
@@ -180,13 +127,22 @@ public class ManageBasicInfoActivity extends BaseActivity {
                 Elements es = doc.getElementsByTag("em");
                 for (Element e : es) {
                     stringList.add(e.text());
-                    LogUtil.d("e", e.text());
                 }
                 // 从List获取数据，并匹配相关变量
                 getDataFromList();
-                Message message = new Message();
-                message.what = MessageConstant.FINISH_LIST;
-                handler.sendMessage(message);
+                // 组建列表布局
+                createList();
+                // 在主线程中更新UI
+                new Thread() {
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tableView.commit();
+                            }
+                        });
+                    }
+                }.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -195,9 +151,8 @@ public class ManageBasicInfoActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            LogUtil.d("JsouphtmlData", "onPostExecute");
             // Close the progressDialog
-            // mProgressDialog.dismiss();
+            mProgressDialog.dismiss();
         }
     }
 
@@ -213,7 +168,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
             reportLossState = stringList.get(5);
             freezeState = stringList.get(6);
         } else {
-            Toast.makeText(this, "数据获取失败！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fail_to_get_data, Toast.LENGTH_SHORT).show();
         }
     }
 

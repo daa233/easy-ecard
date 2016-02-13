@@ -56,6 +56,7 @@
 
     <!-- ManageViewBasicInfoActivity -->
     <string name="ManageViewBasicInfoActivity_label">基本信息</string>
+    <string name="fail_to_get_data">数据获取失败</string>
 
     <!-- ManageTradingInquiryActivity -->
     <string name="ManageTradingInquiryActivity_label">流水查询</string>
