@@ -79,9 +79,11 @@ public class ManageBasicInfoActivity extends BaseActivity {
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
+        /*
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         sendPOSTRequest();  // 发送POST请求
+        */
     }
 
     // 处理从线程中传递出来的消息

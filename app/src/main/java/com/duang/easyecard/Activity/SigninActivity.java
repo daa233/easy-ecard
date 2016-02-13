@@ -5,20 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import com.duang.easyecard.GlobalData.MessageConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
-import com.duang.easyecard.Util.HttpUtil;
-import com.duang.easyecard.Util.HttpUtil.HttpCallbackListener;
 import com.duang.easyecard.Util.ImageUtil;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.CheckBox;
 import com.rey.material.widget.Spinner;
@@ -39,12 +35,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cz.msebera.android.httpclient.Header;
+
 public class SigninActivity extends BaseActivity implements OnClickListener,
 OnFocusChangeListener {
 	
-	private AsyncHttpClient client = new AsyncHttpClient();
-	private HttpClient httpClient = new org.apache.http.impl.client.DefaultHttpClient();
-	
+	private AsyncHttpClient httpClient = new AsyncHttpClient();
+
 	private Spinner signinTypeSpinner;
 	private AutoCompleteTextView accountInput;
 	private EditText passwordInput;
@@ -153,7 +150,7 @@ OnFocusChangeListener {
 	
 	private void getCheckcodeImage() {
 		// 获取验证码图片
-		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, client,
+		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient,
 				new OnLoadImageListener() {
 			@Override
 			public void OnLoadImage(Bitmap bitmap, String bitmapPath) {
@@ -275,16 +272,45 @@ OnFocusChangeListener {
 	// 发送POST请求
 	private void sendPOSTRequest() {
 		// 装填POST数据
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		checkcode = checkcodeInput.getText().toString();
-		username = accountInput.getText().toString();
-		password = passwordInput.getText().toString();
-		params.add(new BasicNameValuePair("checkcode", checkcode));
-		params.add(new BasicNameValuePair("IsUsedKeyPad", "False"));
-		params.add(new BasicNameValuePair("signtype", signtype));
-		params.add(new BasicNameValuePair("username", username));
-		params.add(new BasicNameValuePair("password", password));
+        RequestParams params = new RequestParams();
+        checkcode = checkcodeInput.getText().toString();
+        username = accountInput.getText().toString();
+        password = passwordInput.getText().toString();
+        params.add("checkcode", checkcode);
+        params.add("IsUsedKeyPad", "False");
+        params.add("signtype", signtype);
+        params.add("username", username);
+        params.add("password", password);
 		// 发送POST请求
+        httpClient.post(UrlConstant.MINI_CHECK_IN, params, new AsyncHttpResponseHandler() {
+            // 成功响应
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                if (response.contains("success")) {
+                    // 发送登录成功的消息
+                    LogUtil.d("response", "success");
+                    Message message = new Message();
+                    message.what = MessageConstant.SIGNIN_SUCCESS;
+                    handler.sendMessage(message);
+                } else {
+                    // 登录发生错误
+                    Message message = new Message();
+                    message.what = MessageConstant.SIGNIN_FAILED;
+                    message.obj = response;
+                    handler.sendMessage(message);
+                }
+            }
+            // 网络错误
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                Message message = new Message();
+                message.what = MessageConstant.NETWORK_ERROR;
+                handler.sendMessage(message);
+            }
+        });
+        /*
 		HttpUtil.sendPostRequest(httpClient, UrlConstant.MINI_CHECK_IN, params,
 				new HttpCallbackListener() {
 			@Override
@@ -312,6 +338,7 @@ OnFocusChangeListener {
 	        	handler.sendMessage(message);
 			}
 		});
+		*/
 	}
 
 	// 登录成功

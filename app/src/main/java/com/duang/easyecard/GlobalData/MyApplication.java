@@ -3,12 +3,12 @@ package com.duang.easyecard.GlobalData;
 import android.app.Application;
 import android.content.Context;
 
-import org.apache.http.client.HttpClient;
+import com.loopj.android.http.AsyncHttpClient;
 
 public class MyApplication extends Application {
 	
 	private static Context context;
-	private static HttpClient httpClient;
+	private static AsyncHttpClient httpClient;
 	
 	@Override
 	public void onCreate() {
@@ -20,10 +20,10 @@ public class MyApplication extends Application {
 		return context;
 	}
 	
-	public HttpClient getHttpClient() {
+	public AsyncHttpClient getHttpClient() {
 		return httpClient;
 	}
-	public void setHttpClient(HttpClient httpClient) {
+	public void setHttpClient(AsyncHttpClient httpClient) {
 		MyApplication.httpClient = httpClient;
 	}
 
