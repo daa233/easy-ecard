@@ -17,7 +17,7 @@ import com.duang.easyecard.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageTradingInquiryActivity extends AppCompatActivity {
+public class ManageTradingInquiryActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -26,6 +26,11 @@ public class ManageTradingInquiryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_trading_inquiry);
+
+        initView();
+    }
+
+    private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -37,13 +42,18 @@ public class ManageTradingInquiryActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // 显示home按钮
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // 设置ViewPager
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        // 设置UITableView，startTime and endTime
+
     }
 
     // Defines the number of tabs by setting appropriate fragment and tab name.

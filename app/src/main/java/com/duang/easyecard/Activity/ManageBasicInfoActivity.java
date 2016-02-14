@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -186,17 +185,5 @@ public class ManageBasicInfoActivity extends BaseActivity {
         ViewItem v = new ViewItem(relativeLayout);
         v.setClickable(false);
         tableView.addViewItem(v);
-    }
-    // 菜单项选择
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                break;
-        }
-        return false;
     }
 }

@@ -5,6 +5,7 @@ import com.duang.easyecard.Util.LogUtil;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -19,5 +20,18 @@ public class BaseActivity extends AppCompatActivity {
 	protected void onDestroy()	{
 		super.onDestroy();
 		ActivityCollector.removeActivity(this);
+	}
+
+	// 菜单项选择
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				finish();
+				break;
+			default:
+				break;
+		}
+		return false;
 	}
 }

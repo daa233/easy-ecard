@@ -1,14 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/background"
     tools:context="com.duang.easyecard.Activity.ManageTradingInquiryPickDateFragment">
 
     <br.com.dina.ui.widget.UITableView
         android:id="@+id/manage_trading_inquiry_set_start_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         style="@style/UITableView" />
 
     <br.com.dina.ui.widget.UITableView
         android:id="@+id/manage_trading_inquiry_set_end_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         style="@style/UITableView"/>
-</FrameLayout>
+
+    <com.rey.material.widget.Button
+        android:id="@+id/manage_trading_inquiry_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:text="@string/query"
+        style="@style/Material.Drawable.Ripple.Wave"
+        android:background="@drawable/green_button_selector"/>
+</LinearLayout>

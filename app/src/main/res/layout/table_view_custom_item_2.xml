@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:minHeight="40dp"
+    android:duplicateParentState="true">
+
+    <TextView
+        android:id="@+id/table_view_custom_item_2_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        style="@style/content_page_large_text" />
+
+    <TextView
+        android:id="@+id/table_view_custom_item_2_date"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_marginLeft="50dp"
+        style="@style/table_view_large_text"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/table_view_custom_item_2_day"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        style="@style/table_view_large_text"
+        android:layout_marginLeft="20dp" />
+
+    <ImageView
+        android:id="@+id/table_view_custom_item_2_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginLeft="25dp"
+        android:src="@drawable/chevron_default" />
+</LinearLayout>
