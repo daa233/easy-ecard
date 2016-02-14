@@ -11,25 +11,45 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageTradingInquiryActivity extends BaseActivity {
+import cz.msebera.android.httpclient.Header;
+
+public class ManageTradingInquiryActivity extends BaseActivity implements
+        ManageTradingInquiryPickDateFragment.OnQureyButtonClickListener{
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
+    private AsyncHttpClient httpClient;
+
+    protected static int startYear, startMonthOfYear, startDayOfMonth;
+    protected static int startDayOfWeek;
+    protected static int endYear, endMonthOfYear, endDayOfMonth;
+    protected static int endDayOfWeek;
+    protected static String startTime;
+    protected static String endTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_trading_inquiry);
-
+        // 初始化布局
         initView();
+        // 初始化数据
+        initData();
     }
-
+    // 初始化布局
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -51,9 +71,36 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+    // 初始化数据
+    private void initData() {
+        // 获得全局变量httpClient
+        MyApplication myApp = (MyApplication) getApplication();
+        httpClient = myApp.getHttpClient();
+        // 装填POST数据
+        RequestParams params = new RequestParams();
+        params.add("needHeader", "false");
+        // 发送POST请求
+        httpClient.post(UrlConstant.TRJN_QUERY, params, new AsyncHttpResponseHandler() {
+            // 成功响应，刷新全局httpClient
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setHttpClient(httpClient);
+            }
+            // 网络错误
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                Toast.makeText(ManageTradingInquiryActivity.this, R.string.network_error,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-        // 设置UITableView，startTime and endTime
-
+    // 回调接口，监听“查询”按钮点击事件
+    @Override
+    public void onQueryBtnClick(View v) {
     }
 
     // Defines the number of tabs by setting appropriate fragment and tab name.
@@ -67,7 +114,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                 getResources().getString(R.string.week_trading_inquiry));
         viewPager.setAdapter(adapter);
     }
-
     // Custom adapter class provides fragments required for the view pager.
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

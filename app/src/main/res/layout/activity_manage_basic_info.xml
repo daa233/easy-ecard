@@ -9,6 +9,7 @@
         android:background="@color/background">
         <br.com.dina.ui.widget.UITableView
             android:id="@+id/manage_basic_info_table_view"
+            android:layout_marginTop="20dp"
             style="@style/UITableView" />
     </ScrollView>
 

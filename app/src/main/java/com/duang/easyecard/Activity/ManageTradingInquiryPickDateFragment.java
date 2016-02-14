@@ -17,15 +17,16 @@ import br.com.dina.ui.widget.UITableView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ManageTradingInquiryPickDateFragment.OnFragmentInteractionListener} interface
+ * {@link ManageTradingInquiryPickDateFragment.OnQureyButtonClickListener} interface
  * to handle interaction events.
  */
 public class ManageTradingInquiryPickDateFragment extends Fragment {
 
+    private View viewFragment;
     private UITableView setStartTimeTableView;
     private UITableView setEndTimeTableView;
 
-    // private OnFragmentInteractionListener mListener;
+    private OnQureyButtonClickListener mCallbackListener;
 
     public ManageTradingInquiryPickDateFragment() {
         // Required empty public constructor
@@ -35,8 +36,17 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_manage_trading_inquiry_pick_date,
-                container, false);
+        if (viewFragment == null) {
+            viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry_pick_date,
+                    container, false);
+        }
+        // 缓存的rootView需要判断是否已经被加过parent，
+        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
+        ViewGroup parent = (ViewGroup) viewFragment.getParent();
+        if (parent != null) {
+            parent.removeView(viewFragment);
+        }
+        return viewFragment;
     }
 
     @Override
@@ -53,8 +63,7 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 R.id.manage_trading_inquiry_set_end_time);
         generateTableItem(setStartTimeTableView, "起始时间", "2016-12-23", "周五");
         generateTableItem(setEndTimeTableView, "结束时间", "2016-12-23", "周五");
-        setStartTimeTableView.commit();
-        setEndTimeTableView.commit();
+        updateTableItem(setStartTimeTableView, "起始时间哈哈", "2323-23-22", "粥吧");
     }
 
     // 构造UItableView的列表项，传入title和content
@@ -72,20 +81,18 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
         ViewItem v = new ViewItem(linearLayout);
         v.setClickable(true);
         tableView.addViewItem(v);
+        tableView.commit();
     }
-/*
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    // 更新UITableView的列表项
+    private void updateTableItem(UITableView tableView, String title, String date, String day) {
+        tableView.clear();
+        generateTableItem(tableView, title, date, day);
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnQureyButtonClickListener) {
+            mCallbackListener = (OnQureyButtonClickListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -95,21 +102,16 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mCallbackListener = null;
     }
-*/
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *//*
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+     */
+    public interface OnQureyButtonClickListener {
+        void onQueryBtnClick(View v);
+    }
 }
