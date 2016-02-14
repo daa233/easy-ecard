@@ -32,7 +32,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
 
     private String name;  // 姓名
     private String stuId;  // 学工号
-    private String ecardId;  // 校园卡号
+    private String cardAccount;  // 校园卡号
     private String balance;  // 校园卡余额
     private String transition;  // 过渡余额
     private String reportLossState;  // 挂失状态
@@ -58,7 +58,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         // Create a progressDialog
         mProgressDialog = new ProgressDialog(ManageBasicInfoActivity.this);
         // Set progressDialog message
-        mProgressDialog.setMessage("正在努力加载并解析... o(>﹏<)o");
+        mProgressDialog.setMessage(getResources().getString(R.string.loading) + "o(>﹏<)o");
         mProgressDialog.setIndeterminate(false);
         // Show progressDialog
         mProgressDialog.show();
@@ -100,13 +100,14 @@ public class ManageBasicInfoActivity extends BaseActivity {
 
     // 组建列表布局
 	private void createList() {
-        generateCustomItem(tableView, "姓名", name);
-        generateCustomItem(tableView, "学工号", stuId);
-        generateCustomItem(tableView, "校园卡号", ecardId);
-        generateCustomItem(tableView, "校园卡余额", balance);
-        generateCustomItem(tableView, "过渡余额", transition);
-        generateCustomItem(tableView, "挂失状态", reportLossState);
-        generateCustomItem(tableView, "冻结状态", freezeState);
+        generateCustomItem(tableView, getResources().getString(R.string.name), name);
+        generateCustomItem(tableView, getResources().getString(R.string.stu_id), stuId);
+        generateCustomItem(tableView, getResources().getString(R.string.card_account), cardAccount);
+        generateCustomItem(tableView, getResources().getString(R.string.balance), balance);
+        generateCustomItem(tableView, getResources().getString(R.string.transition), transition);
+        generateCustomItem(tableView, getResources().getString(R.string.report_loss_state),
+                reportLossState);
+        generateCustomItem(tableView, getResources().getString(R.string.freeze_state), freezeState);
 	}
 
     // 通过网站返回的html文本解析数据
@@ -162,7 +163,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
             // 将stringList的数据与变量对应
             name = stringList.get(0);
             stuId = stringList.get(1);
-            ecardId = stringList.get(2);
+            cardAccount = stringList.get(2);
             balance = stringList.get(3);
             transition = stringList.get(4);
             reportLossState = stringList.get(5);

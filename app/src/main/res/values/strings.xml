@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Oh, you see!</string>
+    <string name="loading">正在努力加载并解析... </string>
     <string name="network_error">网络错误</string>
     <!-- SigninActivity -->
     <string name="SigninActivity_label">登录</string>
@@ -46,23 +47,28 @@
     <string name="menu_exit">退出应用</string>
 
     <!-- ManagementFragment -->
-    <string name="name">姓名</string>
-    <string name="balance">校园卡余额</string>
-    <string name="transition">过渡余额</string>
-    <string name="report_loss_state">挂失状态</string>
-    <string name="freeze_state">冻结状态</string>
+
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
 
     <!-- ManageViewBasicInfoActivity -->
     <string name="ManageViewBasicInfoActivity_label">基本信息</string>
     <string name="fail_to_get_data">数据获取失败</string>
+    <string name="name">姓名</string>
+    <string name="balance">校园卡余额</string>
+    <string name="transition">过渡余额</string>
+    <string name="report_loss_state">挂失状态</string>
+    <string name="freeze_state">冻结状态</string>
+
 
     <!-- ManageTradingInquiryActivity -->
     <string name="ManageTradingInquiryActivity_label">流水查询</string>
+    <string name="history_trading_inquiry">历史流水</string>
+    <string name="day_trading_inquiry">当日流水</string>
+    <string name="week_trading_inquiry">一周流水</string>
     <string name="start_time">起始时间</string>
     <string name="end_time">结束时间</string>
-    <string name="history_inquiry_confirm">确    认</string>
+    <string name="history_inquiry_confirm">确认</string>
     <string name="history_inquiry_arrow_img">箭头</string>
     <!-- HistoryTradingINquiryResultFragment -->
     <string name="history_trading_inquiry_result_foot_output">本段时间共支出    ？？？  元 </string>

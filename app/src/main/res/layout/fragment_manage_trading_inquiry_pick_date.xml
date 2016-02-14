@@ -1,0 +1,14 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.duang.easyecard.Activity.ManageTradingInquiryPickDateFragment">
+
+    <br.com.dina.ui.widget.UITableView
+        android:id="@+id/manage_trading_inquiry_set_start_time"
+        style="@style/UITableView" />
+
+    <br.com.dina.ui.widget.UITableView
+        android:id="@+id/manage_trading_inquiry_set_end_time"
+        style="@style/UITableView"/>
+</FrameLayout>
