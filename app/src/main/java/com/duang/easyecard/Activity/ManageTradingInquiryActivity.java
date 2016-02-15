@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +20,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -33,12 +33,12 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
 
     private AsyncHttpClient httpClient;
 
-    protected static int startYear, startMonthOfYear, startDayOfMonth;
-    protected static int startDayOfWeek;
-    protected static int endYear, endMonthOfYear, endDayOfMonth;
-    protected static int endDayOfWeek;
-    protected static String startTime;
-    protected static String endTime;
+    protected static int historyStartYear, historyStartMonthOfYear, historyStartDayOfMonth;
+    protected static int historyStartDayOfWeek;
+    protected static int historyEndYear, historyEndMonthOfYear, historyEndDayOfMonth;
+    protected static int historyEndDayOfWeek;
+    protected static String historyStartTime;
+    protected static String historyEndTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +88,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setHttpClient(httpClient);
             }
+
             // 网络错误
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,

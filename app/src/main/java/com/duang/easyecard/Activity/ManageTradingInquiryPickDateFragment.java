@@ -52,6 +52,7 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initData();
         initView();
     }
 
@@ -61,11 +62,11 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 R.id.manage_trading_inquiry_set_start_time);
         setEndTimeTableView = (UITableView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_set_end_time);
-        generateTableItem(setStartTimeTableView, "起始时间", "2016-12-23", "周五");
-        generateTableItem(setEndTimeTableView, "结束时间", "2016-12-23", "周五");
-        updateTableItem(setStartTimeTableView, "起始时间哈哈", "2323-23-22", "粥吧");
     }
 
+    private void initData() {
+
+    }
     // 构造UItableView的列表项，传入title和content
     private void generateTableItem(UITableView tableView, String title, String date, String day) {
         LayoutInflater mLayoutInflater = (LayoutInflater) getActivity().getSystemService(
