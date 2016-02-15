@@ -33,13 +33,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
 
     private AsyncHttpClient httpClient;
 
-    protected static int historyStartYear, historyStartMonthOfYear, historyStartDayOfMonth;
-    protected static int historyStartDayOfWeek;
-    protected static int historyEndYear, historyEndMonthOfYear, historyEndDayOfMonth;
-    protected static int historyEndDayOfWeek;
-    protected static String historyStartTime;
-    protected static String historyEndTime;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

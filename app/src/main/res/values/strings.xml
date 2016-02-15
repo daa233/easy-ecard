@@ -2,6 +2,8 @@
     <string name="app_name">Oh, you see!</string>
     <string name="loading">正在努力加载并解析... </string>
     <string name="network_error">网络错误</string>
+    <string name="OK">确定</string>
+    <string name="Cancel">取消</string>
     <!-- SigninActivity -->
     <string name="SigninActivity_label">登录</string>
     <string name="signin_type">登录类型</string>

@@ -8,8 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.TradingInquiryDateUtil;
+import com.rey.material.app.DatePickerDialog;
+import com.rey.material.app.Dialog;
+import com.rey.material.app.DialogFragment;
+import com.rey.material.app.ThemeManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
@@ -40,19 +49,12 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
             viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry_pick_date,
                     container, false);
         }
-        // 缓存的rootView需要判断是否已经被加过parent，
-        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
-        ViewGroup parent = (ViewGroup) viewFragment.getParent();
-        if (parent != null) {
-            parent.removeView(viewFragment);
-        }
         return viewFragment;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initData();
         initView();
     }
 
@@ -62,11 +64,74 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 R.id.manage_trading_inquiry_set_start_time);
         setEndTimeTableView = (UITableView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_set_end_time);
+        initTimeTableView();
+        setStartTimeTableView.setClickListener(new UITableView.ClickListener() {
+            boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
+            @Override
+            public void onClick(int i) {
+                Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
+                        R.style.Material_App_Dialog_DatePicker_Light :
+                        R.style.Material_App_Dialog_DatePicker) {
+                    @Override
+                    public void onPositiveActionClicked(DialogFragment fragment) {
+                        DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
+                        String date = dialog.getFormattedDate(SimpleDateFormat.getDateInstance());
+                        Toast.makeText(getActivity(), "Date is " + date, Toast.LENGTH_SHORT).show();
+                        super.onPositiveActionClicked(fragment);
+                    }
+
+                    @Override
+                    public void onNegativeActionClicked(DialogFragment fragment) {
+                        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+                        super.onNegativeActionClicked(fragment);
+                    }
+                }.date(20, 11, 2015);
+                builder.positiveAction(getString(R.string.OK))
+                        .negativeAction(getString(R.string.Cancel));
+                DialogFragment fragment = DialogFragment.newInstance(builder);
+                fragment.show(getFragmentManager(), null);
+            }
+        });
+        setEndTimeTableView.setClickListener(new UITableView.ClickListener() {
+            boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
+            @Override
+            public void onClick(int i) {
+                Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
+                        R.style.Material_App_Dialog_DatePicker_Light :
+                        R.style.Material_App_Dialog_DatePicker) {
+                    @Override
+                    public void onPositiveActionClicked(DialogFragment fragment) {
+                        DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
+                        String date = dialog.getFormattedDate(SimpleDateFormat.getDateInstance());
+                        Toast.makeText(getActivity(), "Date is " + date, Toast.LENGTH_SHORT).show();
+                        super.onPositiveActionClicked(fragment);
+                    }
+
+                    @Override
+                    public void onNegativeActionClicked(DialogFragment fragment) {
+                        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+                        super.onNegativeActionClicked(fragment);
+                    }
+                }.date(20, 11, 2015);
+                builder.positiveAction(getString(R.string.OK))
+                        .negativeAction(getString(R.string.Cancel));
+                DialogFragment fragment = DialogFragment.newInstance(builder);
+                fragment.show(getFragmentManager(), null);
+            }
+        });
+    }
+    // 初始化时间选择列表
+    private void initTimeTableView() {
+        TradingInquiryDateUtil myDateUtil = new TradingInquiryDateUtil(this.getActivity());
+        // 显示到UITableView
+        generateTableItem(setStartTimeTableView, getString(R.string.start_time),
+                myDateUtil.getHistoryStartDate(),
+                myDateUtil.getHistoryStartDayOfWeek());
+        generateTableItem(setEndTimeTableView, getString(R.string.end_time),
+                myDateUtil.getHistoryEndDate(),
+                myDateUtil.getHistoryEndDayOfWeek());
     }
 
-    private void initData() {
-
-    }
     // 构造UItableView的列表项，传入title和content
     private void generateTableItem(UITableView tableView, String title, String date, String day) {
         LayoutInflater mLayoutInflater = (LayoutInflater) getActivity().getSystemService(
