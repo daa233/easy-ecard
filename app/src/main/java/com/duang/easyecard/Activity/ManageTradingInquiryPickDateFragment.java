@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
@@ -17,7 +16,6 @@ import com.rey.material.app.Dialog;
 import com.rey.material.app.DialogFragment;
 import com.rey.material.app.ThemeManager;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import br.com.dina.ui.model.ViewItem;
@@ -45,10 +43,8 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        if (viewFragment == null) {
-            viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry_pick_date,
-                    container, false);
-        }
+        viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry_pick_date,
+                container, false);
         return viewFragment;
     }
 
@@ -64,7 +60,9 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 R.id.manage_trading_inquiry_set_start_time);
         setEndTimeTableView = (UITableView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_set_end_time);
+        /// 初始化“起始时间”和“结束时间”
         initTimeTableView();
+        final TradingInquiryDateUtil myDateUtil = new TradingInquiryDateUtil(getActivity());
         setStartTimeTableView.setClickListener(new UITableView.ClickListener() {
             boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
             @Override
@@ -72,20 +70,31 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
                         R.style.Material_App_Dialog_DatePicker_Light :
                         R.style.Material_App_Dialog_DatePicker) {
+                    // 确定
                     @Override
                     public void onPositiveActionClicked(DialogFragment fragment) {
+                        // 更新HistoryStartDate
                         DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
-                        String date = dialog.getFormattedDate(SimpleDateFormat.getDateInstance());
-                        Toast.makeText(getActivity(), "Date is " + date, Toast.LENGTH_SHORT).show();
+                        Calendar calendar = dialog.getCalendar();
+                        myDateUtil.setHistoryStartDate(calendar);
+                        updateTableItem(setStartTimeTableView, getString(R.string.start_time),
+                                myDateUtil.getHistoryStartDate(),
+                                myDateUtil.getHistoryStartDayOfWeek());
                         super.onPositiveActionClicked(fragment);
                     }
-
+                    // 取消选择
                     @Override
                     public void onNegativeActionClicked(DialogFragment fragment) {
-                        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
                         super.onNegativeActionClicked(fragment);
                     }
-                }.date(20, 11, 2015);
+                }       // 设置日期选择范围
+                        .dateRange(1, 1, 2006,
+                                myDateUtil.getTodayDayOfMonth(), myDateUtil.getTodayMonth(),
+                                myDateUtil.getTodayYear())
+                        // 设置初始时间
+                        .date(myDateUtil.getHistoryStartDayOfMonth(),
+                                myDateUtil.getHistoryStartMonth(),
+                                myDateUtil.getHistoryStartYear());
                 builder.positiveAction(getString(R.string.OK))
                         .negativeAction(getString(R.string.Cancel));
                 DialogFragment fragment = DialogFragment.newInstance(builder);
@@ -99,20 +108,31 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
                 Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
                         R.style.Material_App_Dialog_DatePicker_Light :
                         R.style.Material_App_Dialog_DatePicker) {
+                    // 确定
                     @Override
                     public void onPositiveActionClicked(DialogFragment fragment) {
+                        // 更新HistoryEndDate
                         DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
-                        String date = dialog.getFormattedDate(SimpleDateFormat.getDateInstance());
-                        Toast.makeText(getActivity(), "Date is " + date, Toast.LENGTH_SHORT).show();
+                        Calendar calendar = dialog.getCalendar();
+                        myDateUtil.setHistoryEndDate(calendar);
+                        updateTableItem(setEndTimeTableView, getString(R.string.end_time),
+                                myDateUtil.getHistoryEndDate(),
+                                myDateUtil.getHistoryEndDayOfWeek());
                         super.onPositiveActionClicked(fragment);
                     }
-
+                    // 取消选择
                     @Override
                     public void onNegativeActionClicked(DialogFragment fragment) {
-                        Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
                         super.onNegativeActionClicked(fragment);
                     }
-                }.date(20, 11, 2015);
+                }       // 设置日期选择范围
+                        .dateRange(1, 1, 2006,
+                                myDateUtil.getTodayDayOfMonth(), myDateUtil.getTodayMonth(),
+                                myDateUtil.getTodayYear())
+                        // 设置默认日期
+                        .date(myDateUtil.getHistoryEndDayOfMonth(),
+                                myDateUtil.getHistoryEndMonth(),
+                                myDateUtil.getHistoryEndYear());
                 builder.positiveAction(getString(R.string.OK))
                         .negativeAction(getString(R.string.Cancel));
                 DialogFragment fragment = DialogFragment.newInstance(builder);
@@ -122,7 +142,7 @@ public class ManageTradingInquiryPickDateFragment extends Fragment {
     }
     // 初始化时间选择列表
     private void initTimeTableView() {
-        TradingInquiryDateUtil myDateUtil = new TradingInquiryDateUtil(this.getActivity());
+        TradingInquiryDateUtil myDateUtil = new TradingInquiryDateUtil(getActivity());
         // 显示到UITableView
         generateTableItem(setStartTimeTableView, getString(R.string.start_time),
                 myDateUtil.getHistoryStartDate(),
