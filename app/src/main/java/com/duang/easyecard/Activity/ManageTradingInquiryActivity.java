@@ -10,29 +10,32 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
-import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ManageTradingInquiryActivity extends BaseActivity implements
-        ManageTradingInquiryPickDateFragment.OnQureyButtonClickListener{
+public class ManageTradingInquiryActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
     private AsyncHttpClient httpClient;
+    private ViewPagerAdapter mViewPagerAdapter;
+
+    private ScrollView pickDateView;
+    private ListView resultListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
 
         // 显示home按钮
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // 设置ViewPager
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -82,7 +86,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setHttpClient(httpClient);
             }
-
             // 网络错误
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
@@ -93,21 +96,16 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         });
     }
 
-    // 回调接口，监听“查询”按钮点击事件
-    @Override
-    public void onQueryBtnClick(View v) {
-    }
-
     // Defines the number of tabs by setting appropriate fragment and tab name.
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ManageTradingInquiryPickDateFragment(),
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mViewPagerAdapter.addFragment(new ManageTradingInquiryHistoryFragment(),
                 getResources().getString(R.string.history_trading_inquiry));
-        adapter.addFragment(new SettingsFragment(),
+        mViewPagerAdapter.addFragment(new SettingsFragment(),
                 getResources().getString(R.string.day_trading_inquiry));
-        adapter.addFragment(new SettingsFragment(),
+        mViewPagerAdapter.addFragment(new SettingsFragment(),
                 getResources().getString(R.string.week_trading_inquiry));
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(mViewPagerAdapter);
     }
     // Custom adapter class provides fragments required for the view pager.
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -131,6 +129,21 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
+        }
+
+        public void addFragment(int position, Fragment fragment, String title) {
+            mFragmentList.add(position, fragment);
+            mFragmentTitleList.add(position, title);
+        }
+
+        public void removeFragment(int position) {
+            mFragmentList.remove(position);
+            mFragmentTitleList.remove(position);
+        }
+
+        public void clearFragments() {
+            mFragmentList.clear();
+            mFragmentTitleList.clear();
         }
 
         @Override

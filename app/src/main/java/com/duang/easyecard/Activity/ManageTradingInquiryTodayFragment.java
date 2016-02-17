@@ -13,10 +13,10 @@ import com.duang.easyecard.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManageTradingInquiryDayFragment extends Fragment {
+public class ManageTradingInquiryTodayFragment extends Fragment {
 
 
-    public ManageTradingInquiryDayFragment() {
+    public ManageTradingInquiryTodayFragment() {
         // Required empty public constructor
     }
 
