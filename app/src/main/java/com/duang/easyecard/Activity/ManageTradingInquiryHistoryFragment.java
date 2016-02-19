@@ -47,6 +47,12 @@ public class ManageTradingInquiryHistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry,
                 container, false);
+        // 缓存的rootView需要判断是否已经被加过parent，
+        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
+        ViewGroup parent = (ViewGroup) viewFragment.getParent();
+        if (parent != null) {
+            parent.removeView(viewFragment);
+        }
         return viewFragment;
     }
 

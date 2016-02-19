@@ -10,8 +10,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
@@ -32,10 +30,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     private ViewPager viewPager;
 
     private AsyncHttpClient httpClient;
-    private ViewPagerAdapter mViewPagerAdapter;
-
-    private ScrollView pickDateView;
-    private ListView resultListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +92,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     // Defines the number of tabs by setting appropriate fragment and tab name.
     private void setupViewPager(ViewPager viewPager) {
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPagerAdapter.addFragment(new ManageTradingInquiryHistoryFragment(),
                 getResources().getString(R.string.history_trading_inquiry));
         mViewPagerAdapter.addFragment(new SettingsFragment(),
@@ -129,21 +123,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
-        }
-
-        public void addFragment(int position, Fragment fragment, String title) {
-            mFragmentList.add(position, fragment);
-            mFragmentTitleList.add(position, title);
-        }
-
-        public void removeFragment(int position) {
-            mFragmentList.remove(position);
-            mFragmentTitleList.remove(position);
-        }
-
-        public void clearFragments() {
-            mFragmentList.clear();
-            mFragmentTitleList.clear();
         }
 
         @Override
