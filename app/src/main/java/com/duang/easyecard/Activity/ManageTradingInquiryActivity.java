@@ -55,7 +55,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         });
 
         // 显示home按钮
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupActionBar();
 
         // 设置ViewPager
         viewPager = (ViewPager) findViewById(R.id.viewpager);

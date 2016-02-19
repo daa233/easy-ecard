@@ -144,7 +144,7 @@ OnFocusChangeListener {
 		signinButton.setOnClickListener(this);
 		checkcodeImage.setOnClickListener(this);
 	}
-	
+
 	private void getCheckcodeImage() {
 		// 获取验证码图片
 		ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient,
