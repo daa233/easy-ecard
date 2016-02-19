@@ -39,6 +39,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.duang.easyecard.Activity.BaseActivity" />
         </activity>
+        <activity android:name=".Activity.ManageReportLossActivity"></activity>
     </application>
 
 </manifest>
