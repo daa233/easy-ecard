@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_signin">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <!--
          padding 内边距   layout_margin 外边距
   		android:layout_alignParentTop 布局的位置是否处于顶部
@@ -104,7 +110,10 @@
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:paddingLeft="15dp">
+            android:paddingLeft="15dp"
+            android:paddingStart="15dp"
+            android:paddingRight="15dp"
+            android:paddingEnd="15dp">
 
             <ImageView
                 android:id="@+id/signin_checkcode_image"
@@ -125,10 +134,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:inputType="number"
-                    android:ems="3"
+                    android:textSize="15sp"
                     android:maxLength="4"
                     android:gravity="center"
                     android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:hint="@string/checkcode_input_hint"/>
             </LinearLayout>
             <LinearLayout
@@ -141,7 +151,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:gravity="end|center_vertical"
-                    android:layout_marginRight="10dp"
                     style="@style/Material.Drawable.CheckBox"
                     android:text="@string/remember_password"/>
             </LinearLayout>
@@ -160,7 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:text="@string/signin"
             style="@style/Material.Drawable.Ripple.Wave"
             android:background="@drawable/green_button_selector"/>
@@ -172,11 +181,11 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="end|bottom"
-            android:layout_marginBottom="20dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/signin_pic_below"
             android:src="@drawable/signin_pic_below" />
 
     </LinearLayout>
 </LinearLayout>
+</ScrollView>

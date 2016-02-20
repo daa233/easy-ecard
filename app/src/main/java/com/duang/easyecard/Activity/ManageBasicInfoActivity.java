@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,7 +57,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         // Create a progressDialog
         mProgressDialog = new ProgressDialog(ManageBasicInfoActivity.this);
         // Set progressDialog message
-        mProgressDialog.setMessage(getResources().getString(R.string.loading) + "o(>﹏<)o");
+        mProgressDialog.setMessage(getResources().getString(R.string.loading) + "  o(>﹏<)o");
         mProgressDialog.setIndeterminate(false);
         // Show progressDialog
         mProgressDialog.show();
@@ -88,6 +87,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
                 // 解析response
                 new JsoupHtmlData().execute();
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
@@ -114,11 +114,6 @@ public class ManageBasicInfoActivity extends BaseActivity {
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
         protected Void doInBackground(Void... arg0) {
             // 解析返回的responseHtml
             Document doc;
@@ -140,6 +135,8 @@ public class ManageBasicInfoActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 tableView.commit();
+                                // Close the progressDialog
+                                mProgressDialog.dismiss();
                             }
                         });
                     }
@@ -150,13 +147,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            // Close the progressDialog
-            mProgressDialog.dismiss();
-        }
     }
-
     // 从List获取数据，并匹配相关变量
     private void getDataFromList() {
         if (!stringList.isEmpty()) {
@@ -187,4 +178,5 @@ public class ManageBasicInfoActivity extends BaseActivity {
         v.setClickable(false);
         tableView.addViewItem(v);
     }
+
 }

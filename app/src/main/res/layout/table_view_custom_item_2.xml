@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
     android:minHeight="40dp"
     android:duplicateParentState="true">
 
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="15dp"
         style="@style/table_view_large_text"
         android:layout_centerHorizontal="true" />
 
@@ -31,13 +31,12 @@
         android:layout_height="match_parent"
         android:gravity="center"
         style="@style/table_view_large_text"
-        android:layout_marginLeft="20dp" />
+        android:layout_marginLeft="10dp" />
 
     <ImageView
         android:id="@+id/table_view_custom_item_2_arrow"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="15dp"
         android:src="@drawable/chevron_default" />
 </LinearLayout>
