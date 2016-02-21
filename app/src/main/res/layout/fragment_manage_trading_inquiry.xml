@@ -9,46 +9,123 @@
         android:id="@+id/manage_trading_inquiry_history_pick_date"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-    <LinearLayout
+    <com.rey.material.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="20dp">
 
-        <br.com.dina.ui.widget.UITableView
+        <com.rey.material.widget.LinearLayout
             android:id="@+id/manage_trading_inquiry_set_start_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            style="@style/UITableView" />
+            android:orientation="horizontal"
+            android:weightSum="18"
+            android:padding="10dp"
+            android:minHeight="50dp"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/background_view_rounded_corner">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="match_parent"
+                android:gravity="start|center_vertical"
+                android:text="@string/start_time"
+                style="@style/table_view_large_text" />
 
-        <br.com.dina.ui.widget.UITableView
+            <TextView
+                android:id="@+id/manage_trading_inquiry_start_date"
+                android:layout_width="0dp"
+                android:layout_weight="8"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/table_view_large_text"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/manage_trading_inquiry_start_day"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/table_view_large_text" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/chevron_default" />
+            </LinearLayout>
+
+        </com.rey.material.widget.LinearLayout>
+
+        <com.rey.material.widget.LinearLayout
             android:id="@+id/manage_trading_inquiry_set_end_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="18"
+            android:padding="10dp"
+            android:minHeight="50dp"
             android:layout_marginTop="50dp"
-            style="@style/UITableView"/>
+            android:background="@drawable/background_view_rounded_corner">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="match_parent"
+                android:gravity="start|center_vertical"
+                android:text="@string/end_time"
+                style="@style/table_view_large_text" />
+
+            <TextView
+                android:id="@+id/manage_trading_inquiry_end_date"
+                android:layout_width="0dp"
+                android:layout_weight="8"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/table_view_large_text"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/manage_trading_inquiry_end_day"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/table_view_large_text" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/chevron_default" />
+            </LinearLayout>
+        </com.rey.material.widget.LinearLayout>
 
         <com.rey.material.widget.Button
             android:id="@+id/manage_trading_inquiry_query_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/white"
-            android:textSize="22sp"
+            android:layout_marginTop="60dp"
             android:text="@string/query"
-            style="@style/Material.Drawable.Ripple.Wave"
+            style="@style/button_ripple_wave"
             android:background="@drawable/green_button_selector"/>
 
-    </LinearLayout>
+    </com.rey.material.widget.LinearLayout>
     </ScrollView>
 
-    <ListView
-        android:id="@+id/manage_trading_inquiry_history_result_list_view"
+    <com.rey.material.widget.LinearLayout
+        android:id="@+id/manage_trading_inquiry_history_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:visibility="gone" >
+
+    </com.rey.material.widget.LinearLayout>
 </FrameLayout>
 
