@@ -47,220 +47,6 @@ public class TradingInquiryDateUtil {
         setHistoryStartDate(calendar);
     }
 
-    public int getHistoryStartYear() {
-        return historyStartYear;
-    }
-
-    public void setHistoryStartYear(int historyStartYear) {
-        this.historyStartYear = historyStartYear;
-    }
-
-    public int getHistoryStartMonth() {
-        return historyStartMonth;
-    }
-
-    public void setHistoryStartMonth(int historyStartMonth) {
-        this.historyStartMonth = historyStartMonth;
-    }
-
-    public int getHistoryStartDayOfMonth() {
-        return historyStartDayOfMonth;
-    }
-
-    public void setHistoryStartDayOfMonth(int historyStartDayOfMonth) {
-        this.historyStartDayOfMonth = historyStartDayOfMonth;
-    }
-
-    public int getHistoryEndYear() {
-        return historyEndYear;
-    }
-
-    public void setHistoryEndYear(int historyEndYear) {
-        this.historyEndYear = historyEndYear;
-    }
-
-    public int getHistoryEndMonth() {
-        return historyEndMonth;
-    }
-
-    public void setHistoryEndMonth(int historyEndMonth) {
-        this.historyEndMonth = historyEndMonth;
-    }
-
-    public int getHistoryEndDayOfMonth() {
-        return historyEndDayOfMonth;
-    }
-
-    public void setHistoryEndDayOfMonth(int historyEndDayOfMonth) {
-        this.historyEndDayOfMonth = historyEndDayOfMonth;
-    }
-
-    public String getHistoryStartDate() {
-        return historyStartDate;
-    }
-
-    public void setHistoryStartDate(String historyStartDate) {
-        this.historyStartDate = historyStartDate;
-    }
-
-    public String getHistoryStartDayOfWeek() {
-        return historyStartDayOfWeek;
-    }
-
-    public void setHistoryStartDayOfWeek(String historyStartDayOfWeek) {
-        this.historyStartDayOfWeek = historyStartDayOfWeek;
-    }
-
-    public String getHistoryEndDate() {
-        return historyEndDate;
-    }
-
-    public void setHistoryEndDate(String historyEndDate) {
-        this.historyEndDate = historyEndDate;
-    }
-
-    public String getHistoryEndDayOfWeek() {
-        return historyEndDayOfWeek;
-    }
-
-    public void setHistoryEndDayOfWeek(String historyEndDayOfWeek) {
-        this.historyEndDayOfWeek = historyEndDayOfWeek;
-    }
-
-    public int getTodayYear() {
-        return todayYear;
-    }
-
-    public void setTodayYear(int todayYear) {
-        this.todayYear = todayYear;
-    }
-
-    public int getTodayMonth() {
-        return todayMonth;
-    }
-
-    public void setTodayMonth(int todayMonth) {
-        this.todayMonth = todayMonth;
-    }
-
-    public int getTodayDayOfMonth() {
-        return todayDayOfMonth;
-    }
-
-    public void setTodayDayOfMonth(int todayDayOfMonth) {
-        this.todayDayOfMonth = todayDayOfMonth;
-    }
-
-    public String getTodayDate() {
-        return todayDate;
-    }
-
-    public void setTodayDate(String todayDate) {
-        this.todayDate = todayDate;
-    }
-
-    public String getTodayDayOfWeek() {
-        return todayDayOfWeek;
-    }
-
-    public void setTodayDayOfWeek(String todayDayOfWeek) {
-        this.todayDayOfWeek = todayDayOfWeek;
-    }
-
-    public int getWeekStartYear() {
-        return weekStartYear;
-    }
-
-    public void setWeekStartYear(int weekStartYear) {
-        this.weekStartYear = weekStartYear;
-    }
-
-    public int getWeekStartMonth() {
-        return weekStartMonth;
-    }
-
-    public void setWeekStartMonth(int weekStartMonth) {
-        this.weekStartMonth = weekStartMonth;
-    }
-
-    public int getWeekStartDayOfMonth() {
-        return weekStartDayOfMonth;
-    }
-
-    public void setWeekStartDayOfMonth(int weekStartDayOfMonth) {
-        this.weekStartDayOfMonth = weekStartDayOfMonth;
-    }
-
-    public int getWeekEndYear() {
-        return weekEndYear;
-    }
-
-    public void setWeekEndYear(int weekEndYear) {
-        this.weekEndYear = weekEndYear;
-    }
-
-    public int getWeekEndMonth() {
-        return weekEndMonth;
-    }
-
-    public void setWeekEndMonth(int weekEndMonth) {
-        this.weekEndMonth = weekEndMonth;
-    }
-
-    public int getWeekEndDayOfMonth() {
-        return weekEndDayOfMonth;
-    }
-
-    public void setWeekEndDayOfMonth(int weekEndDayOfMonth) {
-        this.weekEndDayOfMonth = weekEndDayOfMonth;
-    }
-
-    public String getWeekStartDate() {
-        return weekStartDate;
-    }
-
-    public void setWeekStartDate(String weekStartDate) {
-        this.weekStartDate = weekStartDate;
-    }
-
-    public String getWeekStartDayOfWeek() {
-        return weekStartDayOfWeek;
-    }
-
-    public void setWeekStartDayOfWeek(String weekStartDayOfWeek) {
-        this.weekStartDayOfWeek = weekStartDayOfWeek;
-    }
-
-    public String getWeekEndDate() {
-        return weekEndDate;
-    }
-
-    public void setWeekEndDate(String weekEndDate) {
-        this.weekEndDate = weekEndDate;
-    }
-
-    public String getWeekEndDayOfWeek() {
-        return weekEndDayOfWeek;
-    }
-
-    public void setWeekEndDayOfWeek(String weekEndDayOfWeek) {
-        this.weekEndDayOfWeek = weekEndDayOfWeek;
-    }
-
-    /**
-     * calendarTransformTool
-     * Get previous calendar.
-     * Input: Calendar presentCalendar, int agoDays
-     * Return: Calendar transformedCalendar
-     */
-    public Calendar calendarTransformTool(Calendar presentCalendar, int agoDays) {
-        Calendar transformedCalendar = Calendar.getInstance();
-        int year = presentCalendar.get(Calendar.YEAR);
-        int month = presentCalendar.get(Calendar.MONTH);
-        int dayOfMonth = presentCalendar.get(Calendar.DAY_OF_MONTH);
-        transformedCalendar.set(year, month, dayOfMonth - agoDays);
-        return transformedCalendar;
-    }
 
     public void setHistoryStartDate(Calendar calendar) {
         historyStartYear = calendar.get(Calendar.YEAR);
@@ -272,6 +58,12 @@ public class TradingInquiryDateUtil {
         historyStartDate = simpleDateFormat.format(calendar.getTime());
     }
 
+    public void setHistoryStartDate(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        setHistoryStartDate(calendar);
+    }
+
     public void setHistoryEndDate(Calendar calendar) {
         historyEndYear = calendar.get(Calendar.YEAR);
         historyEndMonth = calendar.get(Calendar.MONTH);
@@ -280,6 +72,12 @@ public class TradingInquiryDateUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
                 mContext.getString(R.string.display_date_format));
         historyEndDate = simpleDateFormat.format(calendar.getTime());
+    }
+
+    public void setHistoryEndDate(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        setHistoryEndDate(calendar);
     }
 
     public void setTodayDate(Calendar calendar) {
@@ -302,6 +100,12 @@ public class TradingInquiryDateUtil {
         weekStartDate = simpleDateFormat.format(calendar.getTime());
     }
 
+    public void setWeekStartDate(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        setWeekStartDate(calendar);
+    }
+
     public void setWeekEndDate(Calendar calendar) {
         weekEndYear = calendar.get(Calendar.YEAR);
         weekEndMonth = calendar.get(Calendar.MONTH);
@@ -310,6 +114,12 @@ public class TradingInquiryDateUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
                 mContext.getString(R.string.display_date_format));
         weekEndDate = simpleDateFormat.format(calendar.getTime());
+    }
+
+    public void setWeekEndDate(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        setWeekEndDate(calendar);
     }
 
     /**
@@ -345,5 +155,120 @@ public class TradingInquiryDateUtil {
                 break;
         }
         return dayOfWeekString;
+    }
+
+    /**
+     * calendarTransformTool
+     * Get previous calendar.
+     * Input: Calendar presentCalendar, int agoDays
+     * Return: Calendar transformedCalendar
+     */
+    public Calendar calendarTransformTool(Calendar presentCalendar, int agoDays) {
+        Calendar transformedCalendar = Calendar.getInstance();
+        int year = presentCalendar.get(Calendar.YEAR);
+        int month = presentCalendar.get(Calendar.MONTH);
+        int dayOfMonth = presentCalendar.get(Calendar.DAY_OF_MONTH);
+        transformedCalendar.set(year, month, dayOfMonth - agoDays);
+        return transformedCalendar;
+    }
+
+    public int getHistoryStartYear() {
+        return historyStartYear;
+    }
+
+    public int getHistoryStartMonth() {
+        return historyStartMonth;
+    }
+
+    public int getHistoryStartDayOfMonth() {
+        return historyStartDayOfMonth;
+    }
+
+    public String getHistoryStartDate() {
+        return historyStartDate;
+    }
+
+    public String getHistoryStartDayOfWeek() {
+        return historyStartDayOfWeek;
+    }
+
+    public int getHistoryEndYear() {
+        return historyEndYear;
+    }
+
+    public int getHistoryEndMonth() {
+        return historyEndMonth;
+    }
+
+    public int getHistoryEndDayOfMonth() {
+        return historyEndDayOfMonth;
+    }
+
+    public String getHistoryEndDate() {
+        return historyEndDate;
+    }
+
+    public String getHistoryEndDayOfWeek() {
+        return historyEndDayOfWeek;
+    }
+
+    public int getTodayYear() {
+        return todayYear;
+    }
+
+    public int getTodayMonth() {
+        return todayMonth;
+    }
+
+    public int getTodayDayOfMonth() {
+        return todayDayOfMonth;
+    }
+
+    public String getTodayDate() {
+        return todayDate;
+    }
+
+    public String getTodayDayOfWeek() {
+        return todayDayOfWeek;
+    }
+
+    public int getWeekStartYear() {
+        return weekStartYear;
+    }
+
+    public int getWeekStartMonth() {
+        return weekStartMonth;
+    }
+
+    public int getWeekStartDayOfMonth() {
+        return weekStartDayOfMonth;
+    }
+
+    public String getWeekStartDate() {
+        return weekStartDate;
+    }
+
+    public String getWeekStartDayOfWeek() {
+        return weekStartDayOfWeek;
+    }
+
+    public int getWeekEndYear() {
+        return weekEndYear;
+    }
+
+    public int getWeekEndMonth() {
+        return weekEndMonth;
+    }
+
+    public int getWeekEndDayOfMonth() {
+        return weekEndDayOfMonth;
+    }
+
+    public String getWeekEndDate() {
+        return weekEndDate;
+    }
+
+    public String getWeekEndDayOfWeek() {
+        return weekEndDayOfWeek;
     }
 }

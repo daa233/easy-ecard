@@ -1,24 +1,20 @@
 package com.duang.easyecard.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
-import com.rey.material.app.DatePickerDialog;
-import com.rey.material.app.Dialog;
-import com.rey.material.app.DialogFragment;
-import com.rey.material.app.ThemeManager;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.LinearLayout;
-
-import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +34,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private Button queryButton;
 
     private TradingInquiryDateUtil myDateUtil = null;
+    private DatePickerDialog mDatePickerDialog;
 
     public ManageTradingInquiryHistoryFragment() {
         // Required empty public constructor
@@ -97,74 +94,32 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     // 设置起始时间
     public void setStartTime() {
-        boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
-        Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
-                R.style.Material_App_Dialog_DatePicker_Light :
-                R.style.Material_App_Dialog_DatePicker) {
-            // 确定
-            @Override
-            public void onPositiveActionClicked(DialogFragment fragment) {
-                // 更新HistoryStartDate
-                DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
-                Calendar calendar = dialog.getCalendar();
-                myDateUtil.setHistoryStartDate(calendar);
-                updateTimeTable();
-                super.onPositiveActionClicked(fragment);
-            }
-
-            // 取消选择
-            @Override
-            public void onNegativeActionClicked(DialogFragment fragment) {
-                super.onNegativeActionClicked(fragment);
-            }  // 设置日期选择范围
-        }.dateRange(1, 1, 2006,
-                myDateUtil.getTodayDayOfMonth(), myDateUtil.getTodayMonth(),
-                myDateUtil.getTodayYear())
-                // 设置初始时间
-                .date(myDateUtil.getHistoryStartDayOfMonth(),
-                        myDateUtil.getHistoryStartMonth(),
-                        myDateUtil.getHistoryStartYear());
-
-        builder.positiveAction(getString(R.string.OK))
-                .negativeAction(getString(R.string.Cancel));
-        DialogFragment fragment = DialogFragment.newInstance(builder);
-        fragment.show(getFragmentManager(), null);
+        mDatePickerDialog = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        myDateUtil.setHistoryStartDate(year, monthOfYear, dayOfMonth);
+                        updateTimeTable();
+                    }
+                }, myDateUtil.getHistoryStartYear(), myDateUtil.getHistoryStartMonth(),
+                myDateUtil.getHistoryStartDayOfMonth());
+        mDatePickerDialog.setTitle(getString(R.string.set_start_time));
+        mDatePickerDialog.show();
     }
 
     // 设置结束时间
     public void setEndTime() {
-        boolean isLightTheme = ThemeManager.getInstance().getCurrentTheme() == 0;
-        Dialog.Builder builder = new DatePickerDialog.Builder(isLightTheme ?
-                R.style.Material_App_Dialog_DatePicker_Light :
-                R.style.Material_App_Dialog_DatePicker) {
-            // 确定
-            @Override
-            public void onPositiveActionClicked(DialogFragment fragment) {
-                // 更新HistoryEndDate
-                DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
-                Calendar calendar = dialog.getCalendar();
-                myDateUtil.setHistoryEndDate(calendar);
-                updateTimeTable();
-                super.onPositiveActionClicked(fragment);
-            }
-
-            // 取消选择
-            @Override
-            public void onNegativeActionClicked(DialogFragment fragment) {
-                super.onNegativeActionClicked(fragment);
-            }  // 设置日期选择范围
-        }.dateRange(myDateUtil.getHistoryStartDayOfMonth(), myDateUtil.getHistoryStartMonth(),
-                myDateUtil.getHistoryStartYear(),
-                myDateUtil.getTodayDayOfMonth(), myDateUtil.getTodayMonth(),
-                myDateUtil.getTodayYear())
-                // 设置初始时间
-                .date(myDateUtil.getHistoryEndDayOfMonth(),
-                        myDateUtil.getHistoryEndMonth(),
-                        myDateUtil.getHistoryEndYear());
-        builder.positiveAction(getString(R.string.OK))
-                .negativeAction(getString(R.string.Cancel));
-        DialogFragment fragment = DialogFragment.newInstance(builder);
-        fragment.show(getFragmentManager(), null);
+        mDatePickerDialog = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        myDateUtil.setHistoryEndDate(year, monthOfYear, dayOfMonth);
+                        updateTimeTable();
+                    }
+                }, myDateUtil.getHistoryEndYear(), myDateUtil.getHistoryEndMonth(),
+                myDateUtil.getHistoryEndDayOfMonth());
+        mDatePickerDialog.setTitle(getString(R.string.set_end_time));
+        mDatePickerDialog.show();
     }
 
     // 更新时间列表

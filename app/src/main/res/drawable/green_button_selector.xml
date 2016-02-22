@@ -9,7 +9,7 @@
                 android:endColor="#0b470d"
                 android:angle="270" />           
             <corners
-                android:radius="4dp" />
+                android:radius="8dp" />
         </shape>
     </item>
    <!-- focus -->
@@ -20,7 +20,7 @@
                 android:endColor="#00cd66"
                 android:angle="270" />            
             <corners
-                android:radius="4dp" />
+                android:radius="8dp" />
         </shape>
     </item>
 <!-- default -->
@@ -31,7 +31,7 @@
                 android:endColor="#2ac000"
                 android:angle="0" />
             <corners
-                android:radius="4dp" />
+                android:radius="8dp" />
         </shape>
     </item>
 </selector>
