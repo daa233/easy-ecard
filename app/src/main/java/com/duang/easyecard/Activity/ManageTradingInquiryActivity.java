@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,6 +32,11 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     private AsyncHttpClient httpClient;
 
+    protected static int TAB_SELECTED_STATE;
+    protected static int HISTORY_TAB_INIT_FLAG;
+    protected static int TODAY_TAB_INIT_FLAG;
+    protected static int WEEK_TAB_INIT_FLAG;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         // 初始化数据
         initData();
     }
+
     // 初始化布局
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,7 +70,37 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        // 监听Tab的选择事件
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        TAB_SELECTED_STATE = 0;
+                        break;
+                    case 1:
+                        TAB_SELECTED_STATE = 2;
+                        break;
+                    case 2:
+                        TAB_SELECTED_STATE = 3;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
+
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
@@ -80,6 +117,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setHttpClient(httpClient);
             }
+
             // 网络错误
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
@@ -101,6 +139,46 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                 getResources().getString(R.string.week_trading_inquiry));
         viewPager.setAdapter(mViewPagerAdapter);
     }
+
+    /**
+     * doBack方法
+     * 根据当前状态判断是否退出
+     * 如果不处于“历史流水”查询状态，则直接退出
+     * 如果处于“历史流水”查询状态，切换到时间选择界面
+     */
+    private void doBack() {
+        switch (TAB_SELECTED_STATE) {
+            case 0:
+            case 2:
+            case 3:
+                // 不处于“历史流水”查询状态，则直接退出
+                finish();
+                break;
+            case 1:
+                // 处于“历史流水”查询状态，切换到时间选择界面
+                ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
+                ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
+                // 将TAB_SELECTED_STATE置为0
+                TAB_SELECTED_STATE = 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    // 菜单项选择
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                doBack();
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
     // Custom adapter class provides fragments required for the view pager.
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();

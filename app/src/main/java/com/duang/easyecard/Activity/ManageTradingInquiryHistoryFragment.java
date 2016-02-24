@@ -23,8 +23,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     private View viewFragment;
 
-    private ScrollView pickDateView;
-    private LinearLayout resultView;
+    protected static ScrollView pickDateView;
+    protected static LinearLayout resultView;
     private LinearLayout setStartTimeLayout;
     private LinearLayout setEndTimeLayout;
     private TextView startDateTextView;
@@ -135,6 +135,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         // 将pickDateView隐藏，显示resultView
         pickDateView.setVisibility(View.GONE);
         resultView.setVisibility(View.VISIBLE);
+        // 将TAB_SELECTED_STATE置为1
+        ManageTradingInquiryActivity.TAB_SELECTED_STATE = 1;
     }
 
     @Override
