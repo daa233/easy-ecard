@@ -22,7 +22,6 @@ android {
             dirs 'libs'
         }
     }
-    useLibrary 'org.apache.http.legacy'
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_7
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -34,9 +33,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile('name': 'changeiconcolorwithtext-release', ext: 'aar')
     compile('name': 'android-uitableview-debug', ext: 'aar')
+    compile('name': 'mypinnedheaderlistview-release', ext: 'aar')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.github.rey5137:material:1.2.2'
     compile 'com.android.support:design:23.1.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.android.support:support-v4:23.1.1'
 }
