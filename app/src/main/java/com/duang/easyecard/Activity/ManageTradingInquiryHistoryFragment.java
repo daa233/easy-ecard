@@ -12,6 +12,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.LinearLayout;
@@ -20,8 +21,6 @@ import com.rey.material.widget.LinearLayout;
  * A simple {@link Fragment} subclass.
  */
 public class ManageTradingInquiryHistoryFragment extends Fragment implements View.OnClickListener {
-
-    private View viewFragment;
 
     protected static ScrollView pickDateView;
     protected static LinearLayout resultView;
@@ -36,28 +35,29 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private TradingInquiryDateUtil myDateUtil = null;
     private DatePickerDialog mDatePickerDialog;
 
+    private String TAG = "ManageTradingInquiryHistoryFragment";
+
     public ManageTradingInquiryHistoryFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        LogUtil.d(TAG, "onAttach");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry,
-                container, false);
-        // 缓存的rootView需要判断是否已经被加过parent，
-        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
-        ViewGroup parent = (ViewGroup) viewFragment.getParent();
-        if (parent != null) {
-            parent.removeView(viewFragment);
-        }
-        return viewFragment;
+        LogUtil.d(TAG, "onCreateView");
+        return inflater.inflate(R.layout.fragment_manage_trading_inquiry, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        LogUtil.d(TAG, "onActivityCreated");
         initView();
     }
 
@@ -82,6 +82,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 R.id.manage_trading_inquiry_end_day);
         queryButton = (Button) getActivity().findViewById(
                 R.id.manage_trading_inquiry_query_button);
+
+        // 根据TAB的选择状态来显示布局
+        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
+
         // 初始化DateUtil
         myDateUtil = new TradingInquiryDateUtil(getActivity());
         // 监听控件的点击事件
@@ -90,6 +94,18 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         queryButton.setOnClickListener(this);
         // 更新时间列表
         updateTimeTable();
+    }
+
+    public void chooseViewByState(boolean historyTabInitFlag) {
+        if (historyTabInitFlag) {
+            // 加载结果界面
+            pickDateView.setVisibility(View.GONE);
+            resultView.setVisibility(View.VISIBLE);
+        } else {
+            // 加载时间选择界面
+            pickDateView.setVisibility(View.VISIBLE);
+            resultView.setVisibility(View.GONE);
+        }
     }
 
     // 设置起始时间
@@ -135,18 +151,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         // 将pickDateView隐藏，显示resultView
         pickDateView.setVisibility(View.GONE);
         resultView.setVisibility(View.VISIBLE);
-        // 将TAB_SELECTED_STATE置为1
-        ManageTradingInquiryActivity.TAB_SELECTED_STATE = 1;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+        // 将HistoryTabInitFlag置为true
+        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
     }
 
     // 监听控件的点击事件
@@ -165,5 +171,47 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogUtil.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtil.d(TAG, "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogUtil.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtil.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LogUtil.d(TAG, "onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtil.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        LogUtil.d(TAG, "onDetach");
     }
 }

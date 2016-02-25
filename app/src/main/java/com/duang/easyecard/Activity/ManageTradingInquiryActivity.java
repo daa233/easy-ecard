@@ -32,10 +32,9 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     private AsyncHttpClient httpClient;
 
-    protected static int TAB_SELECTED_STATE;
-    protected static int HISTORY_TAB_INIT_FLAG;
-    protected static int TODAY_TAB_INIT_FLAG;
-    protected static int WEEK_TAB_INIT_FLAG;
+    protected static boolean HISTORY_TAB_INIT_FLAG;
+    protected static boolean TODAY_TAB_INIT_FLAG;
+    protected static boolean WEEK_TAB_INIT_FLAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,39 +69,14 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        // 监听Tab的选择事件
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switch (tab.getPosition()) {
-                    case 0:
-                        TAB_SELECTED_STATE = 0;
-                        break;
-                    case 1:
-                        TAB_SELECTED_STATE = 2;
-                        break;
-                    case 2:
-                        TAB_SELECTED_STATE = 3;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
     }
 
     // 初始化数据
     private void initData() {
+        // 初始化各INIT_FLAG
+        HISTORY_TAB_INIT_FLAG = false;
+        TODAY_TAB_INIT_FLAG = false;
+        WEEK_TAB_INIT_FLAG = false;
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
@@ -133,9 +107,9 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPagerAdapter.addFragment(new ManageTradingInquiryHistoryFragment(),
                 getResources().getString(R.string.history_trading_inquiry));
-        mViewPagerAdapter.addFragment(new SettingsFragment(),
+        mViewPagerAdapter.addFragment(new ManageTradingInquiryTodayFragment(),
                 getResources().getString(R.string.day_trading_inquiry));
-        mViewPagerAdapter.addFragment(new SettingsFragment(),
+        mViewPagerAdapter.addFragment(new ManageTradingInquiryWeekFragment(),
                 getResources().getString(R.string.week_trading_inquiry));
         viewPager.setAdapter(mViewPagerAdapter);
     }
@@ -147,19 +121,21 @@ public class ManageTradingInquiryActivity extends BaseActivity {
      * 如果处于“历史流水”查询状态，切换到时间选择界面
      */
     private void doBack() {
-        switch (TAB_SELECTED_STATE) {
+        switch (tabLayout.getSelectedTabPosition()) {
             case 0:
-            case 2:
-            case 3:
-                // 不处于“历史流水”查询状态，则直接退出
-                finish();
+                if (!HISTORY_TAB_INIT_FLAG) {
+                    // 位于“历史流水”时间选择界面，直接退出
+                    finish();
+                } else {
+                    // 位于“历史流水”查询结果界面，返回到时间选择界面
+                    ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
+                    ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
+                }
                 break;
             case 1:
-                // 处于“历史流水”查询状态，切换到时间选择界面
-                ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
-                ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
-                // 将TAB_SELECTED_STATE置为0
-                TAB_SELECTED_STATE = 0;
+            case 2:
+                // 不处于“历史流水”查询状态，则直接退出
+                finish();
                 break;
             default:
                 break;
