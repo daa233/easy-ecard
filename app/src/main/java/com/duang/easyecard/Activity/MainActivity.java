@@ -41,7 +41,8 @@ public class MainActivity extends BaseActivity {
     private void initEvent() {
         changeColorTab.setViewpager(mViewPager);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);        }
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     //初始化四个Fragment

@@ -15,6 +15,7 @@ import com.duang.easyecard.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,17 +43,17 @@ public class ManageBasicInfoActivity extends BaseActivity {
     private List<String> stringList;
     private AsyncHttpClient httpClient;
 
-	private UITableView tableView;
+    private UITableView tableView;
     private ProgressDialog mProgressDialog;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_manage_basic_info);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_manage_basic_info);
         // 显示返回按钮
         setupActionBar();
         // 绑定控件
-		tableView = (UITableView) findViewById(R.id.manage_basic_info_table_view);
+        tableView = (UITableView) findViewById(R.id.manage_basic_info_table_view);
 
         // Create a progressDialog
         mProgressDialog = new ProgressDialog(ManageBasicInfoActivity.this);
@@ -63,7 +64,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         mProgressDialog.show();
 
         initData();  // 初始化数据
-	}
+    }
 
     // 初始化数据
     private void initData() {
@@ -99,7 +100,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
     }
 
     // 组建列表布局
-	private void createList() {
+    private void createList() {
         generateCustomItem(tableView, getResources().getString(R.string.name), name);
         generateCustomItem(tableView, getResources().getString(R.string.stu_id), stuId);
         generateCustomItem(tableView, getResources().getString(R.string.card_account), cardAccount);
@@ -108,7 +109,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         generateCustomItem(tableView, getResources().getString(R.string.report_loss_state),
                 reportLossState);
         generateCustomItem(tableView, getResources().getString(R.string.freeze_state), freezeState);
-	}
+    }
 
     // 通过网站返回的html文本解析数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
@@ -128,26 +129,22 @@ public class ManageBasicInfoActivity extends BaseActivity {
                 getDataFromList();
                 // 组建列表布局
                 createList();
-                // 在主线程中更新UI
-                new Thread() {
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tableView.commit();
-                                // Close the progressDialog
-                                mProgressDialog.dismiss();
-                            }
-                        });
-                    }
-                }.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 在主线程中更新UI
+            tableView.commit();
+            // Close the progressDialog
+            mProgressDialog.dismiss();
+        }
     }
+
     // 从List获取数据，并匹配相关变量
     private void getDataFromList() {
         if (!stringList.isEmpty()) {

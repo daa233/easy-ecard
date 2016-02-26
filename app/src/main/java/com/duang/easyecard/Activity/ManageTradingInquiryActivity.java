@@ -21,6 +21,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -30,7 +31,10 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private AsyncHttpClient httpClient;
+    protected static AsyncHttpClient httpClient;
+    protected static ArrayList<HashMap<String, String>> historyDataList;
+    protected static ArrayList<HashMap<String, String>> todayDataList;
+    protected static ArrayList<HashMap<String, String>> weekDataList;
 
     protected static boolean HISTORY_TAB_INIT_FLAG;
     protected static boolean TODAY_TAB_INIT_FLAG;

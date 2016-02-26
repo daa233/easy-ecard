@@ -311,9 +311,8 @@ OnFocusChangeListener {
 			}
 		}
 		// 跳转到主界面
-		Intent intent = new Intent(MyApplication.getContext(),
-				MainActivity.class);
-		startActivity(intent);
+		startActivity(new Intent(MyApplication.getContext(),
+				MainActivity.class));
 		finish();  // 销毁活动
 	}
 	// 登录失败

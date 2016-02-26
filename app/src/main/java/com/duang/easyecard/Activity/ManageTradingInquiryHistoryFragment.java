@@ -10,12 +10,17 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.LinearLayout;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +41,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private DatePickerDialog mDatePickerDialog;
 
     private String TAG = "ManageTradingInquiryHistoryFragment";
+
+    private String response;
+    private int maxPageIndex = 1;  // 最大页码，默认为1
+    private int pageIndex = 1;
 
     public ManageTradingInquiryHistoryFragment() {
         // Required empty public constructor
@@ -96,6 +105,33 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         updateTimeTable();
     }
 
+    // 初始化数据，开始“历史流水”查询
+    public void initData() {
+        // 组装Url地址
+        UrlConstant.trjnListStartTime = myDateUtil.getHistoryStartYear() + "-" +
+                myDateUtil.getHistoryStartMonth() + "-" + myDateUtil.getHistoryStartDayOfMonth();
+        UrlConstant.trjnListEndTime = myDateUtil.getHistoryEndYear() + "-" +
+                myDateUtil.getHistoryEndMonth() + "-" + myDateUtil.getHistoryEndDayOfMonth();
+        UrlConstant.trjnListPageIndex = pageIndex;
+        // 发送GET请求
+        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistroy(),
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // 成功响应
+                        response = new String(responseBody);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                          Throwable error) {
+                        // 网络错误
+                        Toast.makeText(getContext(), R.string.network_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public void chooseViewByState(boolean historyTabInitFlag) {
         if (historyTabInitFlag) {
             // 加载结果界面
@@ -153,6 +189,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         resultView.setVisibility(View.VISIBLE);
         // 将HistoryTabInitFlag置为true
         ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
+        // 开始“历史流水”查询
+        initData();
     }
 
     // 监听控件的点击事件
