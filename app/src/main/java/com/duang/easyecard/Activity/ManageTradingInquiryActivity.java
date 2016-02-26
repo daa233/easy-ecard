@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -94,6 +95,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setHttpClient(httpClient);
+                LogUtil.d("ManageTradingInquiryAcitvity", new String(responseBody));
             }
 
             // 网络错误

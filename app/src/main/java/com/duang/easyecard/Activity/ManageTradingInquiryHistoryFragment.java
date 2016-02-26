@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +19,6 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.rey.material.widget.Button;
-import com.rey.material.widget.LinearLayout;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -113,6 +113,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         UrlConstant.trjnListEndTime = myDateUtil.getHistoryEndYear() + "-" +
                 myDateUtil.getHistoryEndMonth() + "-" + myDateUtil.getHistoryEndDayOfMonth();
         UrlConstant.trjnListPageIndex = pageIndex;
+        LogUtil.d(TAG, UrlConstant.getTrjnListHistroy());
         // 发送GET请求
         ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistroy(),
                 new AsyncHttpResponseHandler() {
@@ -126,6 +127,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                           Throwable error) {
                         // 网络错误
+                        LogUtil.d(TAG, new String(responseBody));
                         Toast.makeText(getContext(), R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
                     }

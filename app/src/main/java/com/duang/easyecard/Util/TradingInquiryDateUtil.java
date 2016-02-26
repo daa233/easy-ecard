@@ -50,7 +50,7 @@ public class TradingInquiryDateUtil {
 
     public void setHistoryStartDate(Calendar calendar) {
         historyStartYear = calendar.get(Calendar.YEAR);
-        historyStartMonth = calendar.get(Calendar.MONTH);
+        historyStartMonth = calendar.get(Calendar.MONTH) + 1;
         historyStartDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         historyStartDayOfWeek = translateDayOfWeekValueTool(calendar.get(Calendar.DAY_OF_WEEK));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -60,13 +60,13 @@ public class TradingInquiryDateUtil {
 
     public void setHistoryStartDate(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth);
+        calendar.set(year, month - 1, dayOfMonth);
         setHistoryStartDate(calendar);
     }
 
     public void setHistoryEndDate(Calendar calendar) {
         historyEndYear = calendar.get(Calendar.YEAR);
-        historyEndMonth = calendar.get(Calendar.MONTH);
+        historyEndMonth = calendar.get(Calendar.MONTH) + 1;
         historyEndDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         historyEndDayOfWeek = translateDayOfWeekValueTool(calendar.get(Calendar.DAY_OF_WEEK));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -76,13 +76,13 @@ public class TradingInquiryDateUtil {
 
     public void setHistoryEndDate(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth);
+        calendar.set(year, month - 1, dayOfMonth);
         setHistoryEndDate(calendar);
     }
 
     public void setTodayDate(Calendar calendar) {
         todayYear = calendar.get(Calendar.YEAR);
-        todayMonth = calendar.get(Calendar.MONTH);
+        todayMonth = calendar.get(Calendar.MONTH) + 1;
         todayDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         todayDayOfWeek = translateDayOfWeekValueTool(calendar.get(Calendar.DAY_OF_WEEK));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -92,7 +92,7 @@ public class TradingInquiryDateUtil {
 
     public void setWeekStartDate(Calendar calendar) {
         weekStartYear = calendar.get(Calendar.YEAR);
-        weekStartMonth = calendar.get(Calendar.MONTH);
+        weekStartMonth = calendar.get(Calendar.MONTH) + 1;
         weekStartDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         weekStartDayOfWeek = translateDayOfWeekValueTool(calendar.get(Calendar.DAY_OF_WEEK));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -102,13 +102,13 @@ public class TradingInquiryDateUtil {
 
     public void setWeekStartDate(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth);
+        calendar.set(year, month - 1, dayOfMonth);
         setWeekStartDate(calendar);
     }
 
     public void setWeekEndDate(Calendar calendar) {
         weekEndYear = calendar.get(Calendar.YEAR);
-        weekEndMonth = calendar.get(Calendar.MONTH);
+        weekEndMonth = calendar.get(Calendar.MONTH) + 1;
         weekEndDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         weekEndDayOfWeek = translateDayOfWeekValueTool(calendar.get(Calendar.DAY_OF_WEEK));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -118,7 +118,7 @@ public class TradingInquiryDateUtil {
 
     public void setWeekEndDate(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth);
+        calendar.set(year, month - 1, dayOfMonth);
         setWeekEndDate(calendar);
     }
 
