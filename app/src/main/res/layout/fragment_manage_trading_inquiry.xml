@@ -126,8 +126,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.duang.mypinnedheaderlistview.PinnedHeaderListView
+            android:id="@+id/manage_trading_inquiry_list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:groupIndicator="@null"/>
     </LinearLayout>
 </FrameLayout>
 

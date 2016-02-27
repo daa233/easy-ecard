@@ -136,6 +136,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                     // 位于“历史流水”查询结果界面，返回到时间选择界面
                     ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
                     ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
+                    // 将HISTORY_TAB_INIT_FLAG置为false
+                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = false;
                 }
                 break;
             case 1:
