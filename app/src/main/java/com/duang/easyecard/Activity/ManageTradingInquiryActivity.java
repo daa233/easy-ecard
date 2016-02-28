@@ -15,8 +15,10 @@ import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Model.TradingInquiry;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
+import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -33,6 +35,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     private ViewPager viewPager;
 
     protected static AsyncHttpClient httpClient;
+    protected static TradingInquiryDateUtil myDateUtil;
     protected static ArrayList<HashMap<String, String>> historyDataList;
     protected static ArrayList<HashMap<String, String>> todayDataList;
     protected static ArrayList<HashMap<String, String>> weekDataList;
@@ -82,6 +85,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         HISTORY_TAB_INIT_FLAG = false;
         TODAY_TAB_INIT_FLAG = false;
         WEEK_TAB_INIT_FLAG = false;
+        // 初始化DateUtil
+        myDateUtil = new TradingInquiryDateUtil(this);
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();

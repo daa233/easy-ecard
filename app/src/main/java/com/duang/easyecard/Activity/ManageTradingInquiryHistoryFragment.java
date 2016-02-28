@@ -59,7 +59,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private TextView endDayTextView;
     private Button queryButton;
 
-    private TradingInquiryDateUtil myDateUtil = null;
+    private TradingInquiryDateUtil myDateUtil;
     private DatePickerDialog mDatePickerDialog;
     private ProgressDialog mProgressDialog;
     private List<Group> mGroupList;
@@ -121,11 +121,11 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         queryButton = (Button) getActivity().findViewById(
                 R.id.manage_trading_inquiry_query_button);
 
+        // 获得从Activity传递过来的DateUtil
+        myDateUtil = ManageTradingInquiryActivity.myDateUtil;
+
         // 根据TAB的选择状态来显示布局
         chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
-
-        // 初始化DateUtil
-        myDateUtil = new TradingInquiryDateUtil(getActivity());
         // 监听控件的点击事件
         setStartTimeLayout.setOnClickListener(this);
         setEndTimeLayout.setOnClickListener(this);
@@ -169,6 +169,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             // 加载结果界面
             pickDateView.setVisibility(View.GONE);
             resultView.setVisibility(View.VISIBLE);
+            matchDataWithAdapterLists();
+            setupWithAdapter();
         } else {
             // 加载时间选择界面
             pickDateView.setVisibility(View.VISIBLE);
@@ -182,10 +184,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        myDateUtil.setHistoryStartDate(year, monthOfYear+1, dayOfMonth);
+                        myDateUtil.setHistoryStartDate(year, monthOfYear + 1, dayOfMonth);
                         updateTimeTable();
                     }
-                }, myDateUtil.getHistoryStartYear(), myDateUtil.getHistoryStartMonth()-1,
+                }, myDateUtil.getHistoryStartYear(), myDateUtil.getHistoryStartMonth() - 1,
                 myDateUtil.getHistoryStartDayOfMonth());
         mDatePickerDialog.setTitle(getString(R.string.set_start_time));
         mDatePickerDialog.show();
@@ -197,10 +199,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        myDateUtil.setHistoryEndDate(year, monthOfYear+1, dayOfMonth);
+                        myDateUtil.setHistoryEndDate(year, monthOfYear + 1, dayOfMonth);
                         updateTimeTable();
                     }
-                }, myDateUtil.getHistoryEndYear(), myDateUtil.getHistoryEndMonth()-1,
+                }, myDateUtil.getHistoryEndYear(), myDateUtil.getHistoryEndMonth() - 1,
                 myDateUtil.getHistoryEndDayOfMonth());
         mDatePickerDialog.setTitle(getString(R.string.set_end_time));
         mDatePickerDialog.show();
@@ -355,25 +357,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-
-                mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
-                        R.layout.manage_trading_inquiry_group_item, mChildList,
-                        R.layout.manage_trading_inquiry_child_item);
-                mListView.setAdapter(mAdapter);
-
-                // 如果有数据，展开所有group
-                if (!ManageTradingInquiryActivity.historyDataList.isEmpty()) {
-                    for (int i = 0, count = mListView.getCount();
-                         i < count; i++) {
-                        mListView.expandGroup(i);
-                    }
-                }
-                // 设置监听事件
-                mListView.setOnHeaderUpdateListener(ManageTradingInquiryHistoryFragment.this);
-                mListView.setOnGroupClickListener(ManageTradingInquiryHistoryFragment.this);
-                mListView.setOnChildClickListener(ManageTradingInquiryHistoryFragment.this);
-                // 将HISTORY_TAB_INIT_FLAG置为true
-                ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
+                setupWithAdapter();
                 // 耗时操作基本完成呢，关闭mProgressDialog
                 mProgressDialog.dismiss();
             }
@@ -462,6 +446,30 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             // 把这一组的childTempList添加到mChildList
             mChildList.add(childTempList);
         }
+    }
+
+    /**
+     * 设置Adapter及监听ListView相关事件
+     */
+    private void setupWithAdapter() {
+        mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
+                R.layout.manage_trading_inquiry_group_item, mChildList,
+                R.layout.manage_trading_inquiry_child_item);
+        mListView.setAdapter(mAdapter);
+
+        // 如果有数据，展开所有group
+        if (!ManageTradingInquiryActivity.historyDataList.isEmpty()) {
+            for (int i = 0, count = mListView.getCount();
+                 i < count; i++) {
+                mListView.expandGroup(i);
+            }
+        }
+        // 设置监听事件
+        mListView.setOnHeaderUpdateListener(ManageTradingInquiryHistoryFragment.this);
+        mListView.setOnGroupClickListener(ManageTradingInquiryHistoryFragment.this);
+        mListView.setOnChildClickListener(ManageTradingInquiryHistoryFragment.this);
+        // 将HISTORY_TAB_INIT_FLAG置为true
+        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
     }
 
     // 监听控件的点击事件
