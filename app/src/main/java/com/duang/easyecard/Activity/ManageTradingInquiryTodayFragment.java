@@ -3,6 +3,7 @@ package com.duang.easyecard.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,7 +13,10 @@ import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.Group;
 import com.duang.easyecard.Model.TradingInquiry;
 import com.duang.easyecard.R;
@@ -20,9 +24,19 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.duang.easyecard.Util.TradingInquiryExpandableListAdapter;
 import com.duang.mypinnedheaderlistview.PinnedHeaderListView;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.rey.material.widget.LinearLayout;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +82,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         LogUtil.d(TAG, "onActivityCreated");
         initView();
+        initData();
     }
 
     private void initView() {
@@ -78,9 +93,255 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
     }
 
+    private void initData() {
+        // 初始化todayDataList
+        ManageTradingInquiryActivity.todayDataList = new ArrayList<>();
+        // 发送GET请求
+        sendGETRequest();
+    }
+
+    /**
+     * 发送GET请求
+     */
+    private void sendGETRequest() {
+        UrlConstant.trjnListPageIndex = pageIndex;  // 组装Url
+        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListToday(),
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // 成功响应
+                        response = new String(responseBody);
+                        LogUtil.d(TAG, new String(responseBody));
+                        new JsoupHtmlData().execute();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                          Throwable error) {
+                        // 网络错误
+                        LogUtil.e(TAG, new String(responseBody));
+                        Toast.makeText(getContext(), R.string.network_error,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    /**
+     * 通过网站返回的html文本解析数据
+     * 首次解析会得到最大页码maxIndex
+     * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
+     * 结果保存在ManageTradingInquiryActivity中的todayDataList
+     * <p/>
+     * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
+     * 所以要通过FIRST_TIME_TO_PARSE_FLAG进行标识，仅在首次解析时获取maxIndex
+     */
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // 只有首次解析时才新建 progressDialog
+            if (FIRST_TIME_TO_PARSE_FLAG) {
+                // Create a progressDialog
+                mProgressDialog = new ProgressDialog(getActivity());
+                // Set progressDialog message
+                mProgressDialog.setMessage(getString(R.string.loading) + " o(>﹏<)o");
+                mProgressDialog.setIndeterminate(false);
+                // Show progressDialog
+                mProgressDialog.show();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                // 找到表格
+                for (Element table : doc.select("table[class=table_show]")) {
+                    // 找到表格的所有行
+                    for (Element row : table.select("tr:gt(0)")) {
+                        HashMap<String, String> map = new HashMap<>();
+                        // 找到每一行所包含的td
+                        Elements tds = row.select("td");
+                        // tempTradingTime用于打断字符串
+                        String[] tempTradingTime = tds.get(0).text().split(" ");
+                        // 将td添加到arraylist
+                        map.put("TradingDate", tempTradingTime[0]);
+                        map.put("TradingTime", tempTradingTime[1]);
+                        map.put("MerchantName", tds.get(1).text());
+                        map.put("TradingName", tds.get(2).text());
+                        map.put("TransactionAmount", tds.get(3).text());
+                        map.put("Balance", tds.get(4).text());
+                        ManageTradingInquiryActivity.todayDataList.add(map);
+                    }
+                }
+                // 首次解析时，获得maxIndex
+                if (FIRST_TIME_TO_PARSE_FLAG) {
+                    // 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
+                    String remainString = "";
+                    for (Element page : doc.select("a[data-ajax=true]")) {
+                        remainString = page.attr("href");
+                    }
+                    // 当记录页数少于1时，remainString为空
+                    if (!remainString.isEmpty()) {
+                        // remainString不为空
+                        remainString = remainString.substring(
+                                remainString.indexOf("pageindex=") + 10);
+                        maxPageIndex = Integer.valueOf(remainString);
+                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+                    } else {
+                        // remainString为空, maxIndex值保持不变
+                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+                    }
+                    // 将首次解析标志置为false
+                    FIRST_TIME_TO_PARSE_FLAG = false;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 判断是否已经全部解析完成
+            if (pageIndex < maxPageIndex) {
+                // 如果当前页码不是最大页码，再次发送GET请求，获取更多数据
+                pageIndex++;
+                initData();
+            } else {
+                /**
+                 * 如果当前页码是最大页码，说明已准备好todayDataList加载完成
+                 * 通过matchDataWithAdapterLists，准备mAdapter的数据
+                 */
+                matchDataWithAdapterLists();
+                setupWithAdapter();
+                // 耗时操作基本完成呢，关闭mProgressDialog
+                mProgressDialog.dismiss();
+            }
+        }
+    }
+
+    /**
+     * 从todayDataList中获取数据，配置mGroupList和mChildList
+     */
+    private void matchDataWithAdapterLists() {
+        // 初始化mGroupList和mChildList
+        mGroupList = new ArrayList<>();
+        mChildList = new ArrayList<>();
+        // 没有搜索到数据
+        if (ManageTradingInquiryActivity.todayDataList.isEmpty()) {
+            // 添加默认数据
+            Group group = new Group();
+            group.setTitle(" --- 这里空空的，一定不是因为我穷。--- ");
+            mGroupList.add(group);
+            ArrayList<TradingInquiry> childTempList = new ArrayList<>();
+            TradingInquiry tradingInquiry = new TradingInquiry();
+            tradingInquiry.setTradingTime("如果  选");
+            tradingInquiry.setMerchantName("对了时间  结果 可能");
+            tradingInquiry.setTradingName("就会   不  一");
+            tradingInquiry.setTransactionAmount(" 样");
+            childTempList.add(tradingInquiry);
+            mChildList.add(childTempList);
+            return;
+        }
+
+        // 导入mGroupList
+        String tempDate = null;
+        String tempDateFromHashMapList;  // 直接从HashMapList中获取的日期
+        // 通过循环遍历todayDataList来得到mGroupList
+        for (int i = 0; i < ManageTradingInquiryActivity.todayDataList.size(); i++) {
+            tempDateFromHashMapList = ManageTradingInquiryActivity
+                    .todayDataList.get(i).get("TradingDate");
+            if (mGroupList.size() == 0) {
+                tempDate = tempDateFromHashMapList;
+                LogUtil.d("tempDate", tempDate);
+                Group group = new Group();
+                group.setTitle(tempDate);
+                mGroupList.add(group);
+            } else if (mGroupList.size() > 0) {
+                // 如果日期不同，则把新日期添加到mGroupList
+                if (!tempDate.equals(tempDateFromHashMapList)) {
+                    tempDate = tempDateFromHashMapList;
+                    LogUtil.d("tempDate", tempDate);
+                    Group group = new Group();
+                    group.setTitle(tempDate);
+                    mGroupList.add(group);
+                }
+            }
+        }
+        // 打印mGroupList结果
+        for (int k = 0; k < mGroupList.size(); k++) {
+            LogUtil.d("groupTitle", mGroupList.get(k).getTitle());
+        }
+        // 导入mChildList
+        ArrayList<TradingInquiry> childTempList;
+        for (int i = 0; i < mGroupList.size(); i++) {
+            tempDate = mGroupList.get(i).getTitle();
+            // 进入一个新的组，要有一个新的childTempList
+            childTempList = new ArrayList<>();
+            for (int j = 0; j < ManageTradingInquiryActivity.todayDataList.size(); j++) {
+                String childDate = ManageTradingInquiryActivity
+                        .todayDataList.get(j).get("TradingDate");
+                // 如果日期相同（包含组名）则属于该组
+                if (childDate.contains(tempDate)) {
+                    TradingInquiry tradingInquiry = new TradingInquiry();
+                    tradingInquiry.setTradingDate(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("TradingDate"));
+                    tradingInquiry.setTradingTime(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("TradingTime"));
+                    tradingInquiry.setMerchantName(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("MerchantName"));
+                    tradingInquiry.setTradingName(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("TradingName"));
+                    tradingInquiry.setTransactionAmount(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("TransactionAmount"));
+                    tradingInquiry.setBalance(ManageTradingInquiryActivity
+                            .todayDataList.get(j).get("Balance"));
+                    childTempList.add(tradingInquiry);
+                }
+            }
+            // 把这一组的childTempList添加到mChildList
+            mChildList.add(childTempList);
+        }
+    }
+
+    /**
+     * 设置Adapter及监听ListView相关事件
+     */
+    private void setupWithAdapter() {
+        mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
+                R.layout.manage_trading_inquiry_group_item, mChildList,
+                R.layout.manage_trading_inquiry_child_item);
+        mListView.setAdapter(mAdapter);
+
+        // 如果有数据，展开所有group
+        if (!ManageTradingInquiryActivity.todayDataList.isEmpty()) {
+            for (int i = 0, count = mListView.getCount(); i < count; i++) {
+                mListView.expandGroup(i);
+            }
+        }
+        // 设置监听事件
+        mListView.setOnHeaderUpdateListener(ManageTradingInquiryTodayFragment.this);
+        mListView.setOnGroupClickListener(ManageTradingInquiryTodayFragment.this);
+        mListView.setOnChildClickListener(ManageTradingInquiryTodayFragment.this);
+    }
+
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                 int childPosition, long id) {
+        // 点击子项显示卡余额
+        Toast.makeText(MyApplication.getContext(),
+                mChildList.get(groupPosition).get(childPosition).getTradingDate()
+                        + "-" +
+                        mChildList.get(groupPosition).get(childPosition).getTradingTime()
+                        + "  " + "交易后余额  " +
+                        mChildList.get(groupPosition).get(childPosition).getBalance(),
+                Toast.LENGTH_SHORT).show();
         return false;
     }
 

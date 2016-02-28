@@ -157,7 +157,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                           Throwable error) {
                         // 网络错误
-                        LogUtil.d(TAG, new String(responseBody));
+                        LogUtil.e(TAG, new String(responseBody));
                         Toast.makeText(getContext(), R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -459,8 +459,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
         // 如果有数据，展开所有group
         if (!ManageTradingInquiryActivity.historyDataList.isEmpty()) {
-            for (int i = 0, count = mListView.getCount();
-                 i < count; i++) {
+            for (int i = 0, count = mListView.getCount(); i < count; i++) {
                 mListView.expandGroup(i);
             }
         }

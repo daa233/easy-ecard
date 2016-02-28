@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -164,6 +165,16 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                 break;
             default:
                 break;
+        }
+        return false;
+    }
+
+    // 监听返回键
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)	{
+        if (keyCode == KeyEvent.KEYCODE_BACK)	{
+            doBack();
+            return false;
         }
         return false;
     }
