@@ -1,7 +1,6 @@
 package com.duang.easyecard.Activity;
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -28,6 +28,7 @@ import com.duang.easyecard.Util.TradingInquiryExpandableListAdapter;
 import com.duang.mypinnedheaderlistview.PinnedHeaderListView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.rey.material.widget.Button;
+import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,8 +48,12 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         ExpandableListView.OnGroupClickListener, ExpandableListView.OnChildClickListener,
         PinnedHeaderListView.OnHeaderUpdateListener {
 
+    private View viewFragment;  // 缓存Fragment的View
+
     protected static ScrollView pickDateView;
     protected static LinearLayout resultView;
+    protected static ProgressView mProgressView;
+    protected static ImageView mNothingFoundedImageView;
 
     private PinnedHeaderListView mListView;
     private LinearLayout setStartTimeLayout;
@@ -61,7 +66,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     private TradingInquiryDateUtil myDateUtil;
     private DatePickerDialog mDatePickerDialog;
-    private ProgressDialog mProgressDialog;
     private List<Group> mGroupList;
     private List<List<TradingInquiry>> mChildList;
     private TradingInquiryExpandableListAdapter mAdapter;
@@ -69,8 +73,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private String TAG = "ManageTradingInquiryHistoryFragment";
 
     private String response;
-    private int maxPageIndex = 1;  // 最大页码，默认为1
-    private int pageIndex = 1;
+    private int maxPageIndex;  // 最大页码
+    private int pageIndex;
     private boolean FIRST_TIME_TO_PARSE_FLAG = true;  // 首次解析标志
 
     public ManageTradingInquiryHistoryFragment() {
@@ -87,7 +91,17 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogUtil.d(TAG, "onCreateView");
-        return inflater.inflate(R.layout.fragment_manage_trading_inquiry, container, false);
+        if (viewFragment == null) {
+            viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry,
+                    container, false);
+        }
+        // 缓存的rootView需要判断是否已经被加过parent，
+        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
+        ViewGroup parent = (ViewGroup) viewFragment.getParent();
+        if (parent != null) {
+            parent.removeView(viewFragment);
+        }
+        return viewFragment;
     }
 
     @Override
@@ -103,6 +117,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 R.id.manage_trading_inquiry_history_pick_date);
         resultView = (LinearLayout) getActivity().findViewById(
                 R.id.manage_trading_inquiry_history_result);
+        mProgressView = (ProgressView) getActivity().findViewById(
+                R.id.manage_trading_inquiry_progress_view);
+        mNothingFoundedImageView = (ImageView) getActivity().findViewById(
+                R.id.manage_trading_inquiry_nothing_founded_image_view);
 
         mListView = (PinnedHeaderListView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_list_view);
@@ -124,8 +142,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
 
-        // 根据TAB的选择状态来显示布局
-        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
+        // 根据TAB的状态来显示布局，如果处于加载进度中，则暂时不显示布局
+        if (!ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG) {
+            chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
+        }
         // 监听控件的点击事件
         setStartTimeLayout.setOnClickListener(this);
         setEndTimeLayout.setOnClickListener(this);
@@ -136,6 +156,29 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     // 初始化数据，开始“历史流水”查询
     public void initData() {
+        // 初始化页码
+        pageIndex = 1;
+        maxPageIndex = 1;
+        // 发送GET请求
+        sendGETRequest();
+    }
+
+    public void chooseViewByState(boolean historyTabInitFlag) {
+        if (historyTabInitFlag) {
+            // 结果已经加载完成，显示结果界面
+            pickDateView.setVisibility(View.GONE);
+            matchDataWithAdapterLists();
+        } else {
+            // 未开始加载，显示时间选择界面
+            pickDateView.setVisibility(View.VISIBLE);
+            resultView.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        }
+    }
+
+    // 发送GET请求
+    private void sendGETRequest() {
         // 组装Url地址
         UrlConstant.trjnListStartTime = myDateUtil.getHistoryStartYear() + "-" +
                 myDateUtil.getHistoryStartMonth() + "-" + myDateUtil.getHistoryStartDayOfMonth();
@@ -162,20 +205,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    public void chooseViewByState(boolean historyTabInitFlag) {
-        if (historyTabInitFlag) {
-            // 加载结果界面
-            pickDateView.setVisibility(View.GONE);
-            resultView.setVisibility(View.VISIBLE);
-            matchDataWithAdapterLists();
-            setupWithAdapter();
-        } else {
-            // 加载时间选择界面
-            pickDateView.setVisibility(View.VISIBLE);
-            resultView.setVisibility(View.GONE);
-        }
     }
 
     // 设置起始时间
@@ -218,13 +247,14 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     // queryButton的点击事件
     public void onQueryButtonClick() {
-        // 将pickDateView隐藏，显示resultView
+        // 将pickDateView隐藏
         pickDateView.setVisibility(View.GONE);
-        resultView.setVisibility(View.VISIBLE);
         // 初始化historyDataList
         ManageTradingInquiryActivity.historyDataList = new ArrayList<>();
         // 将首次解析标志FIRST_TIME_TO_PARSE_FLAG置为true
         FIRST_TIME_TO_PARSE_FLAG = true;
+        // 将HISTORY_TAB_IN_PROGRESS_FLAG置为true
+        ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG = true;
         // 开始“历史流水”查询
         initData();
     }
@@ -270,7 +300,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
      * 首次解析会得到最大页码maxIndex
      * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
      * 结果保存在ManageTradingInquiryActivity中的historyDataList
-     * <p/>
+     * <p>
      * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
      * 所以要通过FIRST_TIME_TO_PARSE_FLAG进行标识，仅在首次解析时获取maxIndex
      */
@@ -279,15 +309,9 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // 只有首次解析时才新建 progressDialog
+            // 首次解析时显示进度按钮
             if (FIRST_TIME_TO_PARSE_FLAG) {
-                // Create a progressDialog
-                mProgressDialog = new ProgressDialog(getActivity());
-                // Set progressDialog message
-                mProgressDialog.setMessage(getString(R.string.loading) + " o(>﹏<)o");
-                mProgressDialog.setIndeterminate(false);
-                // Show progressDialog
-                mProgressDialog.show();
+                mProgressView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -350,16 +374,18 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             if (pageIndex < maxPageIndex) {
                 // 如果当前页码不是最大页码，再次发送GET请求，获取更多数据
                 pageIndex++;
-                initData();
+                sendGETRequest();
             } else {
                 /**
                  * 如果当前页码是最大页码，说明已准备好historyDataList加载完成
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                setupWithAdapter();
-                // 耗时操作基本完成呢，关闭mProgressDialog
-                mProgressDialog.dismiss();
+                // 耗时操作基本完成呢，显示ListView，隐藏进度按钮
+                mListView.setVisibility(View.VISIBLE);
+                mProgressView.setVisibility(View.GONE);
+                // 将HISTORY_TAB_IN_PROGRESS_FLAG置为false
+                ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG = false;
             }
         }
     }
@@ -373,6 +399,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.historyDataList.isEmpty()) {
+            mNothingFoundedImageView.setVisibility(View.VISIBLE);
+            /*
             // 添加默认数据
             Group group = new Group();
             group.setTitle(" --- 这里空空的，一定不是因为我穷。--- ");
@@ -385,6 +413,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             tradingInquiry.setTransactionAmount(" 样");
             childTempList.add(tradingInquiry);
             mChildList.add(childTempList);
+            */
             return;
         }
 
@@ -446,12 +475,15 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
             // 把这一组的childTempList添加到mChildList
             mChildList.add(childTempList);
         }
+        setupWithAdapter();
     }
 
     /**
      * 设置Adapter及监听ListView相关事件
      */
     private void setupWithAdapter() {
+        // 显示ListView
+        resultView.setVisibility(View.VISIBLE);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
                 R.layout.manage_trading_inquiry_group_item, mChildList,
                 R.layout.manage_trading_inquiry_child_item);

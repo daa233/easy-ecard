@@ -45,6 +45,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     protected static boolean TODAY_TAB_INIT_FLAG;
     protected static boolean WEEK_TAB_INIT_FLAG;
 
+    protected static boolean HISTORY_TAB_IN_PROGRESS_FLAG = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +144,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                     // 位于“历史流水”查询结果界面，返回到时间选择界面
                     ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
                     ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
+                    ManageTradingInquiryHistoryFragment.mProgressView.setVisibility(View.GONE);
+                    ManageTradingInquiryHistoryFragment.mNothingFoundedImageView.setVisibility(View.GONE);
                     // 将HISTORY_TAB_INIT_FLAG置为false
                     ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = false;
                 }

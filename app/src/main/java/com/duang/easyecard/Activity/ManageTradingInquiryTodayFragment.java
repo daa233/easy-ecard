@@ -26,6 +26,7 @@ import com.duang.easyecard.Util.TradingInquiryExpandableListAdapter;
 import com.duang.mypinnedheaderlistview.PinnedHeaderListView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.rey.material.widget.LinearLayout;
+import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,7 +47,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         PinnedHeaderListView.OnHeaderUpdateListener {
 
     private PinnedHeaderListView mListView;
-    private ProgressDialog mProgressDialog;
+    private ProgressView mProgressView;
 
     private TradingInquiryDateUtil myDateUtil;
     private List<Group> mGroupList;
@@ -89,6 +90,8 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         // 实例化控件
         mListView = (PinnedHeaderListView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_result_list_view);
+        mProgressView = (ProgressView) getActivity().findViewById(
+                R.id.manage_trading_inquiry_result_progress_view);
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
     }
@@ -96,6 +99,9 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
     private void initData() {
         // 初始化todayDataList
         ManageTradingInquiryActivity.todayDataList = new ArrayList<>();
+        // 初始化页码
+        pageIndex = 1;
+        maxPageIndex = 1;
         // 发送GET请求
         sendGETRequest();
     }
@@ -141,15 +147,9 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // 只有首次解析时才新建 progressDialog
+            // 首次解析时显示进度按钮
             if (FIRST_TIME_TO_PARSE_FLAG) {
-                // Create a progressDialog
-                mProgressDialog = new ProgressDialog(getActivity());
-                // Set progressDialog message
-                mProgressDialog.setMessage(getString(R.string.loading) + " o(>﹏<)o");
-                mProgressDialog.setIndeterminate(false);
-                // Show progressDialog
-                mProgressDialog.show();
+                mProgressView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -212,7 +212,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
             if (pageIndex < maxPageIndex) {
                 // 如果当前页码不是最大页码，再次发送GET请求，获取更多数据
                 pageIndex++;
-                initData();
+                sendGETRequest();
             } else {
                 /**
                  * 如果当前页码是最大页码，说明已准备好todayDataList加载完成
@@ -220,8 +220,8 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
                  */
                 matchDataWithAdapterLists();
                 setupWithAdapter();
-                // 耗时操作基本完成呢，关闭mProgressDialog
-                mProgressDialog.dismiss();
+                // 耗时操作基本完成呢，隐藏进度按钮
+                mProgressView.setVisibility(View.GONE);
             }
         }
     }
