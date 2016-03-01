@@ -267,7 +267,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 mChildList.get(groupPosition).get(childPosition).getTradingDate()
                         + "-" +
                         mChildList.get(groupPosition).get(childPosition).getTradingTime()
-                        + "  " + "交易后余额  " +
+                        + "  " + R.string.balance_after_trading +
                         mChildList.get(groupPosition).get(childPosition).getBalance(),
                 Toast.LENGTH_SHORT).show();
         return false;
@@ -400,20 +400,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.historyDataList.isEmpty()) {
             mNothingFoundedImageView.setVisibility(View.VISIBLE);
-            /*
-            // 添加默认数据
-            Group group = new Group();
-            group.setTitle(" --- 这里空空的，一定不是因为我穷。--- ");
-            mGroupList.add(group);
-            ArrayList<TradingInquiry> childTempList = new ArrayList<>();
-            TradingInquiry tradingInquiry = new TradingInquiry();
-            tradingInquiry.setTradingTime("如果  选");
-            tradingInquiry.setMerchantName("对了时间  结果 可能");
-            tradingInquiry.setTradingName("就会   不  一");
-            tradingInquiry.setTransactionAmount(" 样");
-            childTempList.add(tradingInquiry);
-            mChildList.add(childTempList);
-            */
+            // 将HISTORY_TAB_INIT_FLAG置为true
+            ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
             return;
         }
 
