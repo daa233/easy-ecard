@@ -1,7 +1,6 @@
 package com.duang.easyecard.Activity;
 
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ExpandableListView;
-import android.widget.ScrollView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import com.duang.easyecard.Util.TradingInquiryDateUtil;
 import com.duang.easyecard.Util.TradingInquiryExpandableListAdapter;
 import com.duang.mypinnedheaderlistview.PinnedHeaderListView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.rey.material.widget.LinearLayout;
 import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
@@ -48,6 +46,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
 
     private PinnedHeaderListView mListView;
     private ProgressView mProgressView;
+    protected static ImageView mNothingFoundedImageView;
 
     private TradingInquiryDateUtil myDateUtil;
     private List<Group> mGroupList;
@@ -75,7 +74,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogUtil.d(TAG, "onCreateView");
-        return inflater.inflate(R.layout.fragment_manage_trading_inquiry_result, container, false);
+        return inflater.inflate(R.layout.fragment_manage_trading_inquiry_today, container, false);
     }
 
     @Override
@@ -89,9 +88,11 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
     private void initView() {
         // 实例化控件
         mListView = (PinnedHeaderListView) getActivity().findViewById(
-                R.id.manage_trading_inquiry_result_list_view);
+                R.id.manage_trading_inquiry_today_list_view);
         mProgressView = (ProgressView) getActivity().findViewById(
-                R.id.manage_trading_inquiry_result_progress_view);
+                R.id.manage_trading_inquiry_today_progress_view);
+        mNothingFoundedImageView = (ImageView) getActivity().findViewById(
+                R.id.manage_trading_inquiry_today_nothing_founded_image_view);
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
     }
@@ -219,7 +220,6 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                setupWithAdapter();
                 // 耗时操作基本完成呢，隐藏进度按钮
                 mProgressView.setVisibility(View.GONE);
             }
@@ -235,18 +235,10 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.todayDataList.isEmpty()) {
-            // 添加默认数据
-            Group group = new Group();
-            group.setTitle(" --- 这里空空的，一定不是因为我穷。--- ");
-            mGroupList.add(group);
-            ArrayList<TradingInquiry> childTempList = new ArrayList<>();
-            TradingInquiry tradingInquiry = new TradingInquiry();
-            tradingInquiry.setTradingTime("如果  选");
-            tradingInquiry.setMerchantName("对了时间  结果 可能");
-            tradingInquiry.setTradingName("就会   不  一");
-            tradingInquiry.setTransactionAmount(" 样");
-            childTempList.add(tradingInquiry);
-            mChildList.add(childTempList);
+            // 显示默认没有搜索到结果的图片
+            mNothingFoundedImageView.setVisibility(View.VISIBLE);
+            // 将HISTORY_TAB_INIT_FLAG置为true
+            ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
             return;
         }
 
@@ -308,6 +300,8 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
             // 把这一组的childTempList添加到mChildList
             mChildList.add(childTempList);
         }
+        // 设置Adapter
+        setupWithAdapter();
     }
 
     /**
@@ -339,7 +333,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
                 mChildList.get(groupPosition).get(childPosition).getTradingDate()
                         + "-" +
                         mChildList.get(groupPosition).get(childPosition).getTradingTime()
-                        + "  " + "交易后余额  " +
+                        + "  " + R.string.balance_after_trading +
                         mChildList.get(groupPosition).get(childPosition).getBalance(),
                 Toast.LENGTH_SHORT).show();
         return false;

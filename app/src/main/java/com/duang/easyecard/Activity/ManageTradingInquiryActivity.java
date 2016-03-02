@@ -37,15 +37,20 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     protected static AsyncHttpClient httpClient;
     protected static TradingInquiryDateUtil myDateUtil;
-    protected static ArrayList<HashMap<String, String>> historyDataList;
-    protected static ArrayList<HashMap<String, String>> todayDataList;
-    protected static ArrayList<HashMap<String, String>> weekDataList;
+    protected static ArrayList<HashMap<String, String>> historyDataList = new ArrayList<>();
+    protected static ArrayList<HashMap<String, String>> todayDataList = new ArrayList<>();
+    protected static ArrayList<HashMap<String, String>> weekDataList = new ArrayList<>();
 
-    protected static boolean HISTORY_TAB_INIT_FLAG;
-    protected static boolean TODAY_TAB_INIT_FLAG;
-    protected static boolean WEEK_TAB_INIT_FLAG;
-
-    protected static boolean HISTORY_TAB_IN_PROGRESS_FLAG = false;
+    /**
+     * INIT_FLAG
+     * 0，未开始加载
+     * 1，正在加载
+     * 2，加载完成，有数据
+     * 3，加载完成，没有数据
+     */
+    protected static int HISTORY_TAB_INIT_FLAG = 0;
+    protected static int TODAY_TAB_INIT_FLAG = 0;
+    protected static int WEEK_TAB_INIT_FLAG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +89,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     // 初始化数据
     private void initData() {
-        // 初始化各INIT_FLAG
-        HISTORY_TAB_INIT_FLAG = false;
-        TODAY_TAB_INIT_FLAG = false;
-        WEEK_TAB_INIT_FLAG = false;
         // 初始化DateUtil
         myDateUtil = new TradingInquiryDateUtil(this);
         // 获得全局变量httpClient
@@ -137,7 +138,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     private void doBack() {
         switch (tabLayout.getSelectedTabPosition()) {
             case 0:
-                if (!HISTORY_TAB_INIT_FLAG) {
+                if (HISTORY_TAB_INIT_FLAG == 0) {
                     // 位于“历史流水”时间选择界面，直接退出
                     finish();
                 } else {
@@ -146,8 +147,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                     ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
                     ManageTradingInquiryHistoryFragment.mProgressView.setVisibility(View.GONE);
                     ManageTradingInquiryHistoryFragment.mNothingFoundedImageView.setVisibility(View.GONE);
-                    // 将HISTORY_TAB_INIT_FLAG置为false
-                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = false;
+                    // 将HISTORY_TAB_INIT_FLAG置为0
+                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 0;
                 }
                 break;
             case 1:

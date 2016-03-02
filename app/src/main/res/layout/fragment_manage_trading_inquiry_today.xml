@@ -6,15 +6,15 @@
     android:background="@color/background">
 
     <com.duang.mypinnedheaderlistview.PinnedHeaderListView
-        android:id="@+id/manage_trading_inquiry_result_list_view"
+        android:id="@+id/manage_trading_inquiry_today_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:groupIndicator="@null" />
 
     <com.rey.material.widget.ProgressView
-        android:id="@+id/manage_trading_inquiry_result_progress_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/manage_trading_inquiry_today_progress_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="80dp"
         android:visibility="gone"
@@ -22,5 +22,13 @@
         app:pv_circular="true"
         app:pv_progressStyle="@style/Material.Drawable.CircularProgress"
         app:pv_progressMode="indeterminate"/>
+
+    <ImageView
+        android:id="@+id/manage_trading_inquiry_today_nothing_founded_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/nothing_founded_404"/>
 
 </FrameLayout>

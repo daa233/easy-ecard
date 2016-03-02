@@ -92,7 +92,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                              Bundle savedInstanceState) {
         LogUtil.d(TAG, "onCreateView");
         if (viewFragment == null) {
-            viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry,
+            viewFragment = inflater.inflate(R.layout.fragment_manage_trading_inquiry_history,
                     container, false);
         }
         // 缓存的rootView需要判断是否已经被加过parent，
@@ -118,9 +118,9 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         resultView = (LinearLayout) getActivity().findViewById(
                 R.id.manage_trading_inquiry_history_result);
         mProgressView = (ProgressView) getActivity().findViewById(
-                R.id.manage_trading_inquiry_progress_view);
+                R.id.manage_trading_inquiry_history_progress_view);
         mNothingFoundedImageView = (ImageView) getActivity().findViewById(
-                R.id.manage_trading_inquiry_nothing_founded_image_view);
+                R.id.manage_trading_inquiry_history_nothing_founded_image_view);
 
         mListView = (PinnedHeaderListView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_list_view);
@@ -141,11 +141,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
-
         // 根据TAB的状态来显示布局，如果处于加载进度中，则暂时不显示布局
-        if (!ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG) {
-            chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
-        }
+        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
         // 监听控件的点击事件
         setStartTimeLayout.setOnClickListener(this);
         setEndTimeLayout.setOnClickListener(this);
@@ -163,17 +160,34 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         sendGETRequest();
     }
 
-    public void chooseViewByState(boolean historyTabInitFlag) {
-        if (historyTabInitFlag) {
-            // 结果已经加载完成，显示结果界面
-            pickDateView.setVisibility(View.GONE);
-            matchDataWithAdapterLists();
-        } else {
+    public void chooseViewByState(int historyTabInitFlag) {
+        if (historyTabInitFlag == 0) {
             // 未开始加载，显示时间选择界面
             pickDateView.setVisibility(View.VISIBLE);
             resultView.setVisibility(View.GONE);
             mProgressView.setVisibility(View.GONE);
             mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (historyTabInitFlag == 1) {
+            // 正在加载，显示进度按钮
+            pickDateView.setVisibility(View.GONE);
+            resultView.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.VISIBLE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (historyTabInitFlag == 2) {
+            // 加载完成，已经得到数据，显示resultView，并匹配数据到ListView
+            pickDateView.setVisibility(View.GONE);
+            resultView.setVisibility(View.VISIBLE);
+            mProgressView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+            matchDataWithAdapterLists();
+        } else if (historyTabInitFlag == 3) {
+            // 加载完成，没有数据，显示默认无数据图片
+            pickDateView.setVisibility(View.GONE);
+            resultView.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.VISIBLE);
+        } else {
+            LogUtil.e(TAG, "unknown error in chooseViewByState.");
         }
     }
 
@@ -185,9 +199,9 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         UrlConstant.trjnListEndTime = myDateUtil.getHistoryEndYear() + "-" +
                 myDateUtil.getHistoryEndMonth() + "-" + myDateUtil.getHistoryEndDayOfMonth();
         UrlConstant.trjnListPageIndex = pageIndex;
-        LogUtil.d(TAG, UrlConstant.getTrjnListHistroy());
+        LogUtil.d(TAG, UrlConstant.getTrjnListHistory());
         // 发送GET请求
-        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistroy(),
+        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistory(),
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -253,8 +267,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         ManageTradingInquiryActivity.historyDataList = new ArrayList<>();
         // 将首次解析标志FIRST_TIME_TO_PARSE_FLAG置为true
         FIRST_TIME_TO_PARSE_FLAG = true;
-        // 将HISTORY_TAB_IN_PROGRESS_FLAG置为true
-        ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG = true;
+        // 将HISTORY_TAB_INIT_FLAG置为1
+        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 1;
         // 开始“历史流水”查询
         initData();
     }
@@ -381,11 +395,8 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                // 耗时操作基本完成呢，显示ListView，隐藏进度按钮
-                mListView.setVisibility(View.VISIBLE);
+                // 耗时操作基本完成呢，隐藏进度按钮
                 mProgressView.setVisibility(View.GONE);
-                // 将HISTORY_TAB_IN_PROGRESS_FLAG置为false
-                ManageTradingInquiryActivity.HISTORY_TAB_IN_PROGRESS_FLAG = false;
             }
         }
     }
@@ -399,9 +410,11 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.historyDataList.isEmpty()) {
+            // 显示默认没有搜索到结果的图片
             mNothingFoundedImageView.setVisibility(View.VISIBLE);
-            // 将HISTORY_TAB_INIT_FLAG置为true
-            ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
+            // 将HISTORY_TAB_INIT_FLAG置为3
+            ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 3;
+            chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
             return;
         }
 
@@ -470,8 +483,9 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
      * 设置Adapter及监听ListView相关事件
      */
     private void setupWithAdapter() {
-        // 显示ListView
-        resultView.setVisibility(View.VISIBLE);
+        // 将HISTORY_TAB_INIT_FLAG置为2
+        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 2;
+        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
                 R.layout.manage_trading_inquiry_group_item, mChildList,
                 R.layout.manage_trading_inquiry_child_item);
@@ -487,8 +501,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         mListView.setOnHeaderUpdateListener(ManageTradingInquiryHistoryFragment.this);
         mListView.setOnGroupClickListener(ManageTradingInquiryHistoryFragment.this);
         mListView.setOnChildClickListener(ManageTradingInquiryHistoryFragment.this);
-        // 将HISTORY_TAB_INIT_FLAG置为true
-        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
     }
 
     // 监听控件的点击事件
