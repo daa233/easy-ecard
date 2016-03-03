@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.Group;
@@ -111,6 +112,11 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                 R.id.manage_trading_inquiry_week_nothing_founded_image_view);
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
+        // 通过Glide加载mNothingFoundedImageView
+        Glide
+                .with(this)
+                .load(R.drawable.nothing_founded_404)
+                .into(mNothingFoundedImageView);
     }
 
     private void initData() {
@@ -381,7 +387,9 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
     private void setupWithAdapter() {
         // 将WEEK_TAB_INIT_FLAG置为2，显示mListView
         ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = 2;
-        chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
+        // 显示mListView
+        mListView.setVisibility(View.VISIBLE);
+        mProgressView.setVisibility(View.GONE);
         // 显示ListView
         mListView.setVisibility(View.VISIBLE);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,

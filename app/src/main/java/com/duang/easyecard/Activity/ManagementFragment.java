@@ -16,7 +16,11 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 
 import com.bumptech.glide.Glide;
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.Model.SimpleItem;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
+import com.duang.easyecard.Util.ManagementGridViewAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +35,9 @@ public class ManagementFragment extends Fragment implements
 
     private View viewFragment;
 
-    private GridView gridView;
-    private ImageView campusImageView;
-    private List<Map<String, Object>> data_list;
-    private SimpleAdapter sim_adapter;
+    private GridView mGridView;
+    private ImageView mCampusImageView;
+    private ManagementGridViewAdapter mAdapter;
 
     // ItemImage图标封装为一个数组
     private int[] iconImage = {
@@ -53,13 +56,13 @@ public class ManagementFragment extends Fragment implements
                              Bundle savedInstanceState) {
         viewFragment = inflater.inflate(R.layout.fragment_management, null);
         // 实例化控件
-        gridView = (GridView) viewFragment.findViewById(R.id.manage_grid_view);
-        campusImageView = (ImageView) viewFragment.findViewById(R.id.manage_campus_image_view);
-        // 通过Glide设置campusImageView资源
+        mGridView = (GridView) viewFragment.findViewById(R.id.manage_grid_view);
+        mCampusImageView = (ImageView) viewFragment.findViewById(R.id.manage_campus_image_view);
+        // 通过Glide设置mCampusImageView资源
         Glide
                 .with(this)
                 .load(R.drawable.main_campus_scenery)
-                .into(campusImageView);
+                .into(mCampusImageView);
         // ItemText封装数组
         iconText = new String[]{
                 getResources().getString(R.string.basic_information),
@@ -69,31 +72,31 @@ public class ManagementFragment extends Fragment implements
                 getResources().getString(R.string.net_charge),
                 getResources().getString(R.string.pay_fees)
         };
-        // 新建List
-        data_list = new ArrayList<>();
-        // 获取数据
-        getData();
-        // 新建适配器
-        String[] from = {"image", "text"};
-        int[] to = {R.id.grid_view_item_img, R.id.grid_view_item_text};
-        sim_adapter = new SimpleAdapter(this.getActivity(), data_list,
-                R.layout.manage_grid_view_item, from, to);
+        mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
+                getDataLists(iconImage, iconText),
+                R.layout.manage_grid_view_item);
         // 配置适配器
-        gridView.setAdapter(sim_adapter);
+        mGridView.setAdapter(mAdapter);
         // 设置监听器
-        gridView.setOnItemClickListener(this);
+        mGridView.setOnItemClickListener(this);
         return viewFragment;
     }
 
-    public List<Map<String, Object>> getData() {
-        //icon和iconName的长度是相同的，这里任选其一都可以
-        for (int i = 0; i < iconImage.length; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("image", iconImage[i]);
-            map.put("text", iconText[i]);
-            data_list.add(map);
+    // 获得数据List并返回
+    public List<SimpleItem> getDataLists(int[] imageResources, String[] textArray) {
+        List<SimpleItem> itemList = new ArrayList<>();
+        if (imageResources.length == textArray.length) {
+            SimpleItem simpleItem;
+            for (int i = 0; i < imageResources.length; i++) {
+                simpleItem = new SimpleItem();
+                simpleItem.setResourceId(imageResources[i]);
+                simpleItem.setString(textArray[i]);
+                itemList.add(simpleItem);
+            }
+        } else {
+            LogUtil.e(getTag(), "Error: Arrays' lengths don't match.");
         }
-        return data_list;
+        return itemList;
     }
 
     // Item的点击事件,根据图片ID来确定点击对象

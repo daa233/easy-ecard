@@ -122,16 +122,11 @@
     </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/manage_trading_inquiry_history_result"
+    <com.duang.mypinnedheaderlistview.PinnedHeaderListView
+        android:id="@+id/manage_trading_inquiry_history_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.duang.mypinnedheaderlistview.PinnedHeaderListView
-            android:id="@+id/manage_trading_inquiry_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:groupIndicator="@null"/>
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:groupIndicator="@null"/>
 
     <com.rey.material.widget.ProgressView
         android:id="@+id/manage_trading_inquiry_history_progress_view"
@@ -150,7 +145,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:scaleType="fitCenter"
-        android:src="@mipmap/nothing_founded_404"/>
+        android:scaleType="fitCenter" />
 </FrameLayout>
 

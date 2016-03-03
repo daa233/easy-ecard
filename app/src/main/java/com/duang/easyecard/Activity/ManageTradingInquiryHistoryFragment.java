@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.Group;
@@ -51,11 +52,10 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private View viewFragment;  // 缓存Fragment的View
 
     protected static ScrollView pickDateView;
-    protected static LinearLayout resultView;
+    protected static PinnedHeaderListView mListView;
     protected static ProgressView mProgressView;
     protected static ImageView mNothingFoundedImageView;
 
-    private PinnedHeaderListView mListView;
     private LinearLayout setStartTimeLayout;
     private LinearLayout setEndTimeLayout;
     private TextView startDateTextView;
@@ -115,15 +115,13 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         // 实例化控件
         pickDateView = (ScrollView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_history_pick_date);
-        resultView = (LinearLayout) getActivity().findViewById(
-                R.id.manage_trading_inquiry_history_result);
+        mListView = (PinnedHeaderListView) getActivity().findViewById(
+                R.id.manage_trading_inquiry_history_list_view);
         mProgressView = (ProgressView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_history_progress_view);
         mNothingFoundedImageView = (ImageView) getActivity().findViewById(
                 R.id.manage_trading_inquiry_history_nothing_founded_image_view);
 
-        mListView = (PinnedHeaderListView) getActivity().findViewById(
-                R.id.manage_trading_inquiry_list_view);
         setStartTimeLayout = (LinearLayout) getActivity().findViewById(
                 R.id.manage_trading_inquiry_set_start_time);
         setEndTimeLayout = (LinearLayout) getActivity().findViewById(
@@ -141,6 +139,11 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
+        // 通过Glide加载mNothingFoundedImageView
+        Glide
+                .with(this)
+                .load(R.drawable.nothing_founded_404)
+                .into(mNothingFoundedImageView);
         // 根据TAB的状态来显示布局，如果处于加载进度中，则暂时不显示布局
         chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
         // 监听控件的点击事件
@@ -171,26 +174,26 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         if (historyTabInitFlag == 0) {
             // 未开始加载，显示时间选择界面
             pickDateView.setVisibility(View.VISIBLE);
-            resultView.setVisibility(View.GONE);
+            mListView.setVisibility(View.GONE);
             mProgressView.setVisibility(View.GONE);
             mNothingFoundedImageView.setVisibility(View.GONE);
         } else if (historyTabInitFlag == 1) {
             // 正在加载，显示进度按钮
             pickDateView.setVisibility(View.GONE);
-            resultView.setVisibility(View.GONE);
+            mListView.setVisibility(View.GONE);
             mProgressView.setVisibility(View.VISIBLE);
             mNothingFoundedImageView.setVisibility(View.GONE);
         } else if (historyTabInitFlag == 2) {
-            // 加载完成，已经得到数据，显示resultView，并匹配数据到ListView
+            // 加载完成，已经得到数据，显示mListView，并匹配数据到ListView
             pickDateView.setVisibility(View.GONE);
-            resultView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.VISIBLE);
             mProgressView.setVisibility(View.GONE);
             mNothingFoundedImageView.setVisibility(View.GONE);
             matchDataWithAdapterLists();
         } else if (historyTabInitFlag == 3) {
             // 加载完成，没有数据，显示默认无数据图片
             pickDateView.setVisibility(View.GONE);
-            resultView.setVisibility(View.GONE);
+            mListView.setVisibility(View.GONE);
             mProgressView.setVisibility(View.GONE);
             mNothingFoundedImageView.setVisibility(View.VISIBLE);
         } else {
@@ -471,10 +474,12 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
     private void setupWithAdapter() {
         // 将HISTORY_TAB_INIT_FLAG置为2
         ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 2;
-        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
-        mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
-                R.layout.manage_trading_inquiry_group_item, mChildList,
-                R.layout.manage_trading_inquiry_child_item);
+        // 使用chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);会报错，原因不明
+        mListView.setVisibility(View.VISIBLE);
+        mProgressView.setVisibility(View.GONE);
+        mAdapter = new TradingInquiryExpandableListAdapter(getContext(),
+                mGroupList, R.layout.manage_trading_inquiry_group_item,
+                mChildList, R.layout.manage_trading_inquiry_child_item);
         mListView.setAdapter(mAdapter);
 
         // 如果有数据，展开所有group
