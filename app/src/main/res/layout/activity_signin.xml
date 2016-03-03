@@ -180,11 +180,11 @@
         android:layout_height="wrap_content" >
 
         <ImageView
+            android:id="@+id/signin_pic_below"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_marginTop="10dp"
-            android:contentDescription="@string/signin_pic_below"
-            android:src="@drawable/signin_pic_below" />
+            android:contentDescription="@string/signin_pic_below" />
 
     </LinearLayout>
 </LinearLayout>

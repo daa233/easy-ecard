@@ -6,7 +6,7 @@
     tools:context="com.duang.easyecard.Activity.LostAndFoundFragment">
 
     <LinearLayout
-        android:id="@+id/lost_and_found_fragment_lost_linear_layout"
+        android:id="@+id/lost_and_found_fragment_info_browsing_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -27,16 +27,16 @@
             android:background="@drawable/green_button_selector"
             android:text="@string/lost_and_found_info_browsing"/>
         <ImageView
+            android:id="@+id/lost_and_found_fragment_info_browsing_image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/lost_and_found_info_browsing"
             android:contentDescription="@string/lost_and_found_info_browsing_img_des"/>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/lost_and_found_fragment_found_linear_layout"
+        android:id="@+id/lost_and_found_fragment_report_loss_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -58,11 +58,11 @@
             android:paddingBottom="5dp"
             android:background="@drawable/skyblue_button_selector"/>
         <ImageView
+            android:id="@+id/lost_and_found_fragment_report_loss_image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/lost_and_found_registration"
             android:contentDescription="@string/card_loss_registration_img_des"/>
     </LinearLayout>
 

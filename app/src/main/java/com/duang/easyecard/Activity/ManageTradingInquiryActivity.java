@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
-import com.duang.easyecard.Model.TradingInquiry;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.TradingInquiryDateUtil;
@@ -142,13 +141,13 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                     // 位于“历史流水”时间选择界面，直接退出
                     finish();
                 } else {
+                    // 将HISTORY_TAB_INIT_FLAG置为0
+                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 0;
                     // 位于“历史流水”查询结果界面，返回到时间选择界面
                     ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
                     ManageTradingInquiryHistoryFragment.resultView.setVisibility(View.GONE);
                     ManageTradingInquiryHistoryFragment.mProgressView.setVisibility(View.GONE);
                     ManageTradingInquiryHistoryFragment.mNothingFoundedImageView.setVisibility(View.GONE);
-                    // 将HISTORY_TAB_INIT_FLAG置为0
-                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 0;
                 }
                 break;
             case 1:

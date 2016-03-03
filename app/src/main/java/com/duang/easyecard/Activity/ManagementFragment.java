@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.R;
 
 import java.util.ArrayList;
@@ -24,17 +26,18 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManagementFragment extends Fragment  implements
+public class ManagementFragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
     private View viewFragment;
 
     private GridView gridView;
+    private ImageView campusImageView;
     private List<Map<String, Object>> data_list;
     private SimpleAdapter sim_adapter;
 
     // ItemImage图标封装为一个数组
-    private int [] iconImage = {
+    private int[] iconImage = {
             R.drawable.manage_basic_info,
             R.drawable.manage_trading_inquiry,
             R.drawable.manage_report_loss,
@@ -42,10 +45,8 @@ public class ManagementFragment extends Fragment  implements
             R.drawable.manage_net_charge,
             R.drawable.manage_pay_fees,
     };
-    // ItemText封装数组
-    private String[] iconText = {"基本信息", "流水查询", "校园卡挂失",
-            "转账充值", "网费",    "待缴费"};
 
+    private String[] iconText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,13 +54,28 @@ public class ManagementFragment extends Fragment  implements
         viewFragment = inflater.inflate(R.layout.fragment_management, null);
         // 实例化控件
         gridView = (GridView) viewFragment.findViewById(R.id.manage_grid_view);
+        campusImageView = (ImageView) viewFragment.findViewById(R.id.manage_campus_image_view);
+        // 通过Glide设置campusImageView资源
+        Glide
+                .with(this)
+                .load(R.drawable.main_campus_scenery)
+                .into(campusImageView);
+        // ItemText封装数组
+        iconText = new String[]{
+                getResources().getString(R.string.basic_information),
+                getResources().getString(R.string.trading_inquiry),
+                getResources().getString(R.string.report_loss_card),
+                getResources().getString(R.string.recharge),
+                getResources().getString(R.string.net_charge),
+                getResources().getString(R.string.pay_fees)
+        };
         // 新建List
-        data_list = new ArrayList<Map<String, Object>>();
+        data_list = new ArrayList<>();
         // 获取数据
         getData();
         // 新建适配器
-        String [] from = {"image", "text"};
-        int [] to = {R.id.grid_view_item_img, R.id.grid_view_item_text};
+        String[] from = {"image", "text"};
+        int[] to = {R.id.grid_view_item_img, R.id.grid_view_item_text};
         sim_adapter = new SimpleAdapter(this.getActivity(), data_list,
                 R.layout.manage_grid_view_item, from, to);
         // 配置适配器
@@ -69,10 +85,10 @@ public class ManagementFragment extends Fragment  implements
         return viewFragment;
     }
 
-    public List<Map<String, Object>> getData(){
+    public List<Map<String, Object>> getData() {
         //icon和iconName的长度是相同的，这里任选其一都可以
-        for(int i = 0; i < iconImage.length; i++){
-            Map<String, Object> map = new HashMap<String, Object>();
+        for (int i = 0; i < iconImage.length; i++) {
+            Map<String, Object> map = new HashMap<>();
             map.put("image", iconImage[i]);
             map.put("text", iconText[i]);
             data_list.add(map);
@@ -96,10 +112,12 @@ public class ManagementFragment extends Fragment  implements
                 startActivity(intent);
                 break;
             case R.drawable.manage_report_loss:
-                final String[] arrayDialogItems = new String[] {"通过校园卡电子服务平台",
-                        "通过拨打挂失电话 6678-2221"};
+                final String[] arrayDialogItems = new String[]{
+                        getResources().getString(R.string.by_ecard_service_platform),
+                        getResources().getString(R.string.by_call_report_line)};
                 Dialog alertDialog = new AlertDialog.Builder(getActivity()).
-                        setTitle("请选择挂失方式：").
+                        setTitle(getResources().getString(
+                                R.string.please_choose_a_way_to_report_loss)).
                         setIcon(R.drawable.manage_report_loss)
                         .setItems(arrayDialogItems, new DialogInterface.OnClickListener() {
                             @Override
@@ -107,43 +125,44 @@ public class ManagementFragment extends Fragment  implements
                                 if (which == 0) {
                                     // 跳转到ManageReportLossActivity
                                     /*
-                                    Intent intent = new Intent(getActivity(),
-                                            ManageReportLossActivity.class);
-                                    startActivity(intent);
-                                    */
+                                    startActivity(new Intent(getActivity(),
+                                            ManageReportLossActivity.class));
+                                            */
                                 } else {
                                     // 拨打挂失电话
-                                    AlertDialog.Builder callDialog = new AlertDialog.
-                                            Builder(getActivity());
-                                    callDialog.setTitle("提示");
-                                    callDialog.setMessage("您确定要拨打挂失电话\n"
-                                            + "(0532-6678-2221)吗？");
-                                    callDialog.setIcon(R.drawable.manage_report_loss);
-                                    callDialog.setPositiveButton("确定",
+                                    AlertDialog.Builder callDialog =
+                                            new AlertDialog.Builder(getActivity());
+                                    callDialog.setMessage(
+                                            getResources().getString(R.string.phone_call_check));
+                                    callDialog.setPositiveButton(
+                                            getResources().getString(R.string.OK),
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog,
                                                                     int which) {
                                                     // 通过Intent调用拨打电话程序
-                                                    Intent intent = new Intent(
-                                                            Intent.ACTION_CALL,
+                                                    Intent intent = new Intent(Intent.ACTION_CALL,
                                                             Uri.parse("tel:" + "053266782221"));
                                                     startActivity(intent);
                                                 }
                                             });
-                                    callDialog.setNegativeButton("取消",
+                                    callDialog.setNegativeButton(
+                                            getResources().getString(R.string.Cancel),
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog,
-                                                                    int which) {}
+                                                                    int which) {
+                                                }
                                             });
                                     callDialog.show();
                                 }
                             }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {}
-                        }).create();
+                        }).setNegativeButton(getResources().getString(R.string.Cancel),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).create();
                 alertDialog.show();
                 break;
             case R.drawable.manage_recharge:

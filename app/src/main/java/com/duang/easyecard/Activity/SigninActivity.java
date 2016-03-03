@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
@@ -47,6 +48,7 @@ OnFocusChangeListener {
 	private TextView hintText;
 	private Button signinButton;
 	private ImageView checkcodeImage;
+    private ImageView belowImage;
 	private CheckBox rememberPasswordCheckBox;
 	
 	private String signtype = "SynSno";  // {"SynSno", "SynCard"}
@@ -83,7 +85,12 @@ OnFocusChangeListener {
 		checkcodeImage = (ImageView) findViewById(R.id.signin_checkcode_image);
 		rememberPasswordCheckBox = (CheckBox) findViewById(
 				R.id.signin_remember_password_check_box);
-
+        belowImage = (ImageView) findViewById(R.id.signin_pic_below);
+        // 利用Glide载入belowImage资源
+        Glide
+                .with(this)
+                .load(R.drawable.signin_pic_below)
+                .into(belowImage);
 		// 初始提示，输入学工号
 		hintText.setText(R.string.hint_input_stu_id);
 		/*

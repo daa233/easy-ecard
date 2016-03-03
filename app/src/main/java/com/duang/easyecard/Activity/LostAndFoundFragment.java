@@ -8,8 +8,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.R;
 
 /**
@@ -17,8 +19,10 @@ import com.duang.easyecard.R;
  */
 public class LostAndFoundFragment extends Fragment implements View.OnClickListener{
 
-    private LinearLayout lostLinearLayout;
-    private LinearLayout foundLinearLayout;
+    private LinearLayout infoBrowsingLinearLayout;
+    private LinearLayout reportLossLinearLayout;
+    private ImageView infoBrowsingImageView;
+    private ImageView reportLossImageView;
 
     public LostAndFoundFragment() {
         // Required empty public constructor
@@ -36,24 +40,37 @@ public class LostAndFoundFragment extends Fragment implements View.OnClickListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // 实例化控件
-        lostLinearLayout = (LinearLayout) getActivity().findViewById(
-                R.id.lost_and_found_fragment_lost_linear_layout);
-        foundLinearLayout = (LinearLayout) getActivity().findViewById(
-                R.id.lost_and_found_fragment_found_linear_layout);
+        infoBrowsingLinearLayout = (LinearLayout) getActivity().findViewById(
+                R.id.lost_and_found_fragment_info_browsing_linear_layout);
+        reportLossLinearLayout = (LinearLayout) getActivity().findViewById(
+                R.id.lost_and_found_fragment_report_loss_linear_layout);
+        infoBrowsingImageView = (ImageView) getActivity().findViewById(
+                R.id.lost_and_found_fragment_info_browsing_image_view);
+        reportLossImageView = (ImageView) getActivity().findViewById(
+                R.id.lost_and_found_fragment_report_loss_image_view);
+        // 通过Glide加载图片资源
+        Glide
+                .with(this)
+                .load(R.drawable.lost_and_found_info_browsing)
+                .into(infoBrowsingImageView);
+        Glide
+                .with(this)
+                .load(R.drawable.lost_and_found_registration)
+                .into(reportLossImageView);
         // 监听点击事件
-        lostLinearLayout.setOnClickListener(this);
-        foundLinearLayout.setOnClickListener(this);
+        infoBrowsingLinearLayout.setOnClickListener(this);
+        reportLossLinearLayout.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.lost_and_found_fragment_lost_linear_layout:
+            case R.id.lost_and_found_fragment_info_browsing_linear_layout:
                 // 跳转到失卡信息浏览界面
                 startActivity(new Intent(getActivity(),
                         LostAndFoundInformationBrowsingActivity.class));
                 break;
-            case R.id.lost_and_found_fragment_found_linear_layout:
+            case R.id.lost_and_found_fragment_report_loss_linear_layout:
                 // 跳转到丢失卡登记界面
                 startActivity(new Intent(getActivity(), LostAndFoundRegistrationActivity.class));
                 break;

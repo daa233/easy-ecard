@@ -46,7 +46,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
 
     private PinnedHeaderListView mListView;
     private ProgressView mProgressView;
-    protected static ImageView mNothingFoundedImageView;
+    protected ImageView mNothingFoundedImageView;
 
     private TradingInquiryDateUtil myDateUtil;
     private List<Group> mGroupList;
@@ -82,7 +82,11 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         LogUtil.d(TAG, "onActivityCreated");
         initView();
-        initData();
+        // 仅加载一次
+        if (ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG == 0) {
+            initData();
+        }
+        chooseViewByState(ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG);
     }
 
     private void initView() {
@@ -100,11 +104,40 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
     private void initData() {
         // 初始化todayDataList
         ManageTradingInquiryActivity.todayDataList = new ArrayList<>();
+        // 将TODAY_TAB_INIT_FLAG置为1，显示mProgressView
+        ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG = 1;
+        chooseViewByState(ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG);
         // 初始化页码
         pageIndex = 1;
         maxPageIndex = 1;
         // 发送GET请求
         sendGETRequest();
+    }
+
+    /**
+     * 根据传入的FLAG值显示布局
+     *
+     * @param todayTabInitFlag
+     */
+    public void chooseViewByState(int todayTabInitFlag) {
+        if (todayTabInitFlag == 1) {
+            // 正在加载，显示加载按钮
+            mProgressView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (todayTabInitFlag == 2) {
+            // 加载完成，有数据
+            mProgressView.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (todayTabInitFlag == 3) {
+            // 加载完成，没有数据
+            mProgressView.setVisibility(View.GONE);
+            mListView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.VISIBLE);
+        } else {
+            LogUtil.e(TAG, "unknown error in chooseViewByState.");
+        }
     }
 
     /**
@@ -144,15 +177,6 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
      * 所以要通过FIRST_TIME_TO_PARSE_FLAG进行标识，仅在首次解析时获取maxIndex
      */
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // 首次解析时显示进度按钮
-            if (FIRST_TIME_TO_PARSE_FLAG) {
-                mProgressView.setVisibility(View.VISIBLE);
-            }
-        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -220,8 +244,6 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                // 耗时操作基本完成呢，隐藏进度按钮
-                mProgressView.setVisibility(View.GONE);
             }
         }
     }
@@ -235,10 +257,9 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.todayDataList.isEmpty()) {
-            // 显示默认没有搜索到结果的图片
-            mNothingFoundedImageView.setVisibility(View.VISIBLE);
-            // 将HISTORY_TAB_INIT_FLAG置为true
-            ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = true;
+            // 将TODAY_TAB_INIT_FLAG置为3，显示没有数据的默认图片
+            ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG = 3;
+            chooseViewByState(ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG);
             return;
         }
 
@@ -308,6 +329,9 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
      * 设置Adapter及监听ListView相关事件
      */
     private void setupWithAdapter() {
+        // 将TODAY_TAB_INIT_FLAG置为2，显示mListView
+        ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG = 2;
+        chooseViewByState(ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
                 R.layout.manage_trading_inquiry_group_item, mChildList,
                 R.layout.manage_trading_inquiry_child_item);

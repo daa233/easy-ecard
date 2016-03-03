@@ -94,9 +94,11 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         super.onActivityCreated(savedInstanceState);
         LogUtil.d(TAG, "onActivityCreated");
         initView();
-        if (FIRST_TIME_TO_PARSE_FLAG) {
+        // 仅加载一次
+        if (ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG == 0) {
             initData();
         }
+        chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
     }
 
     private void initView() {
@@ -109,15 +111,14 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                 R.id.manage_trading_inquiry_week_nothing_founded_image_view);
         // 获得从Activity传递过来的DateUtil
         myDateUtil = ManageTradingInquiryActivity.myDateUtil;
-        // 根据TAB的状态来显示布局，如果处于加载进度中，则暂时不显示布局
-        if (!ManageTradingInquiryActivity.WEEK_TAB_IN_PROGRESS_FLAG) {
-            chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
-        }
     }
 
     private void initData() {
         // 初始化weekDataList
         ManageTradingInquiryActivity.weekDataList = new ArrayList<>();
+        // 将WEEK_TAB_INIT_FLAG置为1，显示mProgressView
+        ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = 1;
+        chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
         // 初始化页码
         pageIndex = 1;
         maxPageIndex = 1;
@@ -125,13 +126,29 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         sendGETRequest();
     }
 
-    public void chooseViewByState(boolean weekTabInitFlag) {
-        if (weekTabInitFlag) {
-            // 结果已经加载完成，直接显示mListView或者无结果的图片
-            matchDataWithAdapterLists();
-        } else {
-            // 结果正在加载，显示mProgressView
+    /**
+     * 根据传入的FLAG值显示布局
+     *
+     * @param weekTabInitFlag
+     */
+    public void chooseViewByState(int weekTabInitFlag) {
+        if (weekTabInitFlag == 1) {
+            // 正在加载，显示加载按钮
             mProgressView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (weekTabInitFlag == 2) {
+            // 加载完成，有数据
+            mProgressView.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            mNothingFoundedImageView.setVisibility(View.GONE);
+        } else if (weekTabInitFlag == 3) {
+            // 加载完成，没有数据
+            mProgressView.setVisibility(View.GONE);
+            mListView.setVisibility(View.GONE);
+            mNothingFoundedImageView.setVisibility(View.VISIBLE);
+        } else {
+            LogUtil.e(TAG, "unknown error in chooseViewByState.");
         }
     }
 
@@ -143,9 +160,9 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         UrlConstant.trjnListEndTime = myDateUtil.getWeekEndYear() + "-" +
                 myDateUtil.getWeekEndMonth() + "-" + myDateUtil.getWeekEndDayOfMonth();
         UrlConstant.trjnListPageIndex = pageIndex;
-        LogUtil.d(TAG, UrlConstant.getTrjnListHistroy());
+        LogUtil.d(TAG, UrlConstant.getTrjnListHistory());
         // 发送GET请求
-        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistroy(),
+        ManageTradingInquiryActivity.httpClient.get(UrlConstant.getTrjnListHistory(),
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -206,20 +223,11 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
      * 首次解析会得到最大页码maxIndex
      * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
      * 结果保存在ManageTradingInquiryActivity中的WeekDataList
-     * <p>
+     * <p/>
      * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
      * 所以要通过FIRST_TIME_TO_PARSE_FLAG进行标识，仅在首次解析时获取maxIndex
      */
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // 首次解析时显示进度按钮
-            if (FIRST_TIME_TO_PARSE_FLAG) {
-                mProgressView.setVisibility(View.VISIBLE);
-            }
-        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -287,10 +295,6 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                // 耗时操作基本完成呢，隐藏进度按钮
-                mProgressView.setVisibility(View.GONE);
-                // 将WEEK_TAB_IN_PROGRESS_FLAG置为false
-                ManageTradingInquiryActivity.WEEK_TAB_IN_PROGRESS_FLAG = false;
             }
         }
     }
@@ -304,10 +308,9 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.weekDataList.isEmpty()) {
-            // 显示默认没有搜索到结果的图片
-            mNothingFoundedImageView.setVisibility(View.VISIBLE);
-            // 将WEEK_TAB_INIT_FLAG置为true
-            ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = true;
+            // 将WEEK_TAB_INIT_FLAG置为3，显示没有数据的默认图片
+            ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = 3;
+            chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
             return;
         }
 
@@ -376,6 +379,9 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
      * 设置Adapter及监听ListView相关事件
      */
     private void setupWithAdapter() {
+        // 将WEEK_TAB_INIT_FLAG置为2，显示mListView
+        ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = 2;
+        chooseViewByState(ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG);
         // 显示ListView
         mListView.setVisibility(View.VISIBLE);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
@@ -393,8 +399,6 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         mListView.setOnHeaderUpdateListener(ManageTradingInquiryWeekFragment.this);
         mListView.setOnGroupClickListener(ManageTradingInquiryWeekFragment.this);
         mListView.setOnChildClickListener(ManageTradingInquiryWeekFragment.this);
-        // 将Week_TAB_INIT_FLAG置为true
-        ManageTradingInquiryActivity.WEEK_TAB_INIT_FLAG = true;
     }
 
     @Override

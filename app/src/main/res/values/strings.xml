@@ -20,7 +20,7 @@
     <string name="signin_checkcode_image">验证码图片</string>
     <string name="remember_password">记住密码</string>
     <string name="signin_pic_below">登录界面下方的图片</string>
-    <!-- hint 提示：-->
+    <!-- Signin hint 提示：-->
     <string name="hint_input_stu_id">提示：请输入学（工）号</string>
     <string name="hint_input_card_account">提示：请输入校园卡账号</string>
     <string name="hint_input_password">提示：请输入校园卡查询密码</string>
@@ -49,9 +49,19 @@
     <string name="menu_exit">退出应用</string>
 
     <!-- ManagementFragment -->
-
+    <string name="basic_information">基本信息</string>
+    <string name="trading_inquiry">流水查询</string>
+    <string name="report_loss_card">校园卡挂失</string>
+    <string name="recharge">转账充值</string>
+    <string name="net_charge">网费</string>
+    <string name="pay_fees">待缴费</string>
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
+    <string name="please_choose_a_way_to_report_loss">请选择挂失方式：</string>
+    <string name="by_ecard_service_platform">通过校园卡电子服务平台</string>
+    <string name="by_call_report_line">通过拨打挂失电话 6678—2221</string>
+    <string name="phone_call_check">您确定要拨打挂失电话
+        (0532-6678-2221)吗？</string>
 
     <!-- ManageViewBasicInfoActivity -->
     <string name="ManageViewBasicInfoActivity_label">基本信息</string>

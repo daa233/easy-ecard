@@ -153,6 +153,13 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     // 初始化数据，开始“历史流水”查询
     public void initData() {
+        // 初始化historyDataList
+        ManageTradingInquiryActivity.historyDataList = new ArrayList<>();
+        // 将首次解析标志FIRST_TIME_TO_PARSE_FLAG置为true
+        FIRST_TIME_TO_PARSE_FLAG = true;
+        // 将HISTORY_TAB_INIT_FLAG置为1，显示mProgressView
+        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 1;
+        chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
         // 初始化页码
         pageIndex = 1;
         maxPageIndex = 1;
@@ -261,14 +268,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
 
     // queryButton的点击事件
     public void onQueryButtonClick() {
-        // 将pickDateView隐藏
-        pickDateView.setVisibility(View.GONE);
-        // 初始化historyDataList
-        ManageTradingInquiryActivity.historyDataList = new ArrayList<>();
-        // 将首次解析标志FIRST_TIME_TO_PARSE_FLAG置为true
-        FIRST_TIME_TO_PARSE_FLAG = true;
-        // 将HISTORY_TAB_INIT_FLAG置为1
-        ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 1;
         // 开始“历史流水”查询
         initData();
     }
@@ -319,15 +318,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
      * 所以要通过FIRST_TIME_TO_PARSE_FLAG进行标识，仅在首次解析时获取maxIndex
      */
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // 首次解析时显示进度按钮
-            if (FIRST_TIME_TO_PARSE_FLAG) {
-                mProgressView.setVisibility(View.VISIBLE);
-            }
-        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -395,8 +385,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                  * 通过matchDataWithAdapterLists，准备mAdapter的数据
                  */
                 matchDataWithAdapterLists();
-                // 耗时操作基本完成呢，隐藏进度按钮
-                mProgressView.setVisibility(View.GONE);
             }
         }
     }
@@ -410,8 +398,6 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
         mChildList = new ArrayList<>();
         // 没有搜索到数据
         if (ManageTradingInquiryActivity.historyDataList.isEmpty()) {
-            // 显示默认没有搜索到结果的图片
-            mNothingFoundedImageView.setVisibility(View.VISIBLE);
             // 将HISTORY_TAB_INIT_FLAG置为3
             ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 3;
             chooseViewByState(ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG);
