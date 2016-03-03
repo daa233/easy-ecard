@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 
 import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
@@ -23,9 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ManagementGridViewAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.

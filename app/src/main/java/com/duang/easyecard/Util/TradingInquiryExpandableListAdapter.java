@@ -5,20 +5,20 @@ import android.content.Context;
 import com.duang.easyecard.Model.Group;
 import com.duang.easyecard.Model.TradingInquiry;
 import com.duang.easyecard.R;
-import com.duang.mypinnedheaderlistview.CommonExpandableListAdapter;
-import com.duang.mypinnedheaderlistview.ExpandableListViewHolder;
 
 import java.util.List;
 
 /**
+ * TradingInquiryExpandableListAdapter
+ * 适配流水查询的ExpandableListView
  * Created by MrD on 2016/2/27.
  */
 public class TradingInquiryExpandableListAdapter extends
         CommonExpandableListAdapter<Group, TradingInquiry> {
 
-    public TradingInquiryExpandableListAdapter(Context context, List<Group> groupList,
-                                        int groupItemLayoutId, List<List<TradingInquiry>> childList,
-                                        int childItemLayoutId) {
+    public TradingInquiryExpandableListAdapter(
+            Context context, List<Group> groupList, int groupItemLayoutId,
+            List<List<TradingInquiry>> childList, int childItemLayoutId) {
         super(context, groupList, groupItemLayoutId, childList, childItemLayoutId);
     }
 
