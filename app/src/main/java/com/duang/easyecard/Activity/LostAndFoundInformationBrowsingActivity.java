@@ -1,11 +1,10 @@
 package com.duang.easyecard.Activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.duang.easyecard.R;
 
-public class LostAndFoundInformationBrowsingActivity extends AppCompatActivity {
+public class LostAndFoundInformationBrowsingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
