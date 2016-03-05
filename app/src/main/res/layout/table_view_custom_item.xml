@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:minHeight="40dp"
+    android:minHeight="30dp"
     android:duplicateParentState="true">
 
     <TextView

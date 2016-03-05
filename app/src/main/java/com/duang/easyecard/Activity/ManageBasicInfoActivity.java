@@ -12,9 +12,9 @@ import android.widget.Toast;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,7 +29,7 @@ import br.com.dina.ui.widget.UITableView;
 import cz.msebera.android.httpclient.Header;
 
 public class ManageBasicInfoActivity extends BaseActivity {
-
+    /*
     private String name;  // 姓名
     private String stuId;  // 学工号
     private String cardAccount;  // 校园卡号
@@ -37,10 +37,12 @@ public class ManageBasicInfoActivity extends BaseActivity {
     private String transition;  // 过渡余额
     private String reportLossState;  // 挂失状态
     private String freezeState;  // 冻结状态
-
+    */
     private String response;
+    private final String TAG = "ManageBasicInfoActivity";
 
-    private List<String> stringList;
+    private List<String> titleList;
+    private List<String> contentList;
     private AsyncHttpClient httpClient;
 
     private UITableView tableView;
@@ -71,20 +73,19 @@ public class ManageBasicInfoActivity extends BaseActivity {
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
-        sendPOSTRequest();  // 发送POST请求
+        sendGETRequest();  // 发送GET请求
     }
 
-    // 发送POST请求
-    private void sendPOSTRequest() {
-        // 装填POST数据
-        RequestParams params = new RequestParams();
-        params.add("needHeader", "false");
-        // 发送POST请求
-        httpClient.post(UrlConstant.BASIC_INFO, params, new AsyncHttpResponseHandler() {
+    // 发送GET请求
+    private void sendGETRequest() {
+        // 发送GET请求
+        httpClient.get(UrlConstant.MOBILE_BASIC_INFO, null, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
                 response = new String(responseBody);
+                Toast.makeText(ManageBasicInfoActivity.this, response,
+                        Toast.LENGTH_SHORT).show();
                 // 解析response
                 new JsoupHtmlData().execute();
             }
@@ -101,6 +102,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
 
     // 组建列表布局
     private void createList() {
+        /*
         generateCustomItem(tableView, getResources().getString(R.string.name), name);
         generateCustomItem(tableView, getResources().getString(R.string.stu_id), stuId);
         generateCustomItem(tableView, getResources().getString(R.string.card_account), cardAccount);
@@ -109,6 +111,14 @@ public class ManageBasicInfoActivity extends BaseActivity {
         generateCustomItem(tableView, getResources().getString(R.string.report_loss_state),
                 reportLossState);
         generateCustomItem(tableView, getResources().getString(R.string.freeze_state), freezeState);
+        */
+        if (titleList.size() == contentList.size()) {
+            for (int i = 0; i < titleList.size(); i++) {
+                generateCustomItem(tableView, titleList.get(i), contentList.get(i));
+            }
+        } else {
+            LogUtil.e(TAG, "titleList's size dosen't equal to contentList's size.");
+        }
     }
 
     // 通过网站返回的html文本解析数据
@@ -119,14 +129,19 @@ public class ManageBasicInfoActivity extends BaseActivity {
             // 解析返回的responseHtml
             Document doc;
             try {
-                stringList = new ArrayList<>();
+                titleList = new ArrayList<>();
+                contentList = new ArrayList<>();
                 doc = Jsoup.parse(response);
-                Elements es = doc.getElementsByTag("em");
-                for (Element e : es) {
-                    stringList.add(e.text());
+                Elements titles = doc.getElementsByClass("first");
+                for (Element title : titles) {
+                    titleList.add(title.text());
+                }
+                Elements contents = doc.getElementsByClass("second");
+                for (Element content : contents) {
+                    contentList.add(content.text());
                 }
                 // 从List获取数据，并匹配相关变量
-                getDataFromList();
+                // getDataFromList();
                 // 组建列表布局
                 createList();
             } catch (Exception e) {
@@ -144,7 +159,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
             mProgressDialog.dismiss();
         }
     }
-
+    /*
     // 从List获取数据，并匹配相关变量
     private void getDataFromList() {
         if (!stringList.isEmpty()) {
@@ -160,6 +175,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
             Toast.makeText(this, R.string.fail_to_get_data, Toast.LENGTH_SHORT).show();
         }
     }
+    */
 
     // 构造UItableView的列表项，传入title和content
     private void generateCustomItem(UITableView tableView, String title, String content) {

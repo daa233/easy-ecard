@@ -14,6 +14,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.Base64;
 import com.loopj.android.http.RequestParams;
 import com.rey.material.widget.Button;
 import com.rey.material.widget.CheckBox;
@@ -94,7 +95,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
         // 初始提示，输入学工号
         hintText.setText(R.string.hint_input_stu_id);
         /*
-		 设置Spinner
+         设置Spinner
 		  */
         // 添加列表项
         spinnerList.add(getResources().getString(R.string.stu_id));
