@@ -155,7 +155,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
         // 获取验证码图片
         ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient, new OnLoadImageListener() {
             @Override
-            public void OnLoadImage(byte[] imageBytes, String bitmapPath) {
+            public void OnLoadImage(byte[] imageBytes) {
                 Glide
                         .with(SigninActivity.this)
                         .load(imageBytes)

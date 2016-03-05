@@ -1,8 +1,5 @@
 package com.duang.easyecard.Util;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -18,7 +15,7 @@ public class ImageUtil {
             // 获取成功
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 if (responseBody.length != 0) {
-                    onLoadImageListener.OnLoadImage(responseBody, null);
+                    onLoadImageListener.OnLoadImage(responseBody);
                 }
             }
 
@@ -31,8 +28,8 @@ public class ImageUtil {
         });
     }
 
-    // 获取Bitmap后的回调接口
+    // 获取bytes后的回调接口
     public interface OnLoadImageListener {
-        public void OnLoadImage(byte[] imageBytes, String bitmapPath);
+        void OnLoadImage(byte[] imageBytes);
     }
 }
