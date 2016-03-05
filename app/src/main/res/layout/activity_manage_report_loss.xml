@@ -9,106 +9,118 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <!-- 信息 -->
         <br.com.dina.ui.widget.UITableView
             android:id="@+id/manage_manage_report_loss_information_table_view"
             style="@style/UITableView"
             android:layout_marginTop="20dp" />
         <!-- 验证码 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_view_rounded_corner"
+            android:padding="10dp">
+
+            <TextView
+                style="@style/table_view_large_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/checkcode" />
+
+            <ImageView
+                android:id="@+id/manage_report_loss_checkcode_image"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/default_checkcode_img" />
+
+            <EditText
+                android:id="@+id/manage_report_loss_checkcode_input"
+                style="@style/table_view_large_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:hint="@string/checkcode_input_hint"
+                android:inputType="number"
+                android:maxLength="4"
+                android:singleLine="true" />
+
+        </RelativeLayout>
+
+        <!-- 查询密码 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:background="@drawable/background_view_rounded_corner"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/checkcode"
-                style="@sy"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/manage_report_loss_checkcode_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:hint="@string/checkcode_input_hint"
-                android:inputType="number"
-                android:maxLength="4"
-                android:singleLine="true" />
+                <TextView
+                    android:id="@+id/manage_report_loss_password_title"
+                    style="@style/table_view_large_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/password" />
 
+                <EditText
+                    android:id="@+id/manage_report_loss_password"
+                    style="@style/table_view_large_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:focusable="false"
+                    android:hint="@string/report_loss_password_hint"
+                    android:inputType="textPassword"
+                    android:maxLength="6" />
+            </RelativeLayout>
+            <!-- 分割线 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@color/grey" />
+            <!-- 查询密码图片 -->
             <ImageView
-                android:id="@+id/manage_report_loss_checkcode_image"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:contentDescription="@string/report_loss_checkcode_image"
+                android:id="@+id/manage_report_loss_password_img"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:contentDescription="@string/report_loss_password_img_desc"
                 android:scaleType="fitCenter"
-                android:src="@drawable/default_checkcode_img" />
+                android:src="@drawable/default_num_key_pad" />
         </LinearLayout>
-
-        <!-- 查询密码 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:background="@drawable/background_view_rounded_corner" >
-
-            <TextView
-                android:id="@+id/manage_report_loss_password_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:gravity="start"
-                android:text="@string/password"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/manage_report_loss_password"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:focusable="false"
-                android:gravity="end"
-                android:hint="@string/report_loss_password_hint"
-                android:inputType="textPassword"
-                android:maxLength="6"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- 查询密码图片 -->
-        <ImageView
-            android:id="@+id/manage_report_loss_password_img"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="5dp"
-            android:contentDescription="@string/report_loss_password_img_desc"
-            android:scaleType="centerCrop"
-            android:visibility="invisible" />
 
         <Button
             android:id="@+id/manage_report_loss_button"
+            style="@style/Material.Drawable.Ripple.Wave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/dark"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/red_button_selector"
             android:text="@string/report_loss"
             android:textColor="@color/white"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </ScrollView>

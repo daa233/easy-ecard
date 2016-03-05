@@ -10,19 +10,18 @@ import cz.msebera.android.httpclient.Header;
 
 public class ImageUtil {
 
-	public static void onLoadImage(final String imageUrl,
-			final AsyncHttpClient httpClient,
-			final OnLoadImageListener onLoadImageListener) {
-		httpClient.get(imageUrl, new AsyncHttpResponseHandler() {
+    public static void onLoadImage(final String imageUrl,
+                                   final AsyncHttpClient httpClient,
+                                   final OnLoadImageListener onLoadImageListener) {
+        httpClient.get(imageUrl, new AsyncHttpResponseHandler() {
             @Override
             // 获取成功
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 if (responseBody.length != 0) {
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(responseBody,
-                            0, responseBody.length);
-                    onLoadImageListener.OnLoadImage(bitmap, null);
+                    onLoadImageListener.OnLoadImage(responseBody, null);
                 }
             }
+
             // 获取失败
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
@@ -30,9 +29,10 @@ public class ImageUtil {
                 LogUtil.e("ImageUtil", "Fail to get image.");
             }
         });
-	}
-	// 获取Bitmap后的回调接口
-	public interface OnLoadImageListener {
-		public void OnLoadImage(Bitmap bitmap, String bitmapPath);
-	}
+    }
+
+    // 获取Bitmap后的回调接口
+    public interface OnLoadImageListener {
+        public void OnLoadImage(byte[] imageBytes, String bitmapPath);
+    }
 }

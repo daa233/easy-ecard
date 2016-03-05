@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.net.URL;
+
 /**
  * 用于ExpandableListView
  * Created by MrD on 2016/2/23.
@@ -147,8 +149,18 @@ public class ExpandableListViewHolder {
         return this;
     }
 
-    public ExpandableListViewHolder setImageBitmap(int viewId, Bitmap bitmap) {
-        useGlideToLoadImages(viewId, bitmap);
+    public ExpandableListViewHolder setImageUrl(int viewId, String imageUrl) {
+        useGlideToLoadImages(viewId, imageUrl);
+        return this;
+    }
+
+    public ExpandableListViewHolder setImageUrl(int viewId, URL imageUrl) {
+        useGlideToLoadImages(viewId, imageUrl);
+        return this;
+    }
+
+    public ExpandableListViewHolder setImageBytes(int viewId, String imageBytes) {
+        useGlideToLoadImages(viewId, imageBytes);
         return this;
     }
 
