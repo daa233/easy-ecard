@@ -79,13 +79,11 @@ public class ManageBasicInfoActivity extends BaseActivity {
     // 发送GET请求
     private void sendGETRequest() {
         // 发送GET请求
-        httpClient.get(UrlConstant.MOBILE_BASIC_INFO, null, new AsyncHttpResponseHandler() {
+        httpClient.get(UrlConstant.MOBILE_MANAGE_BASIC_INFO, null, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
                 response = new String(responseBody);
-                Toast.makeText(ManageBasicInfoActivity.this, response,
-                        Toast.LENGTH_SHORT).show();
                 // 解析response
                 new JsoupHtmlData().execute();
             }

@@ -12,10 +12,10 @@
         android:orientation="vertical">
         <!-- 信息 -->
         <br.com.dina.ui.widget.UITableView
-            android:id="@+id/manage_manage_report_loss_information_table_view"
+            android:id="@+id/manage_report_loss_information_table_view"
             style="@style/UITableView"
             android:layout_marginTop="20dp" />
-        <!-- 验证码 -->
+        <!-- 验证码
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,9 +55,40 @@
                 android:maxLength="4"
                 android:singleLine="true" />
 
-        </RelativeLayout>
-
+        </RelativeLayout> -->
         <!-- 查询密码 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_view_rounded_corner"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/manage_report_loss_password_title"
+                style="@style/table_view_large_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/password" />
+
+            <EditText
+                android:id="@+id/manage_report_loss_password"
+                style="@style/table_view_large_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:hint="@string/report_loss_password_hint"
+                android:inputType="textPassword"
+                android:maxLength="6" />
+        </RelativeLayout>
+        <!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,14 +124,12 @@
                     android:inputType="textPassword"
                     android:maxLength="6" />
             </RelativeLayout>
-            <!-- 分割线 -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
                 android:background="@color/grey" />
-            <!-- 查询密码图片 -->
             <ImageView
                 android:id="@+id/manage_report_loss_password_img"
                 android:layout_width="match_parent"
@@ -108,7 +137,7 @@
                 android:contentDescription="@string/report_loss_password_img_desc"
                 android:scaleType="fitCenter"
                 android:src="@drawable/default_num_key_pad" />
-        </LinearLayout>
+        </LinearLayout> -->
 
         <Button
             android:id="@+id/manage_report_loss_button"
@@ -121,6 +150,7 @@
             android:background="@drawable/red_button_selector"
             android:text="@string/report_loss"
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:onClick="postCardLostRequest"/>
     </LinearLayout>
 </ScrollView>
