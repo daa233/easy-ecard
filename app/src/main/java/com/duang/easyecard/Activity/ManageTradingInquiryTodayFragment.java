@@ -88,6 +88,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
             initData();
         }
         chooseViewByState(ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG);
+        ManageTradingInquiryActivity.TODAY_TAB_INIT_FLAG = 0;
     }
 
     private void initView() {

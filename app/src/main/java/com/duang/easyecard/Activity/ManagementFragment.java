@@ -124,10 +124,8 @@ public class ManagementFragment extends Fragment implements
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == 0) {
                                     // 跳转到ManageReportLossActivity
-                                    /*
                                     startActivity(new Intent(getActivity(),
                                             ManageReportLossActivity.class));
-                                            */
                                 } else {
                                     // 拨打挂失电话
                                     AlertDialog.Builder callDialog =

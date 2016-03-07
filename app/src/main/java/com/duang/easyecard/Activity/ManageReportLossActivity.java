@@ -1,5 +1,6 @@
 package com.duang.easyecard.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,6 +31,7 @@ public class ManageReportLossActivity extends BaseActivity {
 
     private UITableView userInfoTableView;
     private EditText passwordEditText;
+    private ProgressDialog mProgressDialog;
 
     private AsyncHttpClient httpClient;
     private String response;
@@ -52,6 +55,14 @@ public class ManageReportLossActivity extends BaseActivity {
         userInfoTableView = (UITableView) findViewById(
                 R.id.manage_report_loss_information_table_view);
         passwordEditText = (EditText) findViewById(R.id.manage_report_loss_password);
+
+        // Create a progressDialog
+        mProgressDialog = new ProgressDialog(ManageReportLossActivity.this);
+        // Set progressDialog message
+        mProgressDialog.setMessage(getResources().getString(R.string.loading) + "  o(>﹏<)o");
+        mProgressDialog.setIndeterminate(false);
+        // Show progressDialog
+        mProgressDialog.show();
     }
 
     private void initData() {
@@ -60,6 +71,7 @@ public class ManageReportLossActivity extends BaseActivity {
         httpClient = myApp.getHttpClient();
         sendGETRequest();
     }
+
     // 发送GET请求
     private void sendGETRequest() {
         httpClient.get(this, UrlConstant.MOBILE_MANAGE_CARD_LOST, new AsyncHttpResponseHandler() {
@@ -81,7 +93,14 @@ public class ManageReportLossActivity extends BaseActivity {
 
     // “挂失”按钮的点击事件
     public void postCardLostRequest(View v) {
+        // 发送POST请求
+        sendPOSTRequest();
+    }
 
+    // 发送POST请求
+    private void sendPOSTRequest() {
+        RequestParams requestParams;
+        requestParams.add();
     }
 
     // 通过网站返回的html文本解析数据
@@ -110,6 +129,8 @@ public class ManageReportLossActivity extends BaseActivity {
             generateCustomItem(userInfoTableView, getString(R.string.stu_id), stuId);
             generateCustomItem(userInfoTableView, getString(R.string.card_account), cardAccount);
             userInfoTableView.commit();
+            // Close ProgressDialog
+            mProgressDialog.dismiss();
         }
     }
 

@@ -15,6 +15,7 @@
     <string name="signin_processing">正在登录...</string>
     <string name="signin_success">登录成功</string>
     <string name="password">查询密码</string>
+    <string name="card_query_password">校园卡查询密码</string>
     <string name="password_input_hint">请输入校园卡查询密码</string>
     <string name="checkcode">验证码</string>
     <string name="checkcode_input_hint">验证码</string>

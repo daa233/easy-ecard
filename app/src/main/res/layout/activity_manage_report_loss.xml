@@ -56,6 +56,12 @@
                 android:singleLine="true" />
 
         </RelativeLayout> -->
+        <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
         <!-- 查询密码 -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -64,7 +70,6 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/background_view_rounded_corner"
-            android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
@@ -73,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="@string/password" />
+                android:text="@string/card_query_password" />
 
             <EditText
                 android:id="@+id/manage_report_loss_password"
@@ -83,7 +88,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:focusable="false"
+                android:gravity="end"
                 android:hint="@string/report_loss_password_hint"
                 android:inputType="textPassword"
                 android:maxLength="6" />
@@ -146,11 +151,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="100dp"
             android:background="@drawable/red_button_selector"
+            android:onClick="postCardLostRequest"
             android:text="@string/report_loss"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:onClick="postCardLostRequest"/>
+            android:textSize="20sp" />
     </LinearLayout>
 </ScrollView>

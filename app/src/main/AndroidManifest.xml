@@ -33,13 +33,11 @@
         <activity
             android:name=".Activity.ManageTradingInquiryActivity"
             android:label="@string/title_activity_manage_trading_inquiry"
-            android:parentActivityName=".Activity.BaseActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.duang.easyecard.Activity.BaseActivity" />
-        </activity>
-        <activity android:name=".Activity.ManageReportLossActivity" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.ManageReportLossActivity"
+            android:label="@string/ManageReportLossActivity_label"
+            android:theme="@style/style_titlebar_normal"/>
         <activity android:name=".Activity.LostAndFoundInformationBrowsingActivity" />
         <activity android:name=".Activity.LostAndFoundRegistrationActivity"></activity>
     </application>
