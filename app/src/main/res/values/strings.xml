@@ -105,6 +105,8 @@
     <string name="report_loss_password_img_desc">挂失密码键盘图片</string>
     <string name="report_loss_checkcode_image">挂失验证码图片</string>
     <string name="report_loss">挂失</string>
+    <string name="report_loss_success">挂失成功！</string>
+    <string name="wrong_query_password">查询密码错误</string>
     <!-- LostAndFoundFragment -->
     <string name="lost_and_found_info_browsing">失卡招领信息浏览</string>
     <string name="card_loss_registration">丢失卡登记</string>

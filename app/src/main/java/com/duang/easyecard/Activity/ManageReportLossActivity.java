@@ -14,17 +14,21 @@ import android.widget.Toast;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.Base64;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
 public class ManageReportLossActivity extends BaseActivity {
@@ -39,9 +43,15 @@ public class ManageReportLossActivity extends BaseActivity {
     private String name;
     private String stuId;
     private String cardAccount;
+    private String password;
+
+    private boolean USER_INFO_BEEN_INITIALIZED = false;
+
+    private final String TAG = "ManageReportLossActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LogUtil.d(TAG, "onCreate.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_report_loss);
         // 显示home按钮
@@ -69,6 +79,8 @@ public class ManageReportLossActivity extends BaseActivity {
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
+        // 初始化cardAccount
+        cardAccount = "0";
         sendGETRequest();
     }
 
@@ -92,15 +104,66 @@ public class ManageReportLossActivity extends BaseActivity {
     }
 
     // “挂失”按钮的点击事件
-    public void postCardLostRequest(View v) {
-        // 发送POST请求
-        sendPOSTRequest();
+    public void onReportLossButtonClick(View v) {
+        LogUtil.d(TAG, "onReportLossButtonClick.");
+        if (USER_INFO_BEEN_INITIALIZED) {
+            password = passwordEditText.getText().toString();
+            if (password.isEmpty()) {
+                // 没有输入密码
+                Toast.makeText(this,
+                        getString(R.string.hint_input_password), Toast.LENGTH_SHORT).show();
+            } else {
+                // 输入了密码，对密码进行加密，并发送POST请求
+                sendPOSTRequest(Base64.encodeToString(password.getBytes(), Base64.DEFAULT));
+            }
+        }
     }
 
     // 发送POST请求
-    private void sendPOSTRequest() {
-        RequestParams requestParams;
-        requestParams.add();
+    private void sendPOSTRequest(String encodedPassword) {
+        RequestParams requestParams = new RequestParams();
+        // 添加参数
+        requestParams.put("CardNo", cardAccount);
+        // 采用Base64对查询密码进行加密
+        requestParams.put("Password", encodedPassword);
+        LogUtil.d(TAG, requestParams.toString());
+        httpClient.post(UrlConstant.MOBILE_MANAGE_CARD_LOST,
+                requestParams, new JsonHttpResponseHandler() {
+                    // 成功响应，处理返回的JSON数据
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        super.onSuccess(statusCode, headers, response);
+                        try {
+                            if (response.getString("success").equals("true")) {
+                                // 挂失成功
+                                new SweetAlertDialog(ManageReportLossActivity.this,
+                                        SweetAlertDialog.SUCCESS_TYPE)
+                                        .setTitleText(getString(R.string.report_loss_success))
+                                        .show();
+                            } else {
+                                // 挂失失败
+                                new SweetAlertDialog(ManageReportLossActivity.this,
+                                        SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText(getString(R.string.wrong_query_password))
+                                        .show();
+                                passwordEditText.setText("");
+                            }
+                            LogUtil.d(TAG, response.getString("success"));
+                            LogUtil.d(TAG, response.getString("msg"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // 网络错误
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString,
+                                          Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                        Toast.makeText(ManageReportLossActivity.this, R.string.network_error,
+                                Toast.LENGTH_SHORT);
+                    }
+                });
     }
 
     // 通过网站返回的html文本解析数据
@@ -131,6 +194,14 @@ public class ManageReportLossActivity extends BaseActivity {
             userInfoTableView.commit();
             // Close ProgressDialog
             mProgressDialog.dismiss();
+            // 如果解析获得的信息不为空，将USER_INFO_BEEN_INITIALIZED置为true;
+            if (!(name == null || name.isEmpty())) {
+                if (!(stuId == null || stuId.isEmpty())) {
+                    if (!(cardAccount == null || cardAccount.isEmpty())) {
+                        USER_INFO_BEEN_INITIALIZED = true;
+                    }
+                }
+            }
         }
     }
 

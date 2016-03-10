@@ -90,7 +90,7 @@
                 android:layout_centerVertical="true"
                 android:gravity="end"
                 android:hint="@string/report_loss_password_hint"
-                android:inputType="textPassword"
+                android:inputType="numberPassword"
                 android:maxLength="6" />
         </RelativeLayout>
         <!--
@@ -144,7 +144,7 @@
                 android:src="@drawable/default_num_key_pad" />
         </LinearLayout> -->
 
-        <Button
+        <com.rey.material.widget.Button
             android:id="@+id/manage_report_loss_button"
             style="@style/Material.Drawable.Ripple.Wave"
             android:layout_width="match_parent"
@@ -153,7 +153,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="100dp"
             android:background="@drawable/red_button_selector"
-            android:onClick="postCardLostRequest"
+            android:onClick="onReportLossButtonClick"
             android:text="@string/report_loss"
             android:textColor="@color/white"
             android:textSize="20sp" />
