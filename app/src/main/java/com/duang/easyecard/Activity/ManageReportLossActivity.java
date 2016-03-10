@@ -160,8 +160,9 @@ public class ManageReportLossActivity extends BaseActivity {
                     public void onFailure(int statusCode, Header[] headers, String responseString,
                                           Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
+                        LogUtil.e(TAG, "Error: POST Response.");
                         Toast.makeText(ManageReportLossActivity.this, R.string.network_error,
-                                Toast.LENGTH_SHORT);
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
