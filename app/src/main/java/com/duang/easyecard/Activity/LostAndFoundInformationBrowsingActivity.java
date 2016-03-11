@@ -1,14 +1,256 @@
 package com.duang.easyecard.Activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Model.LostAndFoundEvent;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
+import com.duang.easyecard.Util.LostAndFoundEventAdapter;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.rey.material.widget.ListView;
+import com.yalantis.phoenix.PullToRefreshView;
 
-public class LostAndFoundInformationBrowsingActivity extends BaseActivity {
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import cz.msebera.android.httpclient.Header;
+
+public class LostAndFoundInformationBrowsingActivity extends BaseActivity
+        implements AdapterView.OnItemClickListener {
+
+    private PullToRefreshView mPullToRefreshView;
+    private ListView mListView;
+    private CheckBox mNotFoundedCheckBox;
+    private CheckBox mFoundedCheckBox;
+    private SweetAlertDialog mProgressDialog;
+
+    private AsyncHttpClient httpClient;
+    private LostAndFoundEventAdapter mAdapter;
+    private String response;  // 服务器响应数据
+    private int pageIndex = 1;  // 访问的网页信息的页码
+    private int maxPageIndex = 1;  // 最大页码，默认为1
+    private boolean FIRST_TIME_TO_PARSE_FLAG = true;  // 首次解析标志
+    private int amountLostAndFoundEvent;
+    private int foundedLostAndFoundEvent;
+    private List<LostAndFoundEvent> lostAndFoundEventList;
+
+    private final String TAG = "LostAndFoundInformationBrowsingActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lost_and_found_information_browsing);
+        // 显示Back按钮
+        setupActionBar();
+        initView();
+        initData();
+    }
+
+    // 初始化布局
+    private void initView() {
+        // 实例化控件
+        mPullToRefreshView = (PullToRefreshView) findViewById(
+                R.id.lost_and_found_information_browsing_pull_to_refresh_view);
+        mListView = (ListView) findViewById(R.id.lost_and_found_information_browsing_list_view);
+        mNotFoundedCheckBox = (CheckBox) findViewById(
+                R.id.lost_and_found_information_browsing_not_founded_check_box);
+        mFoundedCheckBox = (CheckBox) findViewById(
+                R.id.lost_and_found_information_browsing_founded_check_box);
+    }
+
+    // 初始化数据
+    private void initData() {
+        // 获得全局变量httpClient
+        MyApplication myApp = (MyApplication) getApplication();
+        httpClient = myApp.getHttpClient();
+        // 初始化数据List
+        lostAndFoundEventList = new ArrayList<>();
+        // 显示ProgerssDialog
+        mProgressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText(getString(R.string.loading));
+        mProgressDialog.show();
+        mProgressDialog.setCancelable(false);
+        // 需要先访问到“应用中心”界面，准备好后发送GET请求
+        sendPreGETRequest();
+    }
+
+    // 更新ListView
+    private void updateListView() {
+        LogUtil.d(TAG, "setAdapter");
+        mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(), lostAndFoundEventList,
+                R.layout.lost_and_found_information_browsing_list_item);
+        mListView.setAdapter(mAdapter);
+    }
+
+    // 先访问应用中心界面，准备发送PreGET请求
+    private void sendPreGETRequest() {
+        httpClient.get(UrlConstant.MANAGEMENT, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                LogUtil.d(TAG, "PreGET response success.");
+                response = new String(responseBody);
+                LogUtil.d(TAG, "PreGET response: " + response);
+                // 响应成功，发送GET请求
+                sendGETRequest();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // 网络错误
+                Toast.makeText(LostAndFoundInformationBrowsingActivity.this,
+                        R.string.network_error, Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+    }
+
+    // 发送GET请求
+    private void sendGETRequest() {
+        UrlConstant.cardLossPageIndex = pageIndex;  // 组装Url
+        LogUtil.d(TAG, "GET address: " + UrlConstant.getCardLossInfoBrowsing());
+        httpClient.get(UrlConstant.getCardLossInfoBrowsing(), new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                // 成功响应
+                LogUtil.d(TAG, "GET response success.");
+                response = new String(responseBody);
+                new JsoupHtmlData().execute();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // 网络错误
+                Toast.makeText(LostAndFoundInformationBrowsingActivity.this,
+                        R.string.network_error, Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            LogUtil.d(TAG, "Start Jsoup");
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                // 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
+                if (FIRST_TIME_TO_PARSE_FLAG) {
+                    String remainString = "";
+                    for (Element page : doc.select("a[data-ajax=true]")) {
+                        remainString = page.attr("href");
+                    }
+                    // 当记录页数少于1时，remainString为空
+                    if (!remainString.isEmpty()) {
+                        // remainString不为空
+                        remainString = remainString.substring(
+                                remainString.indexOf("pageindex=") + 10);
+                        maxPageIndex = Integer.valueOf(remainString);
+                        LogUtil.d(TAG, "maxPageIndex = " + maxPageIndex);
+                    } else {
+                        // remainString为空, maxIndex值保持不变
+                        LogUtil.d(TAG, "maxPageIndex = " + maxPageIndex);
+                    }
+                    // 解析当前累计丢失信息条数和已招领条数
+                    for (Element div : doc.select("div[class=content]")) {
+                        Element span = div.getElementById("lblLostCount");
+                        amountLostAndFoundEvent = Integer.valueOf(span.text());
+                        span = div.getElementById("lblClaimCount");
+                        foundedLostAndFoundEvent = Integer.valueOf(span.text());
+                    }
+                    // 将首次解析标志置为flase
+                    FIRST_TIME_TO_PARSE_FLAG = false;
+                }
+                // 找到表格
+                for (Element table : doc.select("table[class=table_show widthtable]")) {
+                    Elements tbody = table.select("tbody");
+                    // 找到表格的所有行
+                    for (Element row : tbody.select("tr")) {
+                        LostAndFoundEvent event = new LostAndFoundEvent();
+                        // 找到每一行所包含的td
+                        Elements tds = row.select("td");
+                        // 将数据按照顺序填入event对象
+                        if (!tds.get(0).text().isEmpty()) {
+                            // 通过字符串截取获得丢失信息ID
+                            String eventIdString = tds.get(0).toString();
+                            eventIdString = eventIdString.substring(
+                                    eventIdString.indexOf("(") + 1);
+                            eventIdString = eventIdString.substring(
+                                    0, eventIdString.indexOf(")"));
+                            event.setId(Integer.valueOf(eventIdString));
+                            event.setName(tds.get(0).text());
+                            event.setStuId(tds.get(1).text());
+                            event.setAccount(tds.get(2).text());
+                            event.setPublishTime(tds.get(3).text());
+                            event.setContact(tds.get(4).text());
+                            event.setState(tds.get(5).text());
+                            event.setFoundTime(tds.get(6).text());
+                            LogUtil.d(TAG, event.toString());
+                            lostAndFoundEventList.add(event);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 判断是否已经全部加载完成
+            if (pageIndex < maxPageIndex) {
+                // 还有数据需要加载，页码加1，然后继续发送GET请求
+                pageIndex++;
+                sendGETRequest();
+            } else {
+                // 已经全部加载完成
+                LogUtil.d(TAG, "Loading Finished.");
+                // 更新CheckBox的数量显示
+                mNotFoundedCheckBox.setText(getString(R.string.not_founded) + " (" +
+                        (amountLostAndFoundEvent - foundedLostAndFoundEvent) + ")");
+                mFoundedCheckBox.setText(getString(R.string.founded) + " (" +
+                        foundedLostAndFoundEvent + ")");
+                // 设置适配器并显示
+                updateListView();
+                // 关闭ProgressDialog
+                mProgressDialog
+                        .setTitleText(getString(R.string.loading_complete))
+                        .setContentText(getString(R.string.total_queried_events)
+                                + amountLostAndFoundEvent + getString(R.string.in_records))
+                        .setContentText(getString(R.string.OK))
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                // 延迟一段时间后，关闭ProgressDialog
+                try {
+                    Thread.currentThread().sleep(800);
+                    mProgressDialog.dismissWithAnimation();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

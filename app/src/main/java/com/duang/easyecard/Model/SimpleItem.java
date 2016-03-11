@@ -6,22 +6,22 @@ package com.duang.easyecard.Model;
  */
 public class SimpleItem {
 
-    private String mString;
-    private int mResourceId;
+    private String string;
+    private int resourceId;
 
     public String getString() {
-        return mString;
+        return string;
     }
 
-    public void setString(String mString) {
-        this.mString = mString;
+    public void setString(String string) {
+        this.string = string;
     }
 
     public int getResourceId() {
-        return mResourceId;
+        return resourceId;
     }
 
-    public void setResourceId(int mResourceId) {
-        this.mResourceId = mResourceId;
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
     }
 }
