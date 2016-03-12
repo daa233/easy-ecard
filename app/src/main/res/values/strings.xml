@@ -122,6 +122,8 @@
     <string name="lost_place">丢卡地点</string>
     <string name="description">说明</string>
     <string name="state">招领状态</string>
+    <string name="card_in_lost_state">丢失卡</string>
+    <string name="card_has_been_founded">已招领</string>
     <string name="found_time">招领时间</string>
     <string name="send_message_to_ta">向Ta发送消息</string>
     <!-- LostAndFoundRegistrationActivity -->

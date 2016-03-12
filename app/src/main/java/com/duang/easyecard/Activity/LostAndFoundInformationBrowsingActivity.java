@@ -2,11 +2,15 @@ package com.duang.easyecard.Activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.LostAndFoundEvent;
@@ -36,19 +40,23 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
     private ListView mListView;
     private CheckBox mNotFoundedCheckBox;
     private CheckBox mFoundedCheckBox;
+    private ImageView mImageView;
     private SweetAlertDialog mProgressDialog;
 
     private AsyncHttpClient httpClient;
     private LostAndFoundEventAdapter mAdapter;
     private String response;  // 服务器响应数据
-    private int pageIndex = 1;  // 访问的网页信息的页码
-    private int maxPageIndex = 1;  // 最大页码，默认为1
-    private boolean FIRST_TIME_TO_PARSE_FLAG = true;  // 首次解析标志
+    private List<LostAndFoundEvent> lostAndFoundEventList;
+    private int pageIndex;  // 访问的网页信息的页码
+    private int maxPageIndex;  // 最大页码
+    private boolean FIRST_TIME_TO_PARSE_FLAG = true;  // 首次解析标志，默认为true
     private int amountLostAndFoundEvent;
     private int foundedLostAndFoundEvent;
-    private List<LostAndFoundEvent> lostAndFoundEventList;
+    private boolean DISPLAY_NOT_FOUNDED_EVENTS_FLAG = true;  // 显示未招领事件标志，默认为true
+    private boolean DISPLAY_FOUNDED_EVENTS_FLAG = true;  // 显示已招领事件标志，默认为true
 
     private final String TAG = "LostAndFoundInformationBrowsingActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +78,33 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                 R.id.lost_and_found_information_browsing_not_founded_check_box);
         mFoundedCheckBox = (CheckBox) findViewById(
                 R.id.lost_and_found_information_browsing_founded_check_box);
+        mImageView = (ImageView) findViewById(
+                R.id.lost_and_found_information_browsing_nothing_image_view);
+        // 监听PullToRefreshView的下拉刷新事件
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 开始刷新
+                initData();
+            }
+        });
+        // 监听ListView的Item点击事件
+        mListView.setOnItemClickListener(this);
+        // 监听CheckBox的选择事件
+        mNotFoundedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                DISPLAY_NOT_FOUNDED_EVENTS_FLAG = isChecked;
+                updateListView();
+            }
+        });
+        mFoundedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                DISPLAY_FOUNDED_EVENTS_FLAG = isChecked;
+                updateListView();
+            }
+        });
     }
 
     // 初始化数据
@@ -79,6 +114,10 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
         httpClient = myApp.getHttpClient();
         // 初始化数据List
         lostAndFoundEventList = new ArrayList<>();
+        // 初始化网页信息页码，首次解析标志置为true
+        pageIndex = 1;
+        maxPageIndex = 1;
+        FIRST_TIME_TO_PARSE_FLAG = true;
         // 显示ProgerssDialog
         mProgressDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
                 .setTitleText(getString(R.string.loading));
@@ -91,9 +130,51 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
     // 更新ListView
     private void updateListView() {
         LogUtil.d(TAG, "setAdapter");
-        mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(), lostAndFoundEventList,
-                R.layout.lost_and_found_information_browsing_list_item);
-        mListView.setAdapter(mAdapter);
+        List<LostAndFoundEvent> partialLostAndFoundEventList = new ArrayList<>();
+        // 根据标志位状态设置Adapter
+        if (DISPLAY_NOT_FOUNDED_EVENTS_FLAG && DISPLAY_FOUNDED_EVENTS_FLAG) {
+            // 显示所有事件
+            mImageView.setVisibility(View.GONE);
+            mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(),
+                    lostAndFoundEventList, R.layout.lost_and_found_information_browsing_list_item);
+            mListView.setAdapter(mAdapter);
+        } else {
+            if (DISPLAY_NOT_FOUNDED_EVENTS_FLAG) {
+                // 仅显示未招领事件
+                mImageView.setVisibility(View.GONE);
+                for (int i = 0; i < lostAndFoundEventList.size(); i++) {
+                    if (lostAndFoundEventList.get(i).getState().contains(
+                            getString(R.string.card_in_lost_state))) {
+                        partialLostAndFoundEventList.add(lostAndFoundEventList.get(i));
+                    }
+                }
+            } else if (DISPLAY_FOUNDED_EVENTS_FLAG) {
+                // 仅显示已招领事件
+                mImageView.setVisibility(View.GONE);
+                for (int i = 0; i < lostAndFoundEventList.size(); i++) {
+                    if (lostAndFoundEventList.get(i).getState().contains(
+                            getString(R.string.card_has_been_founded))) {
+                        partialLostAndFoundEventList.add(lostAndFoundEventList.get(i));
+                    }
+                }
+            } else {
+                // 不显示任何事件
+                LogUtil.d(TAG, "updateListView: Display nothing.");
+            }
+            // 设置适配器
+            if (partialLostAndFoundEventList.isEmpty()) {
+                // 显示没有搜索到结果的图片
+                Glide
+                        .with(this)
+                        .load(R.drawable.nothing_founded_404)
+                        .into(mImageView);
+                mImageView.setVisibility(View.VISIBLE);
+            }
+            mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(),
+                    partialLostAndFoundEventList,
+                    R.layout.lost_and_found_information_browsing_list_item);
+            mListView.setAdapter(mAdapter);
+        }
     }
 
     // 先访问应用中心界面，准备发送PreGET请求
@@ -236,20 +317,22 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                         foundedLostAndFoundEvent + ")");
                 // 设置适配器并显示
                 updateListView();
-                // 关闭ProgressDialog
+                // 关停PullToRefreshView的刷新
+                mPullToRefreshView.setRefreshing(false);
+                // 准备停止ProgressDialog
                 mProgressDialog
                         .setTitleText(getString(R.string.loading_complete))
                         .setContentText(getString(R.string.total_queried_events)
                                 + amountLostAndFoundEvent + getString(R.string.in_records))
-                        .setContentText(getString(R.string.OK))
+                        .setConfirmText(getString(R.string.OK))
                         .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                 // 延迟一段时间后，关闭ProgressDialog
-                try {
-                    Thread.currentThread().sleep(800);
-                    mProgressDialog.dismissWithAnimation();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressDialog.dismiss();
+                    }
+                }, 1500);
             }
         }
     }

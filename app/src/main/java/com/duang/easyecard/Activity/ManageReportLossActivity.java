@@ -139,12 +139,16 @@ public class ManageReportLossActivity extends BaseActivity {
                                 new SweetAlertDialog(ManageReportLossActivity.this,
                                         SweetAlertDialog.SUCCESS_TYPE)
                                         .setTitleText(getString(R.string.report_loss_success))
+                                        .setConfirmText(getString(R.string.OK))
                                         .show();
+                                // 销毁Activity
+                                finish();
                             } else {
                                 // 挂失失败
                                 new SweetAlertDialog(ManageReportLossActivity.this,
                                         SweetAlertDialog.ERROR_TYPE)
                                         .setTitleText(getString(R.string.wrong_query_password))
+                                        .setConfirmText(getString(R.string.OK))
                                         .show();
                                 passwordEditText.setText("");
                             }
