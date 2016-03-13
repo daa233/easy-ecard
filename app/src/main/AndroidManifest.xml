@@ -8,6 +8,7 @@
 
     <application
         android:name=".GlobalData.MyApplication"
+        android:fullBackupContent="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -40,6 +41,10 @@
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingActivity"
             android:label="@string/LostAndFoundInformationBrowsingActivity_label"
+            android:theme="@style/style_titlebar_normal" />
+        <activity
+            android:name=".Activity.LostAndFoundInformationBrowsingViewDetailActivity"
+            android:label="@string/LostAndFoundInformationBrowsingViewDetailActivity_label"
             android:theme="@style/style_titlebar_normal" />
         <activity
             android:name=".Activity.LostAndFoundRegistrationActivity"

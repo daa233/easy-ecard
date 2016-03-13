@@ -116,8 +116,9 @@
     <string name="founded">已招领</string>
     <string name="view_detail">查看详细信息</string>
     <string name="publish_time">发布时间</string>
-    <!-- LostInfoBrowsingViewDetail -->
-    <string name="LostInfoBrowsingViewDetailActivity_label">失卡招领详细信息</string>
+    <!-- LostAndFoundInformationBrowsingViewDetailActivity -->
+    <string name="LostAndFoundInformationBrowsingViewDetailActivity_label">失卡招领详细信息</string>
+    <string name="number_point">—— No.</string>
     <string name="contact">联系方式</string>
     <string name="lost_place">丢卡地点</string>
     <string name="description">说明</string>

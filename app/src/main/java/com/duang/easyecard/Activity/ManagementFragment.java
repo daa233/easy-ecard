@@ -102,8 +102,7 @@ public class ManagementFragment extends Fragment implements
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
                 // 跳转到ManageViewBasicInfoActivity
-                Intent intent = new Intent(this.getContext(),
-                        ManageBasicInfoActivity.class);
+                Intent intent = new Intent(this.getContext(), ManageBasicInfoActivity.class);
                 startActivity(intent);
                 break;
             case R.drawable.manage_trading_inquiry:

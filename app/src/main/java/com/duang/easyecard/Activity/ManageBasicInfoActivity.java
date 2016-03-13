@@ -94,6 +94,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
                 // 网络错误
                 Toast.makeText(ManageBasicInfoActivity.this, R.string.network_error,
                         Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
             }
         });
     }

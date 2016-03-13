@@ -299,7 +299,7 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
     private void signinSuccess() {
         hintText.setText(R.string.hint_signin_success);
         signinButton.setText(R.string.signin_success);
-        // 传递全局变量http
+        // 传递全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         myApp.setHttpClient(httpClient);
         if (myApp.getHttpClient() != null) {

@@ -2,27 +2,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:duplicateParentState="true"
     android:minHeight="30dp"
-    android:duplicateParentState="true">
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
     <TextView
         android:id="@+id/table_view_custom_item_title"
+        style="@style/table_view_large_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:layout_centerVertical="true"
-        style="@style/table_view_large_text" />
+        android:gravity="center_vertical"
+        android:maxWidth="150dp" />
 
     <TextView
         android:id="@+id/table_view_custom_item_content"
+        style="@style/table_view_large_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        style="@style/table_view_large_text"/>
+        android:maxWidth="180dp"
+        android:textIsSelectable="true" />
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.duang.easyecard.Activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -224,9 +225,17 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
         });
     }
 
+    // ListView的Item点击事件
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        // 跳转到查看详细信息界面，并传递LostAndFoundEvent对象
+        Intent intent = new Intent(MyApplication.getContext(),
+                LostAndFoundInformationBrowsingViewDetailActivity.class);
+        Bundle bundle = new Bundle();
+        LostAndFoundEvent event = (LostAndFoundEvent) parent.getItemAtPosition(position);
+        bundle.putSerializable("LostAndFoundEvent", event);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     // 解析响应数据
