@@ -91,6 +91,7 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                 //  网络错误
                 Toast.makeText(LostAndFoundInformationBrowsingViewDetailActivity.this,
                         R.string.network_error, Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
             }
         });
     }
