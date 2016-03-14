@@ -1,30 +1,25 @@
 package com.duang.easyecard.Activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Model.UserBasicInformation;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
@@ -34,19 +29,10 @@ import cz.msebera.android.httpclient.Header;
 public class ManageReportLossActivity extends BaseActivity {
 
     private UITableView userInfoTableView;
-    private EditText passwordEditText;
-    private ProgressDialog mProgressDialog;
-
+    private MaterialEditText passwordEditText;
+    private UserBasicInformation userBasicInformation;
     private AsyncHttpClient httpClient;
-    private String response;
-
-    private String name;
-    private String stuId;
-    private String cardAccount;
     private String password;
-
-    private boolean USER_INFO_BEEN_INITIALIZED = false;
-
     private final String TAG = "ManageReportLossActivity";
 
     @Override
@@ -64,58 +50,39 @@ public class ManageReportLossActivity extends BaseActivity {
         // 实例化控件
         userInfoTableView = (UITableView) findViewById(
                 R.id.manage_report_loss_information_table_view);
-        passwordEditText = (EditText) findViewById(R.id.manage_report_loss_password);
-
-        // Create a progressDialog
-        mProgressDialog = new ProgressDialog(ManageReportLossActivity.this);
-        // Set progressDialog message
-        mProgressDialog.setMessage(getResources().getString(R.string.loading) + "  o(>﹏<)o");
-        mProgressDialog.setIndeterminate(false);
-        // Show progressDialog
-        mProgressDialog.show();
+        passwordEditText = (MaterialEditText) findViewById(R.id.manage_report_loss_password);
     }
 
     private void initData() {
-        // 获得全局变量httpClient
+        // 获得全局变量httpClient和userBasicInformation
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
-        // 初始化cardAccount
-        cardAccount = "0";
-        sendGETRequest();
+        userBasicInformation = myApp.getUserBasicInformation();
+        // 创建UITableView
+        createUITableViewList();
     }
 
-    // 发送GET请求
-    private void sendGETRequest() {
-        httpClient.get(this, UrlConstant.MOBILE_MANAGE_CARD_LOST, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                // 成功响应
-                response = new String(responseBody);
-                new JsoupGetHtmlData().execute();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                // 网络错误
-                Toast.makeText(ManageReportLossActivity.this, R.string.network_error,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
+    // 创建UITableView
+    private void createUITableViewList() {
+        generateCustomItem(userInfoTableView, getString(R.string.name),
+                userBasicInformation.getName());
+        generateCustomItem(userInfoTableView, getString(R.string.stu_id),
+                userBasicInformation.getStuId());
+        generateCustomItem(userInfoTableView, getString(R.string.card_account),
+                userBasicInformation.getCardAccount());
+        userInfoTableView.commit();
     }
 
     // “挂失”按钮的点击事件
     public void onReportLossButtonClick(View v) {
         LogUtil.d(TAG, "onReportLossButtonClick.");
-        if (USER_INFO_BEEN_INITIALIZED) {
-            password = passwordEditText.getText().toString();
-            if (password.isEmpty()) {
-                // 没有输入密码
-                Toast.makeText(this,
-                        getString(R.string.hint_input_password), Toast.LENGTH_SHORT).show();
-            } else {
-                // 输入了密码，对密码进行加密，并发送POST请求
-                sendPOSTRequest(Base64.encodeToString(password.getBytes(), Base64.DEFAULT));
-            }
+        password = passwordEditText.getText().toString();
+        if (password.isEmpty()) {
+            // 没有输入密码
+            passwordEditText.setError(getString(R.string.report_loss_password_is_empty));
+        } else {
+            // 对密码进行加密，并发送POST请求
+            sendPOSTRequest(Base64.encodeToString(password.getBytes(), Base64.DEFAULT));
         }
     }
 
@@ -123,7 +90,7 @@ public class ManageReportLossActivity extends BaseActivity {
     private void sendPOSTRequest(String encodedPassword) {
         RequestParams requestParams = new RequestParams();
         // 添加参数
-        requestParams.put("CardNo", cardAccount);
+        requestParams.put("CardNo", userBasicInformation.getCardAccount());
         // 采用Base64对查询密码进行加密
         requestParams.put("Password", encodedPassword);
         LogUtil.d(TAG, requestParams.toString());
@@ -145,12 +112,8 @@ public class ManageReportLossActivity extends BaseActivity {
                                 finish();
                             } else {
                                 // 挂失失败
-                                new SweetAlertDialog(ManageReportLossActivity.this,
-                                        SweetAlertDialog.ERROR_TYPE)
-                                        .setTitleText(getString(R.string.wrong_query_password))
-                                        .setConfirmText(getString(R.string.OK))
-                                        .show();
-                                passwordEditText.setText("");
+                                passwordEditText.setError(
+                                        getString(R.string.report_loss_wrong_password));
                             }
                             LogUtil.d(TAG, response.getString("success"));
                             LogUtil.d(TAG, response.getString("msg"));
@@ -167,47 +130,9 @@ public class ManageReportLossActivity extends BaseActivity {
                         LogUtil.e(TAG, "Error: POST Response.");
                         Toast.makeText(ManageReportLossActivity.this, R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
+                        throwable.printStackTrace();
                     }
                 });
-    }
-
-    // 通过网站返回的html文本解析数据
-    private class JsoupGetHtmlData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            // 解析返回的response
-            Document doc;
-            try {
-                doc = Jsoup.parse(response);
-                Elements es = doc.select("em");
-                name = es.get(0).text();
-                stuId = es.get(1).text();
-                cardAccount = es.get(2).text();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            generateCustomItem(userInfoTableView, getString(R.string.name), name);
-            generateCustomItem(userInfoTableView, getString(R.string.stu_id), stuId);
-            generateCustomItem(userInfoTableView, getString(R.string.card_account), cardAccount);
-            userInfoTableView.commit();
-            // Close ProgressDialog
-            mProgressDialog.dismiss();
-            // 如果解析获得的信息不为空，将USER_INFO_BEEN_INITIALIZED置为true;
-            if (!(name == null || name.isEmpty())) {
-                if (!(stuId == null || stuId.isEmpty())) {
-                    if (!(cardAccount == null || cardAccount.isEmpty())) {
-                        USER_INFO_BEEN_INITIALIZED = true;
-                    }
-                }
-            }
-        }
     }
 
     // 构造UItableView的列表项，传入title和content

@@ -24,6 +24,8 @@ import com.duang.easyecard.Util.ManagementGridViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -102,65 +104,30 @@ public class ManagementFragment extends Fragment implements
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
                 // 跳转到ManageViewBasicInfoActivity
-                Intent intent = new Intent(this.getContext(), ManageBasicInfoActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this.getContext(), ManageBasicInfoActivity.class));
                 break;
             case R.drawable.manage_trading_inquiry:
-                intent = new Intent(this.getContext(),
-                        ManageTradingInquiryActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this.getContext(), ManageTradingInquiryActivity.class));
                 break;
             case R.drawable.manage_report_loss:
-                final String[] arrayDialogItems = new String[]{
-                        getResources().getString(R.string.by_ecard_service_platform),
-                        getResources().getString(R.string.by_call_report_line)};
-                Dialog alertDialog = new AlertDialog.Builder(getActivity()).
-                        setTitle(getResources().getString(
-                                R.string.please_choose_a_way_to_report_loss)).
-                        setIcon(R.drawable.manage_report_loss)
-                        .setItems(arrayDialogItems, new DialogInterface.OnClickListener() {
+                // 先给出用户挂失的提示
+                final SweetAlertDialog alertDialog = new SweetAlertDialog(this.getContext(),
+                        SweetAlertDialog.WARNING_TYPE);
+                alertDialog
+                        .setTitleText(getString(R.string.hint_start_report_loss_warning_title))
+                        .setContentText(getString(R.string.hint_start_report_loss_warning_content))
+                        .setConfirmText(getString(R.string.OK))
+                        .setCancelText(getString(R.string.Cancel))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            // 用户确定挂失
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) {
-                                    // 跳转到ManageReportLossActivity
-                                    startActivity(new Intent(getActivity(),
-                                            ManageReportLossActivity.class));
-                                } else {
-                                    // 拨打挂失电话
-                                    AlertDialog.Builder callDialog =
-                                            new AlertDialog.Builder(getActivity());
-                                    callDialog.setMessage(
-                                            getResources().getString(R.string.phone_call_check));
-                                    callDialog.setPositiveButton(
-                                            getResources().getString(R.string.OK),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog,
-                                                                    int which) {
-                                                    // 通过Intent调用拨打电话程序
-                                                    Intent intent = new Intent(Intent.ACTION_CALL,
-                                                            Uri.parse("tel:" + "053266782221"));
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                    callDialog.setNegativeButton(
-                                            getResources().getString(R.string.Cancel),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog,
-                                                                    int which) {
-                                                }
-                                            });
-                                    callDialog.show();
-                                }
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                // 跳转到ManageReportLossActivity
+                                startActivity(new Intent(getActivity(), ManageReportLossActivity.class));
+                                alertDialog.dismiss();
                             }
-                        }).setNegativeButton(getResources().getString(R.string.Cancel),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                }).create();
-                alertDialog.show();
+                        })
+                        .show();
                 break;
             case R.drawable.manage_recharge:
                 break;

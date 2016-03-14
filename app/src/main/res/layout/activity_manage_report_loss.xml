@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,154 +9,59 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <!-- 信息 -->
         <br.com.dina.ui.widget.UITableView
             android:id="@+id/manage_report_loss_information_table_view"
             style="@style/UITableView"
             android:layout_marginTop="20dp" />
-        <!-- 验证码
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/background_view_rounded_corner"
-            android:padding="10dp">
 
-            <TextView
-                style="@style/table_view_large_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/checkcode" />
-
-            <ImageView
-                android:id="@+id/manage_report_loss_checkcode_image"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:clickable="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/default_checkcode_img" />
-
-            <EditText
-                android:id="@+id/manage_report_loss_checkcode_input"
-                style="@style/table_view_large_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:hint="@string/checkcode_input_hint"
-                android:inputType="number"
-                android:maxLength="4"
-                android:singleLine="true" />
-
-        </RelativeLayout> -->
         <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
-        <!-- 查询密码 -->
-        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/background_view_rounded_corner"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/manage_report_loss_password_title"
-                style="@style/table_view_large_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/card_query_password" />
-
-            <EditText
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp">
+            <!-- 查询密码 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/manage_report_loss_password"
-                style="@style/table_view_large_text"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:gravity="end"
                 android:hint="@string/report_loss_password_hint"
                 android:inputType="numberPassword"
-                android:maxLength="6" />
-        </RelativeLayout>
-        <!--
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/background_view_rounded_corner"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/manage_report_loss_password_title"
-                    style="@style/table_view_large_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/password" />
-
-                <EditText
-                    android:id="@+id/manage_report_loss_password"
-                    style="@style/table_view_large_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:focusable="false"
-                    android:hint="@string/report_loss_password_hint"
-                    android:inputType="textPassword"
-                    android:maxLength="6" />
-            </RelativeLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"
-                android:background="@color/grey" />
-            <ImageView
-                android:id="@+id/manage_report_loss_password_img"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:contentDescription="@string/report_loss_password_img_desc"
-                android:scaleType="fitCenter"
-                android:src="@drawable/default_num_key_pad" />
-        </LinearLayout> -->
+                android:maxLength="6"
+                app:met_clearButton="true"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/card_query_password"
+                app:met_helperTextAlwaysShown="true"
+                app:met_maxCharacters="6"
+                app:met_primaryColor="@color/colorPrimaryDark" />
+        </LinearLayout>
 
         <com.rey.material.widget.Button
             android:id="@+id/manage_report_loss_button"
             style="@style/Material.Drawable.Ripple.Wave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="80dp"
             android:background="@drawable/red_button_selector"
             android:onClick="onReportLossButtonClick"
             android:text="@string/report_loss"
             android:textColor="@color/white"
             android:textSize="20sp" />
+
     </LinearLayout>
 </ScrollView>
