@@ -341,7 +341,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                     public void run() {
                         mProgressDialog.dismiss();
                     }
-                }, 1500);
+                }, 1200);
             }
         }
     }

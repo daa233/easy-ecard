@@ -43,7 +43,6 @@
                 app:met_errorColor="@color/red"
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="@string/card_query_password"
-                app:met_helperTextAlwaysShown="true"
                 app:met_maxCharacters="6"
                 app:met_primaryColor="@color/colorPrimaryDark" />
         </LinearLayout>

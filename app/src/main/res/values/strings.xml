@@ -2,40 +2,39 @@
     <string name="app_name">Oh, you see!</string>
     <string name="loading">正在努力加载...</string>
     <string name="network_error">网络错误</string>
+    <string name="unknown_error">未知错误</string>
     <string name="OK">确定</string>
     <string name="Cancel">取消</string>
 
     <!-- SigninActivity -->
     <string name="SigninActivity_label">登录</string>
     <string name="signin_type">登录类型</string>
-    <string name="stu_id">学工号</string>
-    <string name="stu_id_input_hint">请输入学（工）号</string>
+    <string name="stu_id">学（工）号</string>
     <string name="card_account">校园卡账号</string>
-    <string name="card_account_input_hint">请输入校园卡账号</string>
-    <string name="signin">登录</string>
-    <string name="signin_processing">正在登录...</string>
-    <string name="signin_success">登录成功</string>
-    <string name="password">查询密码</string>
     <string name="card_query_password">校园卡查询密码</string>
-    <string name="password_input_hint">请输入校园卡查询密码</string>
     <string name="checkcode">验证码</string>
-    <string name="checkcode_input_hint">验证码</string>
     <string name="signin_checkcode_image">验证码图片</string>
+    <string name="signin">登录</string>
+    <string name="stu_id_input_hint">请输入学（工）号</string>
+    <string name="card_account_input_hint">请输入校园卡账号</string>
+    <string name="password_input_hint">请输入校园卡查询密码</string>
+    <string name="checkcode_input_hint">请输入验证码</string>
+    <string name="auto_signin">自动登录</string>
     <string name="remember_password">记住密码</string>
     <string name="signin_pic_below">登录界面下方的图片</string>
-    <!-- Signin hint 提示：-->
-    <string name="hint_input_stu_id">提示：请输入学（工）号</string>
-    <string name="hint_input_card_account">提示：请输入校园卡账号</string>
-    <string name="hint_input_password">提示：请输入校园卡查询密码</string>
-    <string name="hint_input_checkcode">提示：请输入验证码</string>
-    <string name="hint_click_image_if_not_clear">提示：如果看不清，试试点击图片换一张</string>
-    <string name="hint_signin_processing">提示：正在登录...</string>
-    <string name="hint_signin_success">提示：登录成功！</string>
-    <string name="hint_account_query_condition_less">提示：帐号查询条件不足！</string>
-    <string name="hint_account_not_exist">提示：帐户不存在！</string>
-    <string name="hint_password_error">提示：密码错误！</string>
-    <string name="hint_checkcode_error">提示：验证码不正确！</string>
-    <string name="hint_unknown_error">提示：未知错误！</string>
+    <!-- helper text -->
+    <string name="signin_stu_id_is_empty">学（工）号不能为空</string>
+    <string name="signin_card_account_is_empty">校园卡账号不能为空</string>
+    <string name="signin_account_not_exists">帐号查询条件不足</string>
+    <string name="signin_password_is_empty">查询密码不能为空</string>
+    <string name="signin_password_is_wrong">查询密码错误</string>
+    <string name="signin_checkcode_is_empty">验证码不能为空</string>
+    <string name="signin_checkcode_is_wrong">验证码不正确</string>
+    <string name="signin_hint_click_image_if_not_clear">看不清？点击图片换一张</string>
+    <string name="signin_processing">正在登录...</string>
+    <string name="signin_success">登录成功</string>
+    <string name="signin_failed">登录失败</string>
+    <string name="signin_the_card_has_been_reported_loss">抱歉，该校园卡已挂失，请解挂后再登录</string>
 
     <!-- MainActivity -->
     <string name="MainActivity_label">Oh, you see!</string>

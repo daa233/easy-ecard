@@ -1,99 +1,79 @@
 package com.duang.easyecard.Activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.duang.easyecard.R;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.R;
 import com.duang.easyecard.Util.ImageUtil;
-import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
+import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.Base64;
 import com.loopj.android.http.RequestParams;
-import com.rey.material.widget.Button;
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 import com.rey.material.widget.Spinner;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
-public class SigninActivity extends BaseActivity implements OnClickListener,
-        OnFocusChangeListener {
-
-    private AsyncHttpClient httpClient = new AsyncHttpClient();
+public class SigninActivity extends BaseActivity {
 
     private Spinner signinTypeSpinner;
-    private AutoCompleteTextView accountInput;
-    private EditText passwordInput;
-    private EditText checkcodeInput;
-    private TextView accountText;
-    private TextView hintText;
-    private Button signinButton;
+    private MaterialEditText accountEditText;
+    private MaterialEditText passwordEditText;
+    private MaterialEditText checkcodeEditText;
     private ImageView checkcodeImage;
-    private ImageView belowImage;
+    private CheckBox autoSigninCheckBox;
     private CheckBox rememberPasswordCheckBox;
+    private SweetAlertDialog sweetAlertDialog;
 
-    private String signtype = "SynSno";  // {"SynSno", "SynCard"}
-    private String username;
-    private String password;
-    private String checkcode;
-
+    private AsyncHttpClient httpClient;
     private List<String> spinnerList = new ArrayList<>();
     private ArrayAdapter<String> spinnerAdapter;
-    private ArrayAdapter<String> autoCompleteAdapter;
-    private static String[] autoCompleteStringArray = {"Recent Accounts", ""};
-    private static Map<String, String> rememberedPassword =
-            new HashMap<>();
+
+    private String signtype = "SynSno";  // 登录类型，{"SynSno", "SynCard"}，默认为"SynSno"
+    private final String TAG = "SigninActivity.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.SigninActivity_label);
         setContentView(R.layout.activity_signin);
-
         initView();
+        initData();
     }
 
+    // 初始化布局
     public void initView() {
         // 实例化控件
         signinTypeSpinner = (Spinner) findViewById(R.id.signin_type_spinner);
-        accountInput = (AutoCompleteTextView)
-                findViewById(R.id.signin_account_input);
-        passwordInput = (EditText) findViewById(R.id.signin_password_input);
-        checkcodeInput = (EditText) findViewById(R.id.signin_checkcode_input);
-        accountText = (TextView) findViewById(R.id.signin_account_text);
-        hintText = (TextView) findViewById(R.id.signin_hint_text);
-        signinButton = (Button) findViewById(R.id.signin_signin_button);
+        accountEditText = (MaterialEditText) findViewById(R.id.signin_account_edit_text);
+        passwordEditText = (MaterialEditText) findViewById(R.id.signin_password_edit_text);
+        checkcodeEditText = (MaterialEditText) findViewById(R.id.signin_checkcode_edit_text);
         checkcodeImage = (ImageView) findViewById(R.id.signin_checkcode_image);
-        rememberPasswordCheckBox = (CheckBox) findViewById(
-                R.id.signin_remember_password_check_box);
-        belowImage = (ImageView) findViewById(R.id.signin_pic_below);
-        // 利用Glide载入belowImage资源
+        autoSigninCheckBox = (CheckBox) findViewById(R.id.signin_auto_signin_check_box);
+        rememberPasswordCheckBox = (CheckBox) findViewById(R.id.signin_remember_password_check_box);
+        // 利用Glide载入默认图片资源
+        Glide
+                .with(this)
+                .load(R.drawable.default_checkcode_img)
+                .into(checkcodeImage);
         Glide
                 .with(this)
                 .load(R.drawable.signin_pic_below)
-                .into(belowImage);
-        // 初始提示，输入学工号
-        hintText.setText(R.string.hint_input_stu_id);
+                .into((ImageView) findViewById(R.id.signin_pic_below));
         /*
          设置Spinner
 		  */
@@ -101,11 +81,9 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
         spinnerList.add(getResources().getString(R.string.stu_id));
         spinnerList.add(getResources().getString(R.string.card_account));
         // 新建适配器，利用系统内置的layout
-        spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, spinnerList);
+        spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
         // 设置下拉菜单样式，利用系统内置的layout
-        spinnerAdapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // 绑定适配器到控件
         signinTypeSpinner.setAdapter(spinnerAdapter);
         // 设置选择响应事件
@@ -114,46 +92,33 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
             public void onItemSelected(Spinner parent, View view, int position, long id) {
                 // 选中响应事件
                 if (position == 0) {
-                    accountText.setText(R.string.stu_id);
-                    accountInput.setHint(R.string.hint_input_stu_id);
+                    // 学（工）号
+                    accountEditText.setHint(R.string.stu_id_input_hint);
+                    accountEditText.setFloatingLabelText(getString(R.string.stu_id));
                     signtype = "SynSno";
-                    hintText.setText(R.string.hint_input_stu_id);
                 } else if (position == 1) {
-                    accountText.setText(R.string.card_account);
-                    accountInput.setHint(R.string.card_account_input_hint);
+                    // 校园卡账号
+                    accountEditText.setHint(R.string.card_account_input_hint);
+                    accountEditText.setFloatingLabelText(getString(R.string.card_account));
                     signtype = "SynCard";
-                    hintText.setText(R.string.hint_input_card_account);
+                } else {
+                    // 意外错误
+                    LogUtil.e(TAG, "Error in SpinnerItem selected.");
                 }
             }
         });
-
-        // 设置账号自动填充的适配器
-        autoCompleteAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, autoCompleteStringArray);
-        accountInput.setAdapter(autoCompleteAdapter);
-        accountInput.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1,
-                                    int arg2, long arg3) {
-                // 选中了自动填充文本，将记住的密码输入
-                passwordInput.setText(rememberedPassword.get(autoCompleteStringArray[1]));
-            }
-        });
-
-        getCheckcodeImage();  // 获取验证码
-
-        // 监听EditText的焦点改变事件
-        accountInput.setOnFocusChangeListener(this);
-        passwordInput.setOnFocusChangeListener(this);
-        checkcodeInput.setOnFocusChangeListener(this);
-
-        // 监听控件的点击事件
-        signinButton.setOnClickListener(this);
-        checkcodeImage.setOnClickListener(this);
     }
 
+    // 初始化数据
+    private void initData() {
+        // 初始化httpClient
+        httpClient = new AsyncHttpClient();
+        // 获取验证码
+        getCheckcodeImage();
+    }
+
+    // 获取验证码图片
     private void getCheckcodeImage() {
-        // 获取验证码图片
         ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient, new OnLoadImageListener() {
             @Override
             public void OnLoadImage(byte[] imageBytes) {
@@ -165,96 +130,27 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
         });
     }
 
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        // 控件焦点的改变事件
-        switch (v.getId()) {
-            case R.id.signin_account_input:
-                if (!hasFocus) {
-                    if (!accountInput.getText().toString().isEmpty()) {
-                        if (passwordInput.getText().toString().isEmpty()) {
-                            hintText.setText(R.string.hint_input_password);
-                        }
-                    }
-                }
-                break;
-            case R.id.signin_password_input:
-                if (hasFocus) {
-                    if (accountInput.getText().toString().isEmpty()) {
-                        if (signtype.equals("SynSno")) {
-                            hintText.setText(R.string.hint_input_stu_id);
-                        } else {
-                            hintText.setText(R.string.hint_input_card_account);
-                        }
-                    }
-                } else {
-                    // 失去焦点
-                    if (!accountInput.getText().toString().isEmpty()) {
-                        if (passwordInput.getText().toString().isEmpty()) {
-                            hintText.setText(R.string.hint_input_password);
-                        }
-                    }
-                }
-                break;
-            case R.id.signin_checkcode_input:
-                if (hasFocus) {
-                    if (accountInput.getText().toString().isEmpty()) {
-                        if (signtype.equals("SynSno")) {
-                            hintText.setText(R.string.hint_input_stu_id);
-                        } else {
-                            hintText.setText(R.string.hint_input_card_account);
-                        }
-                    } else if (passwordInput.getText().toString().isEmpty()) {
-                        hintText.setText(R.string.hint_input_password);
-                    } else {
-                        hintText.setText(R.string.hint_click_image_if_not_clear);
-                    }
-                }
-                break;
-            default:
-                break;
-        }
+    // 验证码图片的点击事件
+    public void onCheckcodeImageClick(View v) {
+        getCheckcodeImage();
     }
 
-    @Override
-    public void onClick(View v) {
-        // 控件的点击事件
-        switch (v.getId()) {
-            // 验证码图片
-            case R.id.signin_checkcode_image:
-                getCheckcodeImage();
-                break;
-            // 点击登录按钮
-            case R.id.signin_signin_button:
-                if (!accountInput.getText().toString().isEmpty()) {
-                    if (!passwordInput.getText().toString().isEmpty()) {
-                        if (!checkcodeInput.getText().toString().isEmpty()) {
-                            // 屏蔽登录按钮的点击功能
-                            signinButton.setClickable(false);
-                            // 显示“正在登录”
-                            signinButton.setText(R.string.signin_processing);
-                            hintText.setText(R.string.hint_signin_processing);
-                            // 发送POST请求
-                            sendPOSTRequest();
-                        } else {
-                            // 提示输入验证码
-                            hintText.setText(R.string.hint_input_checkcode);
-                        }
-                    } else {
-                        // 提示输入密码
-                        hintText.setText(R.string.hint_input_password);
-                    }
-                } else {
-                    // 提示输入账号
-                    if (signtype.equals("SynSno")) {
-                        hintText.setText(R.string.hint_input_stu_id);
-                    } else {
-                        hintText.setText(R.string.hint_input_card_account);
-                    }
-                }
-                break;
-            default:
-                break;
+    // 登录按钮点击事件
+    public void onSigninButtonClick(View v) {
+        if (accountEditText.getText().toString().isEmpty()) {
+            // 账号输入为空
+            accountEditText.setError(signtype.equals("SynSno") ?
+                    getString(R.string.signin_stu_id_is_empty) :
+                    getString(R.string.signin_card_account_is_empty));
+        } else if (passwordEditText.getText().toString().isEmpty()) {
+            // 查询密码输入为空
+            passwordEditText.setError(getString(R.string.signin_password_is_empty));
+        } else if (checkcodeEditText.getText().toString().isEmpty()) {
+            // 验证码为空
+            checkcodeEditText.setError(getString(R.string.signin_checkcode_is_empty));
+        } else {
+            // 所有EditText都有输入，发送POST请求
+            sendPOSTRequest();
         }
     }
 
@@ -262,14 +158,11 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
     private void sendPOSTRequest() {
         // 装填POST数据
         RequestParams params = new RequestParams();
-        checkcode = checkcodeInput.getText().toString();
-        username = accountInput.getText().toString();
-        password = passwordInput.getText().toString();
-        params.add("checkcode", checkcode);
+        params.add("checkcode", checkcodeEditText.getText().toString());
         params.add("IsUsedKeyPad", "False");
         params.add("signtype", signtype);
-        params.add("username", username);
-        params.add("password", password);
+        params.add("username", accountEditText.getText().toString());
+        params.add("password", passwordEditText.getText().toString());
         // 发送POST请求
         httpClient.post(UrlConstant.MINI_CHECK_IN, params, new AsyncHttpResponseHandler() {
             // 成功响应
@@ -278,10 +171,10 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
                 String response = new String(responseBody);
                 if (response.contains("success")) {
                     // 登录成功
-                    signinSuccess();
+                    onSigninSuccess();
                 } else {
                     // 登录发生错误
-                    signinFailed(response);
+                    onSigninFailed(response);
                 }
             }
 
@@ -289,59 +182,70 @@ public class SigninActivity extends BaseActivity implements OnClickListener,
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
+                LogUtil.e(TAG, "Error: In POST Response.");
                 Toast.makeText(SigninActivity.this, R.string.network_error,
                         Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
             }
         });
     }
 
     // 登录成功
-    private void signinSuccess() {
-        hintText.setText(R.string.hint_signin_success);
-        signinButton.setText(R.string.signin_success);
-        // 传递全局变量httpClient
+    private void onSigninSuccess() {
+        LogUtil.d(TAG, getString(R.string.signin_success));
+        // 显示登录成功对话框
+        sweetAlertDialog = new SweetAlertDialog(SigninActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+        sweetAlertDialog
+                .setTitleText(getString(R.string.signin_success))
+                .setConfirmText(getString(R.string.OK))
+                .show();
+        // 刷新全局httpClient
         MyApplication myApp = (MyApplication) getApplication();
         myApp.setHttpClient(httpClient);
-        if (myApp.getHttpClient() != null) {
-            LogUtil.d("httpClient", "success to spread");
-        }
-        // 记录登录成功的账号
-        autoCompleteStringArray[1] = username;
-        // 判断记住密码复选框是否被选中
-        if (rememberPasswordCheckBox.isChecked()) {
-            // 记住密码
-            rememberedPassword.put(username, password);
-        } else {
-            // 不记住密码，若已经记住，需要清除记忆
-            if (rememberedPassword.containsKey(username)) {
-                rememberedPassword.remove(username);
+        // 延时一小段时间后关闭对话框
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sweetAlertDialog.dismiss();
+                // 跳转到主界面
+                startActivity(new Intent(SigninActivity.this, MainActivity.class));
+                finish();  // 销毁活动
             }
-        }
-        // 跳转到主界面
-        startActivity(new Intent(MyApplication.getContext(),
-                MainActivity.class));
-        finish();  // 销毁活动
+        }, 1200);
     }
 
     // 登录失败
-    private void signinFailed(String str) {
-        // 登录出错
-        signinButton.setText(R.string.signin);  // 登录按钮恢复“登录”字样
-        if (str.contains("帐户不存在")) {
-            hintText.setText(R.string.hint_account_not_exist);
-        } else if (str.contains("帐号查询条件不足")) {
-            hintText.setText(R.string.hint_account_query_condition_less);
-        } else if (str.contains("查询密码")) {
-            hintText.setText(R.string.hint_password_error);
-            passwordInput.setText("");
-        } else if (str.contains("验证码")) {
-            hintText.setText(R.string.hint_checkcode_error);
-            getCheckcodeImage();  // 刷新验证码
+    private void onSigninFailed(String str) {
+        LogUtil.d(TAG, getString(R.string.signin_failed));
+        if (str.contains("帐号查询条件不足")) {
+            // 账号输入有误
+            accountEditText.setError(getString(R.string.signin_account_not_exists));
+        } else if (str.contains("查询密码错误")) {
+            // 查询密码错误
+            passwordEditText.setError(getString(R.string.signin_password_is_wrong));
+        } else if (str.contains("验证码不正确")) {
+            // 验证码不正确
+            checkcodeEditText.setError(getString(R.string.signin_checkcode_is_wrong));
+        } else if (str.contains("挂失")) {
+            // 该卡已挂失
+            sweetAlertDialog = new SweetAlertDialog(SigninActivity.this,
+                    SweetAlertDialog.ERROR_TYPE);
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.signin_failed))
+                    .setContentText(getString(R.string.signin_the_card_has_been_reported_loss))
+                    .setConfirmText(getString(R.string.OK))
+                    .show();
         } else {
-            LogUtil.e("SigninActivity", str);
-            hintText.setText(R.string.hint_unknown_error);
+            // 未知错误
+            LogUtil.e(TAG, "Unknown eroor: " + str);
+            // 显示错误对话框
+            sweetAlertDialog = new SweetAlertDialog(SigninActivity.this,
+                    SweetAlertDialog.ERROR_TYPE);
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.signin_failed))
+                    .setContentText(getString(R.string.unknown_error) + str)
+                    .setConfirmText(getString(R.string.OK))
+                    .show();
         }
-        // 恢复登录按钮的点击功能
-        signinButton.setClickable(true);
     }
 }
