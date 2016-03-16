@@ -227,6 +227,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                         LogUtil.e(TAG, new String(responseBody));
                         Toast.makeText(getContext(), R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
                     }
                 });
     }

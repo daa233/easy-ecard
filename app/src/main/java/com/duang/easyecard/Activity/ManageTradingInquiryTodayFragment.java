@@ -169,6 +169,7 @@ public class ManageTradingInquiryTodayFragment extends Fragment implements
                         LogUtil.e(TAG, new String(responseBody));
                         Toast.makeText(getContext(), R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
                     }
                 });
     }

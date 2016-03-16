@@ -1,12 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/background"
     tools:context="com.duang.easyecard.Activity.LostAndFoundRegistrationActivity">
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <br.com.dina.ui.widget.UITableView
+            android:id="@+id/lost_and_found_registration_user_information_table_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="10dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/lost_and_found_registration_contact_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/lost_and_found_registration_contact_hint"
+                android:inputType="number"
+                android:maxLength="15"
+                app:met_clearButton="true"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/contact"
+                app:met_hideUnderline="true"
+                app:met_minCharacters="7" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="20dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/lost_and_found_registration_lost_place_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:hint="@string/lost_and_found_registration_lost_place_hint"
+                android:maxLength="128"
+                android:minLines="2"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/lost_place"
+                app:met_hideUnderline="true"
+                app:met_maxCharacters="128" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="20dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/lost_and_found_registration_description_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:hint="@string/lost_and_found_registration_description_hint"
+                android:maxLength="256"
+                android:minLines="2"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/description"
+                app:met_hideUnderline="true"
+                app:met_maxCharacters="256" />
+        </LinearLayout>
+
+        <com.rey.material.widget.Button
+            android:id="@+id/lost_and_found_registration_submit_button"
+            style="@style/button_ripple_wave"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/skyblue_button_selector"
+            android:onClick="onSubmitButtonClick"
+            android:text="@string/submit" />
+    </LinearLayout>
+</ScrollView>

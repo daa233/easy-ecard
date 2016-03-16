@@ -18,15 +18,9 @@
 
         <com.rey.material.widget.Button
             android:id="@+id/lost_and_found_fragment_information_browsing_view_detail_button"
-            style="@style/Material.Drawable.Ripple.Wave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/button_ripple_wave"
             android:layout_marginBottom="40dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="40dp"
-            android:onClick="buttonOnClick"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:onClick="buttonOnClick" />
     </LinearLayout>
 </ScrollView>

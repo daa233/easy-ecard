@@ -182,6 +182,7 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                                           Throwable error) {
                         // 网络错误
                         LogUtil.e(TAG, new String(responseBody));
+                        error.printStackTrace();
                         Toast.makeText(getContext(), R.string.network_error,
                                 Toast.LENGTH_SHORT).show();
                     }

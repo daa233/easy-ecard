@@ -19,18 +19,10 @@
 
         <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            style="@style/table_view_like_linear_layout_style"
             android:layout_marginTop="30dp"
-            android:background="@drawable/background_view_rounded_corner"
             android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp">
+            android:focusableInTouchMode="true">
             <!-- 查询密码 -->
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/manage_report_loss_password"
@@ -49,18 +41,12 @@
 
         <com.rey.material.widget.Button
             android:id="@+id/manage_report_loss_button"
-            style="@style/Material.Drawable.Ripple.Wave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/button_ripple_wave"
             android:layout_marginBottom="50dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="80dp"
             android:background="@drawable/red_button_selector"
             android:onClick="onReportLossButtonClick"
-            android:text="@string/report_loss"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:text="@string/report_loss" />
 
     </LinearLayout>
 </ScrollView>

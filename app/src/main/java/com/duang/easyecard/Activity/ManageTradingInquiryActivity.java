@@ -112,6 +112,7 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                                   Throwable error) {
                 Toast.makeText(ManageTradingInquiryActivity.this, R.string.network_error,
                         Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
             }
         });
     }

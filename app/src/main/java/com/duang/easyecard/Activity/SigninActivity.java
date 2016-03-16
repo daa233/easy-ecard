@@ -334,6 +334,7 @@ public class SigninActivity extends BaseActivity {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 LogUtil.e(TAG, "Error: In POST Response.");
+                sweetAlertDialog.cancel();
                 Toast.makeText(SigninActivity.this, R.string.network_error,
                         Toast.LENGTH_SHORT).show();
                 error.printStackTrace();

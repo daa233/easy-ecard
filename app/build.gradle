@@ -43,5 +43,4 @@ dependencies {
     compile('name': 'changeiconcolorwithtext-release', ext: 'aar')
     compile('name': 'android-uitableview-debug', ext: 'aar')
     compile('name': 'mypinnedheaderlistview-release', ext: 'aar')
-    compile('name': 'circlerefresh-release', ext: 'aar')
 }

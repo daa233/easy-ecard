@@ -23,6 +23,7 @@ import org.jsoup.nodes.Element;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -32,6 +33,7 @@ import cz.msebera.android.httpclient.Header;
 public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActivity {
 
     private UITableView mTableView;
+    private SweetAlertDialog sweetAlertDialog;
 
     private AsyncHttpClient httpClient;
     private String response;
@@ -65,6 +67,11 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
+        sweetAlertDialog = new SweetAlertDialog(MyApplication.getContext(),
+                SweetAlertDialog.PROGRESS_TYPE);
+        sweetAlertDialog
+                .setTitleText(getString(R.string.loading))
+                .setCancelable(false);
         sendGETRequest();  // 发送GET请求
     }
 
@@ -89,6 +96,7 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 //  网络错误
+                sweetAlertDialog.cancel();
                 Toast.makeText(LostAndFoundInformationBrowsingViewDetailActivity.this,
                         R.string.network_error, Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
@@ -111,6 +119,7 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                     description = ps.ownText();
                 }
             } catch (Exception e) {
+                sweetAlertDialog.cancel();
                 e.printStackTrace();
             }
             return null;
@@ -121,6 +130,11 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
             super.onPostExecute(aVoid);
             // 组装UITableView的数据列表
             createTableViewList();
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.loading_complete))
+                    .setConfirmText(getString(R.string.OK))
+                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+            sweetAlertDialog.dismissWithAnimation();
         }
     }
 

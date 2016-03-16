@@ -194,6 +194,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
+                mProgressDialog.cancel();
                 Toast.makeText(LostAndFoundInformationBrowsingActivity.this,
                         R.string.network_error, Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
@@ -218,6 +219,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
+                mProgressDialog.cancel();
                 Toast.makeText(LostAndFoundInformationBrowsingActivity.this,
                         R.string.network_error, Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
@@ -303,6 +305,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                     }
                 }
             } catch (Exception e) {
+                mProgressDialog.cancel();
                 e.printStackTrace();
             }
             return null;

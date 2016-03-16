@@ -134,10 +134,10 @@
     <string name="send_message_to_ta">向Ta发送消息</string>
     <!-- LostAndFoundRegistrationActivity -->
     <string name="LostAndFoundRegistrationActivity_label">丢失卡登记</string>
-    <string name="save_and_submit">保存并提交</string>
-    <string name="lost_info_registration_contact_hint">必填，7—11位号码</string>
-    <string name="lost_info_registration_lost_place_hint">选填，最多128个字符</string>
-    <string name="lost_info_registration_description_hint">选填，最多256个字符</string>
+    <string name="submit">提交</string>
+    <string name="lost_and_found_registration_contact_hint">联系方式 （必填，7—15位）</string>
+    <string name="lost_and_found_registration_lost_place_hint">丢卡地点 （选填，最多128个字符）</string>
+    <string name="lost_and_found_registration_description_hint">说明 （选填，最多256个字符）</string>
 
     <!-- InformationCreateNoticeActivity -->
     <string name="InformationCreateNoticeActivity_label">发消息</string>
