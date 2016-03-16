@@ -93,7 +93,6 @@ public class ManageReportLossActivity extends BaseActivity {
         requestParams.put("CardNo", userBasicInformation.getCardAccount());
         // 采用Base64对查询密码进行加密
         requestParams.put("Password", encodedPassword);
-        LogUtil.d(TAG, requestParams.toString());
         httpClient.post(UrlConstant.MOBILE_MANAGE_CARD_LOST,
                 requestParams, new JsonHttpResponseHandler() {
                     // 成功响应，处理返回的JSON数据

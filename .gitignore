@@ -33,3 +33,6 @@ proguard/
 
 # UrlConstant
 UrlConstant.java
+
+# EncryptorUtil
+EncryptorUtil.java

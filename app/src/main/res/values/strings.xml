@@ -31,9 +31,13 @@
     <string name="signin_checkcode_is_empty">验证码不能为空</string>
     <string name="signin_checkcode_is_wrong">验证码不正确</string>
     <string name="signin_hint_click_image_if_not_clear">看不清？点击图片换一张</string>
+    <string name="signin_error_when_encrypting">数据加密出错！</string>
+    <string name="signin_error_when_decrypting">数据解密出错！</string>
     <string name="signin_processing">正在登录...</string>
+    <string name="signin_processing_automatically">正在自动登录...</string>
     <string name="signin_success">登录成功</string>
     <string name="signin_failed">登录失败</string>
+    <string name="signin_automatically_failed">自动登录失败，请重新登录</string>
     <string name="signin_the_card_has_been_reported_loss">抱歉，该校园卡已挂失，请解挂后再登录</string>
 
     <!-- MainActivity -->

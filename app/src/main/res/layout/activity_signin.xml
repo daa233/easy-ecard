@@ -18,6 +18,8 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="50dp"
             android:background="@drawable/background_view_rounded_corner"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="bottom"
             android:orientation="vertical"
             android:padding="15dp">
@@ -104,12 +106,12 @@
                     android:gravity="start">
 
                     <com.rey.material.widget.CheckBox
-                        android:id="@+id/signin_auto_signin_check_box"
+                        android:id="@+id/signin_remember_password_check_box"
                         style="@style/Material.Drawable.CheckBox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end|center_vertical"
-                        android:text="@string/auto_signin" />
+                        android:text="@string/remember_password" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -119,12 +121,13 @@
                     android:gravity="end">
 
                     <com.rey.material.widget.CheckBox
-                        android:id="@+id/signin_remember_password_check_box"
+                        android:id="@+id/signin_auto_signin_check_box"
                         style="@style/Material.Drawable.CheckBox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:enabled="false"
                         android:gravity="end|center_vertical"
-                        android:text="@string/remember_password" />
+                        android:text="@string/auto_signin" />
                 </LinearLayout>
             </LinearLayout>
 
