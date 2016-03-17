@@ -52,7 +52,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         userBasicInformation = myApp.getUserBasicInformation();
-        if (userBasicInformation != null) {
+        if (userBasicInformation != null && !userBasicInformation.getStuId().isEmpty()) {
             // 成功获取UserBasicInformation
             LogUtil.d(TAG, "Success to get UserBasicInformation.");
             createUITableViewDataList();

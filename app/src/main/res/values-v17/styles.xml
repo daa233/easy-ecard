@@ -29,7 +29,7 @@
         <item name="android:layout_marginEnd">10dp</item>
         <item name="rd_maxRippleRadius">48dp</item>
         <item name="rd_rippleColor">#3FCCCCCC</item>
-        <item name="rd_rippleAnimDuration">800</item>
+        <item name="rd_rippleAnimDuration">400</item>
         <item name="rd_rippleType">wave</item>
     </style>
 </resources>

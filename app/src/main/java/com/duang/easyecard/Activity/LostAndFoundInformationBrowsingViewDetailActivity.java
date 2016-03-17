@@ -67,11 +67,13 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
-        sweetAlertDialog = new SweetAlertDialog(MyApplication.getContext(),
+        sweetAlertDialog = new SweetAlertDialog(
+                LostAndFoundInformationBrowsingViewDetailActivity.this,
                 SweetAlertDialog.PROGRESS_TYPE);
         sweetAlertDialog
                 .setTitleText(getString(R.string.loading))
-                .setCancelable(false);
+                .show();
+        sweetAlertDialog.setCancelable(false);
         sendGETRequest();  // 发送GET请求
     }
 

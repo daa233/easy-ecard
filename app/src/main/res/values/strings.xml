@@ -2,7 +2,9 @@
     <string name="app_name">Oh, you see!</string>
     <string name="loading">正在努力加载...</string>
     <string name="network_error">网络错误</string>
+    <string name="server_error">服务器错误</string>
     <string name="unknown_error">未知错误</string>
+    <string name="shut_down_caused_by_accident">抱歉，由于意外的错误，此应用暂时无法使用</string>
     <string name="OK">确定</string>
     <string name="Cancel">取消</string>
 
@@ -134,10 +136,18 @@
     <string name="send_message_to_ta">向Ta发送消息</string>
     <!-- LostAndFoundRegistrationActivity -->
     <string name="LostAndFoundRegistrationActivity_label">丢失卡登记</string>
-    <string name="submit">提交</string>
+    <string name="save">保存</string>
     <string name="lost_and_found_registration_contact_hint">联系方式 （必填，7—15位）</string>
-    <string name="lost_and_found_registration_lost_place_hint">丢卡地点 （选填，最多128个字符）</string>
+    <string name="lost_and_found_registration_lost_place_hint">丢卡地点 （必填，最多128个字符）</string>
     <string name="lost_and_found_registration_description_hint">说明 （选填，最多256个字符）</string>
+    <string name="save_error">保存失败</string>
+    <string name="pick_up_card">标记为招领</string>
+    <string name="lost_and_found_registration_contact_is_empty">联系方式不能为空</string>
+    <string name="lost_and_found_registration_contact_is_too_short">联系方式不能少于7位</string>
+    <string name="lost_and_found_registration_lost_place_is_empty">丢失地点不能为空</string>
+    <string name="lost_and_found_registration_save_check_title">保存并提交</string>
+    <string name="lost_and_found_registration_save_check_content">保存后将无法修改，您确定保存并提交吗？
+        友情提示：这项操作只是帮助您招领而非挂失校园卡，确定后可去失卡招领信息中查看。</string>
 
     <!-- InformationCreateNoticeActivity -->
     <string name="InformationCreateNoticeActivity_label">发消息</string>
