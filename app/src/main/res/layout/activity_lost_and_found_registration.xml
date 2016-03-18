@@ -75,12 +75,10 @@
         </LinearLayout>
 
         <com.rey.material.widget.Button
-            android:id="@+id/lost_and_found_registration_save_button"
+            android:id="@+id/lost_and_found_registration_button"
             style="@style/button_ripple_wave"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="60dp"
-            android:background="@drawable/skyblue_button_selector"
-            android:onClick="onSaveButtonClick"
-            android:text="@string/save" />
+            android:onClick="onButtonClick" />
     </LinearLayout>
 </ScrollView>

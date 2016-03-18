@@ -38,7 +38,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     private MaterialEditText contactEditText;
     private MaterialEditText lostPlaceEditText;
     private MaterialEditText descriptionEditText;
-    private Button saveButton;
+    private Button button;
     private SweetAlertDialog sweetAlertDialog;
 
     private UserBasicInformation userBasicInformation;
@@ -47,6 +47,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     private String spanString;  // 解析为特定值时，说明该卡已经登记丢失
     private List<String> pList;  // 丢失登记信息
     private boolean registratedFlag = false;
+    private String lostAndFoundEventId;
 
     private final String TAG = "LostAndFoundRegistrationActivity";
 
@@ -71,7 +72,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                 R.id.lost_and_found_registration_lost_place_edit_text);
         descriptionEditText = (MaterialEditText) findViewById(
                 R.id.lost_and_found_registration_description_edit_text);
-        saveButton = (Button) findViewById(R.id.lost_and_found_registration_save_button);
+        button = (Button) findViewById(R.id.lost_and_found_registration_button);
     }
 
     // 初始化数据
@@ -98,9 +99,26 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     }
 
     // 提交按钮的点击事件
-    public void onSaveButtonClick(View v) {
+    public void onButtonClick(View v) {
         if (registratedFlag) {
             // 已登记为丢失卡，点击招领
+            sweetAlertDialog = new SweetAlertDialog(LostAndFoundRegistrationActivity.this,
+                    SweetAlertDialog.WARNING_TYPE);
+            sweetAlertDialog
+                    .setTitleText(getString(
+                            R.string.lost_and_found_registration_pick_up_card_title))
+                    .setContentText(getString(
+                            R.string.lost_and_found_registration_pick_up_card_content))
+                    .setConfirmText(getString(R.string.OK))
+                    .setCancelText(getString(R.string.Cancel))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            // 确定将卡片标记为招领状态，发送POST请求
+                            sendSearchPOSTRequest();
+                        }
+                    })
+                    .show();
         } else {
             // 未登记为丢失卡，点击判断内容填充是否符合条件
             if (contactEditText.getText().toString().isEmpty()) {
@@ -145,7 +163,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
                 response = new String(responseBody);
-                new JsoupHtmlData().execute();
+                new JsoupGETHtmlData().execute();
             }
 
             @Override
@@ -177,19 +195,22 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                 if (response.contains("保存成功")) {
                     // 保存成功
                     sweetAlertDialog
-                            .setTitleText(response)
+                            .setTitleText(getString(R.string.lost_registration))
+                            .setContentText(response)
                             .setConfirmText(getString(R.string.OK))
                             .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    // 点击确定
+                                    // 点击确定，重新载入当前界面
+                                    initData();
                                 }
                             })
                             .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                 } else {
                     // 保存失败，未知错误
                     sweetAlertDialog
-                            .setTitleText(response)
+                            .setTitleText(getString(R.string.lost_registration))
+                            .setContentText(response)
                             .setConfirmText(getString(R.string.OK))
                             .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 }
@@ -200,20 +221,50 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
-                new SweetAlertDialog(LostAndFoundRegistrationActivity.this,
-                        SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText(getString(R.string.network_error))
+                sweetAlertDialog
+                        .setTitleText(getString(R.string.lost_registration))
+                        .setContentText(getString(R.string.network_error))
                         .setConfirmText(getString(R.string.OK))
-                        .show();
-                Toast.makeText(LostAndFoundRegistrationActivity.this,
-                        getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 error.printStackTrace();
             }
         });
     }
 
+    // 发送POST请求，在失卡信息中搜索用户已登记的丢失信息
+    private void sendSearchPOSTRequest() {
+        // 组装POST数据
+        RequestParams params = new RequestParams();
+        params.add("cardno", userBasicInformation.getCardAccount());
+        params.add("name", userBasicInformation.getName());
+        params.add("sno", userBasicInformation.getStuId());
+        httpClient.post(UrlConstant.CARD_LOSS_INFO_MANAGELIST, params,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // 响应成功
+                        response = new String(responseBody);
+                        new JsoupSearchPOSTHtmlData().execute();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                          Throwable error) {
+                        // 网络错误
+                        new SweetAlertDialog(LostAndFoundRegistrationActivity.this,
+                                SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText(getString(R.string.network_error))
+                                .setConfirmText(getString(R.string.OK))
+                                .show();
+                        Toast.makeText(LostAndFoundRegistrationActivity.this,
+                                getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                });
+    }
+
     // 解析响应数据
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+    private class JsoupGETHtmlData extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             // 解析返回的responseString
@@ -227,11 +278,8 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                         LogUtil.d(TAG, "spanString: " + spanString);
                     } else {
                         pList.add(p.ownText());
-                        LogUtil.d(TAG, "p.ownText(): " + p.ownText());
                     }
                 }
-                LogUtil.d(TAG, "_spanString: " + spanString);
-                LogUtil.d(TAG, "_pList: " + pList.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -250,13 +298,105 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                 lostPlaceEditText.setFocusable(false);
                 descriptionEditText.setText(pList.get(5));
                 descriptionEditText.setFocusable(false);
-                saveButton.setText(getString(R.string.pick_up_card));
+                button.setText(getString(R.string.pick_up_card));
+                button.setBackgroundResource(R.drawable.green_button_selector);
             } else {
                 // 用户没有登记丢失
                 LogUtil.d(TAG, "The card has not been registrated.");
                 registratedFlag = false;
+                button.setText(getString(R.string.save));
+                button.setBackgroundResource(R.drawable.skyblue_button_selector);
             }
         }
+    }
+
+    // 解析失卡招领信息网页返回的响应数据，确定用户丢失信息ID
+    private class JsoupSearchPOSTHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // 解析返回的responseString
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                // 判断字段中是否有含有待招领的ID
+                for (Element a : doc.select("a")) {
+                    if (a.text().contains("招领")) {
+                        // 获取到了含有“招领”字样的a标签
+                        lostAndFoundEventId = a.toString().substring(a.toString().indexOf("(") + 1);
+                        lostAndFoundEventId = lostAndFoundEventId.substring(0,
+                                lostAndFoundEventId.indexOf(")"));
+                        LogUtil.d(TAG, "JsoupSearchPostHtmlData: a=" + a.toString());
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (!lostAndFoundEventId.isEmpty()) {
+                // 获得了用户登记丢失信息的ID，发送标记为招领的POST请求
+                LogUtil.d(TAG, "lostAndFoundEventId = " + lostAndFoundEventId);
+                sendPickUpCardPOSTRequest();
+            } else {
+                // 发生意外错误，没有解析出用户丢失信息ID
+                LogUtil.e(TAG, "Fail to get the ID of user's LostAndFoundEvent.");
+                sweetAlertDialog
+                        .setTitleText(getString(
+                                R.string.lost_and_found_registration_pick_up_card_title))
+                        .setContentText(getString(R.string.operation_failed))
+                        .setConfirmText(getString(R.string.OK))
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+            }
+        }
+    }
+
+    // 用户捡到卡后，将卡片标记为招领状态的请求
+    private void sendPickUpCardPOSTRequest() {
+        httpClient.post(UrlConstant.CARD_LOSS_PICK_UP_CARD + lostAndFoundEventId,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // 响应成功
+                        response = new String(responseBody);
+                        if (response.contains("True")) {
+                            // 招领成功
+                            sweetAlertDialog
+                                    .setTitleText(getString(R.string
+                                            .lost_and_found_registration_pick_up_card_title))
+                                    .setContentText(getString(R.string.operaton_successed))
+                                    .setConfirmText(getString(R.string.OK))
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            // 重新载入此界面
+                            initData();
+                        } else {
+                            // 招领失败
+                            sweetAlertDialog
+                                    .setTitleText(getString(R.string
+                                            .lost_and_found_registration_pick_up_card_title))
+                                    .setContentText(getString(R.string.operation_failed))
+                                    .setConfirmText(getString(R.string.OK))
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                          Throwable error) {
+                        // 网络错误
+                        sweetAlertDialog
+                                .setTitleText(getString(
+                                        R.string.lost_and_found_registration_pick_up_card_title))
+                                .setContentText(getString(R.string.network_error))
+                                .setConfirmText(getString(R.string.OK))
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        error.printStackTrace();
+                    }
+                });
     }
 
     // 构造UItableView的列表项，传入title和content

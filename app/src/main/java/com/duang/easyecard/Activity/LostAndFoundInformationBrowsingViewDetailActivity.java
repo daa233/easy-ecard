@@ -13,9 +13,11 @@ import android.widget.Toast;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.LostAndFoundEvent;
+import com.duang.easyecard.Model.UserBasicInformation;
 import com.duang.easyecard.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.rey.material.widget.Button;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,13 +35,18 @@ import cz.msebera.android.httpclient.Header;
 public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActivity {
 
     private UITableView mTableView;
+    private Button button;
     private SweetAlertDialog sweetAlertDialog;
 
     private AsyncHttpClient httpClient;
+    private UserBasicInformation userBasicInformation;
     private String response;
     private LostAndFoundEvent event;
     private String lostPlace;
     private String description;
+    private boolean isViewingOwnEventFlag;
+
+    private final String TAG = "LostAndFoundInformationBrowsingViewDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +68,35 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         // 实例化控件
         mTableView = (UITableView) findViewById(
                 R.id.lost_and_found_information_browsing_view_detail_table_view);
+        button = (Button) findViewById(
+                R.id.lost_and_found_fragment_information_browsing_view_detail_button);
     }
 
     private void initData() {
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
+        userBasicInformation = myApp.getUserBasicInformation();
+        // 判断用户是否正在查看自己的丢失信息
+        if (userBasicInformation.getStuId().equals(event.getStuId())) {
+            // 用户正在查看自己的丢失信息
+            isViewingOwnEventFlag = true;
+            if (event.getState().contains("已招领")) {
+                // 用户的该丢失信息已招领
+                button.setText(getString(R.string.card_has_been_founded));
+                button.setBackgroundResource(R.drawable.skyblue_button_selector);
+                button.setClickable(false);
+            } else {
+                // 用户的该丢失信息未招领
+                button.setText(getString(R.string.pick_up_card));
+                button.setBackgroundResource(R.drawable.green_button_selector);
+            }
+        } else {
+            // 用户正在查看他人的丢失信息
+            isViewingOwnEventFlag = false;
+            button.setText(getString(R.string.send_message_to_ta));
+            button.setBackgroundResource(R.drawable.green_button_selector);
+        }
         sweetAlertDialog = new SweetAlertDialog(
                 LostAndFoundInformationBrowsingViewDetailActivity.this,
                 SweetAlertDialog.PROGRESS_TYPE);
@@ -74,11 +104,15 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                 .setTitleText(getString(R.string.loading))
                 .show();
         sweetAlertDialog.setCancelable(false);
-        sendGETRequest();  // 发送GET请求
+        sendGETRequest();  // 发送GET请求，获取丢失地点和说明
     }
 
-    public void buttonOnClick(View v) {
-
+    public void onButtonClick(View v) {
+        if (isViewingOwnEventFlag) {
+            // 用户正在查看自己的丢失信息
+        } else {
+            // 用户正在查看他人的丢失信息
+        }
     }
 
     // 发送GET请求

@@ -30,7 +30,7 @@ public class MyApplication extends Application {
         MyApplication.httpClient = httpClient;
     }
 
-    public static UserBasicInformation getUserBasicInformation() {
+    public UserBasicInformation getUserBasicInformation() {
         return userBasicInformation;
     }
 
