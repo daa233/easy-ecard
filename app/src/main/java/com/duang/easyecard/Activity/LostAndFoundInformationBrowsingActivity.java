@@ -137,7 +137,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
             // 显示所有事件
             mImageView.setVisibility(View.GONE);
             mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(),
-                    lostAndFoundEventList, R.layout.lost_and_found_information_browsing_list_item);
+                    lostAndFoundEventList, R.layout.item_lost_and_found_information_browsing_list);
             mListView.setAdapter(mAdapter);
         } else {
             if (DISPLAY_NOT_FOUNDED_EVENTS_FLAG) {
@@ -173,7 +173,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
             }
             mAdapter = new LostAndFoundEventAdapter(MyApplication.getContext(),
                     partialLostAndFoundEventList,
-                    R.layout.lost_and_found_information_browsing_list_item);
+                    R.layout.item_lost_and_found_information_browsing_list);
             mListView.setAdapter(mAdapter);
         }
     }
@@ -278,9 +278,9 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                 // 找到表格
                 for (Element table : doc.select("table[class=table_show widthtable]")) {
                     Elements tbody = table.select("tbody");
+                    LostAndFoundEvent event = new LostAndFoundEvent();
                     // 找到表格的所有行
                     for (Element row : tbody.select("tr")) {
-                        LostAndFoundEvent event = new LostAndFoundEvent();
                         // 找到每一行所包含的td
                         Elements tds = row.select("td");
                         // 将数据按照顺序填入event对象
@@ -299,7 +299,6 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                             event.setContact(tds.get(4).text());
                             event.setState(tds.get(5).text());
                             event.setFoundTime(tds.get(6).text());
-                            LogUtil.d(TAG, event.toString());
                             lostAndFoundEventList.add(event);
                         }
                     }

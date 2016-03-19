@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.duang.easyecard.Model.UserBasicInformation;
 import com.loopj.android.http.AsyncHttpClient;
+import com.squareup.leakcanary.LeakCanary;
 
 public class MyApplication extends Application {
 
@@ -16,6 +17,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         context = getApplicationContext();
         super.onCreate();
+        LeakCanary.install(this);
     }
 
     public static Context getContext() {

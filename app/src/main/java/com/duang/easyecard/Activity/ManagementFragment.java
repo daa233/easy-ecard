@@ -1,12 +1,8 @@
 package com.duang.easyecard.Activity;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +69,7 @@ public class ManagementFragment extends Fragment implements
         };
         mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
                 getDataLists(iconImage, iconText),
-                R.layout.manage_grid_view_item);
+                R.layout.item_manage_grid_view);
         // 配置适配器
         mGridView.setAdapter(mAdapter);
         // 设置监听器

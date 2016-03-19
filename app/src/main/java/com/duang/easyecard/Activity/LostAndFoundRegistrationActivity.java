@@ -404,7 +404,7 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
         LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
-                R.layout.table_view_custom_item, null);
+                R.layout.item_table_view_custom, null);
         TextView titleText = (TextView) relativeLayout.getChildAt(0);
         titleText.setText(title);
         TextView contentText = (TextView) relativeLayout.getChildAt(1);

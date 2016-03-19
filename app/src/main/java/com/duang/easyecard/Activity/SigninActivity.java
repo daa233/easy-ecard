@@ -396,10 +396,8 @@ public class SigninActivity extends BaseActivity {
                     .changeAlertType(SweetAlertDialog.ERROR_TYPE);
         } else {
             // 未知错误
-            LogUtil.e(TAG, "Unknown eroor: " + str);
+            LogUtil.e(TAG, "Unknown error: " + str);
             // 显示错误对话框
-            sweetAlertDialog = new SweetAlertDialog(SigninActivity.this,
-                    SweetAlertDialog.ERROR_TYPE);
             sweetAlertDialog
                     .setTitleText(getString(R.string.signin_failed))
                     .setContentText(getString(R.string.unknown_error) + str)

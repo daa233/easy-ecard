@@ -211,7 +211,7 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
     @Override
     public View getPinnedHeader() {
         View headerView = getActivity().getLayoutInflater().inflate(
-                R.layout.manage_trading_inquiry_group_item, null);
+                R.layout.item_manage_trading_inquiry_group, null);
         headerView.setLayoutParams(new AbsListView.LayoutParams(
                 AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));
         return headerView;
@@ -394,8 +394,8 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
         // 显示ListView
         mListView.setVisibility(View.VISIBLE);
         mAdapter = new TradingInquiryExpandableListAdapter(getContext(), mGroupList,
-                R.layout.manage_trading_inquiry_group_item, mChildList,
-                R.layout.manage_trading_inquiry_child_item);
+                R.layout.item_manage_trading_inquiry_group, mChildList,
+                R.layout.item_manage_trading_inquiry_child);
         mListView.setAdapter(mAdapter);
 
         // 如果有数据，展开所有group

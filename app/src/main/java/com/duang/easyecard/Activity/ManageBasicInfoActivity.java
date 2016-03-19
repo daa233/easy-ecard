@@ -1,33 +1,18 @@
 package com.duang.easyecard.Activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
-import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.UserBasicInformation;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
-import cz.msebera.android.httpclient.Header;
 
 public class ManageBasicInfoActivity extends BaseActivity {
 
@@ -95,7 +80,7 @@ public class ManageBasicInfoActivity extends BaseActivity {
         LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
-                R.layout.table_view_custom_item, null);
+                R.layout.item_table_view_custom, null);
         TextView titleText = (TextView) relativeLayout.getChildAt(0);
         titleText.setText(title);
         TextView contentText = (TextView) relativeLayout.getChildAt(1);
