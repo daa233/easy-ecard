@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -53,14 +54,17 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lost_and_found_information_browsing_view_detail);
+        Toolbar toolbar = (Toolbar) findViewById(
+                R.id.lost_and_found_information_browsing_view_detail_toolbar);
+        setSupportActionBar(toolbar);
         // 显示Back按钮
-        setupActionBar();
+        setDisplayHomeButton();
         // 获得传递的LostAndFoundEvent对象
         Intent intent = this.getIntent();
         event = (LostAndFoundEvent) intent.getSerializableExtra("LostAndFoundEvent");
         // 重设标题
-        setTitle(getString(R.string.LostAndFoundInformationBrowsingViewDetailActivity_label) +
-                getString(R.string.number_point) + event.getId());
+        setTitle(getString(R.string.title_activity_lost_and_found_information_browsing_view_detail)
+                + getString(R.string.number_point) + event.getId());
         initView();
         initData();
     }

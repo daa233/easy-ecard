@@ -3,6 +3,7 @@ package com.duang.easyecard.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -55,14 +56,16 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lost_and_found_registration);
-        // 显示Back按钮
-        setupActionBar();
         initView();
         initData();
     }
 
     // 初始化布局
     private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.lost_and_found_registration_toolbar);
+        setSupportActionBar(toolbar);
+        // 显示Back按钮
+        setDisplayHomeButton();
         // 实例化控件
         tableView = (UITableView) findViewById(
                 R.id.lost_and_found_registration_user_information_table_view);

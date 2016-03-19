@@ -2,6 +2,7 @@ package com.duang.easyecard.Activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -40,8 +41,10 @@ public class ManageReportLossActivity extends BaseActivity {
         LogUtil.d(TAG, "onCreate.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_report_loss);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.manage_report_loss_toolbar);
+        setSupportActionBar(toolbar);
         // 显示home按钮
-        setupActionBar();
+        setDisplayHomeButton();
         initView();
         initData();
     }

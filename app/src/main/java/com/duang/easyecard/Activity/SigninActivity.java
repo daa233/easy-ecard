@@ -70,8 +70,8 @@ public class SigninActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.SigninActivity_label);
         setContentView(R.layout.activity_signin);
+        setTitle(getString(R.string.title_activity_signin));
         initView();
         initData();
     }

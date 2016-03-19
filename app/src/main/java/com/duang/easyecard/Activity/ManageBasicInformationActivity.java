@@ -2,6 +2,7 @@ package com.duang.easyecard.Activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,26 +15,28 @@ import com.duang.easyecard.Util.LogUtil;
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
 
-public class ManageBasicInfoActivity extends BaseActivity {
+public class ManageBasicInformationActivity extends BaseActivity {
 
     private UITableView tableView;
     private UserBasicInformation userBasicInformation;
-    private final String TAG = "ManageBasicInfoActivity";
+    private final String TAG = "ManageBasicInformationActivity";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_basic_info);
-        // 显示返回按钮
-        setupActionBar();
-        // 绑定控件
-        tableView = (UITableView) findViewById(R.id.manage_basic_info_table_view);
-        // 初始化布局
+        setContentView(R.layout.activity_manage_basic_information);
         initView();
     }
 
-    // 初始化数据
+    // 初始化布局和数据
     private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.manage_basic_information_toolbar);
+        setSupportActionBar(toolbar);
+        // 显示返回按钮
+        setDisplayHomeButton();
+
+        // 绑定控件
+        tableView = (UITableView) findViewById(R.id.manage_basic_information_table_view);
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         userBasicInformation = myApp.getUserBasicInformation();
@@ -89,4 +92,5 @@ public class ManageBasicInfoActivity extends BaseActivity {
         v.setClickable(false);
         tableView.addViewItem(v);
     }
+
 }

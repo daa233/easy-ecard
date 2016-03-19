@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity {
         // 设置ViewPager和TabLayout
         mTabFragments.add(new ManagementFragment());
         mTabFragments.add(new LostAndFoundFragment());
-        mTabFragments.add(new InformationFragment());
+        mTabFragments.add(new MessagesFragment());
         mTabFragments.add(new SettingsFragment());
         mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity {
             if (userBasicInformationDataList.size() >= 10 &&
                     !userBasicInformationDataList.isEmpty()) {
                 // 从“掌上校园”成功获得了数据
-                LogUtil.e(TAG, "Success to get UserBasicInformation from Mobile address.");
+                LogUtil.d(TAG, "Success to get UserBasicInformation from Mobile address.");
                 setGlobalUserBasicInformation(true);
             } else {
                 // 从“掌上校园”获取数据失败，转向校园卡服务平台发送数据

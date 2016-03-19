@@ -11,7 +11,7 @@
     <string name="Cancel">取消</string>
 
     <!-- SigninActivity -->
-    <string name="SigninActivity_label">登录</string>
+    <string name="title_activity_signin">登录</string>
     <string name="signin_type">登录类型</string>
     <string name="stu_id">学（工）号</string>
     <string name="card_account">校园卡账号</string>
@@ -45,7 +45,7 @@
     <string name="signin_the_card_has_been_reported_loss">抱歉，该校园卡已挂失，请解挂后再登录</string>
 
     <!-- MainActivity -->
-    <string name="MainActivity_label">Oh, you see!</string>
+    <string name="title_activity_main">Oh, you see!</string>
     <!--MainActivity Tab -->
     <string name="manage">校园卡管理</string>
     <string name="lost_found">丢失和拾获</string>
@@ -64,14 +64,14 @@
     <string name="report_loss_card">校园卡挂失</string>
     <string name="recharge">转账充值</string>
     <string name="net_charge">网费</string>
-    <string name="pay_fees">待缴费</string>
+    <string name="change_password">修改密码</string>
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
     <string name="hint_start_report_loss_warning_title">您确定要挂失吗？</string>
     <string name="hint_start_report_loss_warning_content">挂失后您将暂时无法登录本应用，解挂后会恢复正常。</string>
 
-    <!-- ManageViewBasicInfoActivity -->
-    <string name="ManageViewBasicInfoActivity_label">基本信息</string>
+    <!-- ManageViewBasicInformationActivity -->
+    <string name="title_activity_manage_basic_information">基本信息</string>
     <string name="fail_to_get_data">数据获取失败</string>
     <string name="name">姓名</string>
     <string name="balance">校园卡余额</string>
@@ -83,7 +83,7 @@
     <string name="identity_type">身份类型</string>
     <string name="department">部门名称</string>
     <!-- ManageTradingInquiryActivity -->
-    <string name="ManageTradingInquiryActivity_label">流水查询</string>
+    <string name="title_activity_manage_trading_inquiry">流水查询</string>
     <string name="history_trading_inquiry">历史流水</string>
     <string name="day_trading_inquiry">当日流水</string>
     <string name="week_trading_inquiry">一周流水</string>
@@ -103,7 +103,7 @@
     <string name="error_day_of_week">ErrorDay!</string>
     <string name="balance_after_trading">交易后余额：</string>
     <!-- ManageReportLossActivity -->
-    <string name="ManageReportLossActivity_label">挂失校园卡</string>
+    <string name="title_activity_manage_report_loss">挂失校园卡</string>
     <string name="report_loss_password_hint">请输入校园卡查询密码</string>
     <string name="report_loss_checkcode_image">挂失验证码图片</string>
     <string name="report_loss_password_is_empty">查询密码不能为空！</string>
@@ -117,7 +117,7 @@
     <string name="lost_and_found_info_browsing_img_des">失卡招领信息浏览配图</string>
     <string name="card_loss_registration_img_des">丢失卡登记配图</string>
     <!-- LostAndFoundInformationBrowsingActivity -->
-    <string name="LostAndFoundInformationBrowsingActivity_label">失卡招领信息浏览</string>
+    <string name="title_activity_lost_and_found_information_browsing">失卡招领信息浏览</string>
     <string name="loading_complete">加载完成！</string>
     <string name="total_queried_events">共搜索到</string>
     <string name="in_records">条记录</string>
@@ -126,7 +126,7 @@
     <string name="view_detail">查看详细信息</string>
     <string name="publish_time">发布时间</string>
     <!-- LostAndFoundInformationBrowsingViewDetailActivity -->
-    <string name="LostAndFoundInformationBrowsingViewDetailActivity_label">失卡招领详细信息</string>
+    <string name="title_activity_lost_and_found_information_browsing_view_detail">失卡招领详细信息</string>
     <string name="number_point">—— No.</string>
     <string name="contact">联系方式</string>
     <string name="lost_place">丢卡地点</string>
@@ -137,7 +137,7 @@
     <string name="found_time">招领时间</string>
     <string name="send_message_to_ta">向Ta发送消息</string>
     <!-- LostAndFoundRegistrationActivity -->
-    <string name="LostAndFoundRegistrationActivity_label">丢失卡登记</string>
+    <string name="title_activity_lost_and_found_registration">丢失卡登记</string>
     <string name="lost_registration">丢失卡登记</string>
     <string name="save">保存</string>
     <string name="lost_and_found_registration_contact_hint">联系方式 （必填，7—15位）</string>
@@ -153,9 +153,6 @@
         友情提示：这项操作只是帮助您招领而非挂失校园卡，确定后可去失卡招领信息中查看。</string>
     <string name="lost_and_found_registration_pick_up_card_title">招领卡片</string>
     <string name="lost_and_found_registration_pick_up_card_content">在找到卡片或者已经补办卡片后，您可以选择将卡片标记为已招领。您确定进行此项操作吗？</string>
-
-    <!-- InformationCreateNoticeActivity -->
-    <string name="InformationCreateNoticeActivity_label">发消息</string>
 
     <string name="hello_blank_fragment">你好</string>
 </resources>

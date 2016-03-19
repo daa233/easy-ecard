@@ -63,9 +63,11 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     // 初始化布局
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.manage_trading_inquiry_toolbar);
         setSupportActionBar(toolbar);
-
+        // 显示home按钮
+        setDisplayHomeButton();
+        // 操作FloatingActionButton
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,9 +76,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        // 显示home按钮
-        setupActionBar();
 
         // 设置ViewPager
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -176,8 +175,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     // 监听返回键
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)	{
-        if (keyCode == KeyEvent.KEYCODE_BACK)	{
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             doBack();
             return false;
         }

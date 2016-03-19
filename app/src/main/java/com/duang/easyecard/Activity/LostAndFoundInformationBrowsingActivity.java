@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -63,14 +64,16 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lost_and_found_information_browsing);
-        // 显示Back按钮
-        setupActionBar();
         initView();
         initData();
     }
 
     // 初始化布局
     private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.lost_and_found_information_browsing_toolbar);
+        setSupportActionBar(toolbar);
+        // 显示Back按钮
+        setDisplayHomeButton();
         // 实例化控件
         mPullToRefreshView = (PullToRefreshView) findViewById(
                 R.id.lost_and_found_information_browsing_pull_to_refresh_view);
@@ -278,13 +281,13 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                 // 找到表格
                 for (Element table : doc.select("table[class=table_show widthtable]")) {
                     Elements tbody = table.select("tbody");
-                    LostAndFoundEvent event = new LostAndFoundEvent();
                     // 找到表格的所有行
                     for (Element row : tbody.select("tr")) {
                         // 找到每一行所包含的td
                         Elements tds = row.select("td");
                         // 将数据按照顺序填入event对象
                         if (!tds.get(0).text().isEmpty()) {
+                            LostAndFoundEvent event = new LostAndFoundEvent();
                             // 通过字符串截取获得丢失信息ID
                             String eventIdString = tds.get(0).toString();
                             eventIdString = eventIdString.substring(

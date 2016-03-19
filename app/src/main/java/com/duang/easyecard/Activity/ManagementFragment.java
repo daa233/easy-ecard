@@ -41,7 +41,7 @@ public class ManagementFragment extends Fragment implements
             R.drawable.manage_report_loss,
             R.drawable.manage_recharge,
             R.drawable.manage_net_charge,
-            R.drawable.manage_pay_fees,
+            R.drawable.manage_change_password,
     };
 
     private String[] iconText;
@@ -65,7 +65,7 @@ public class ManagementFragment extends Fragment implements
                 getResources().getString(R.string.report_loss_card),
                 getResources().getString(R.string.recharge),
                 getResources().getString(R.string.net_charge),
-                getResources().getString(R.string.pay_fees)
+                getResources().getString(R.string.change_password)
         };
         mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
                 getDataLists(iconImage, iconText),
@@ -100,7 +100,7 @@ public class ManagementFragment extends Fragment implements
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
                 // 跳转到ManageViewBasicInfoActivity
-                startActivity(new Intent(this.getContext(), ManageBasicInfoActivity.class));
+                startActivity(new Intent(this.getContext(), ManageBasicInformationActivity.class));
                 break;
             case R.drawable.manage_trading_inquiry:
                 startActivity(new Intent(this.getContext(), ManageTradingInquiryActivity.class));
@@ -129,7 +129,7 @@ public class ManagementFragment extends Fragment implements
                 break;
             case R.drawable.manage_net_charge:
                 break;
-            case R.drawable.manage_pay_fees:
+            case R.drawable.manage_change_password:
                 break;
             default:
                 break;
