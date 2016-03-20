@@ -110,6 +110,20 @@
     <string name="report_loss_wrong_password">查询密码错误！</string>
     <string name="report_loss">挂失</string>
     <string name="report_loss_success">挂失成功！</string>
+    <!-- ManageChangePasswordActivity -->
+    <string name="title_activity_manage_change_password">修改查询密码</string>
+    <string name="change_password_new_card_query_password">新查询密码</string>
+    <string name="change_password_new_card_query_password_input_hint">请输入新的查询密码</string>
+    <string name="change_password_confirm_new_card_query_password">确认新的查询密码</string>
+    <string name="change_password_confirm_new_card_query_password_input_hint">请再次输入新的查询密码</string>
+    <string name="change_password_old_password_is_empty">必须先输入旧的查询密码</string>
+    <string name="change_password_new_password_is_empty">新的查询密码不能为空</string>
+    <string name="change_password_confirm_new_password_is_empty">必须再次输入新密码进行确认</string>
+    <string name="change_password_input_is_short">输入不足6位</string>
+    <string name="change_password_the_two_inputs_are_not_same">两次输入不一致</string>
+    <string name="change_password_success">修改成功！</string>
+    <string name="change_password_failed">修改失败</string>
+    <string name="change_password_password_is_wrong">查询密码错误</string>
 
     <!-- LostAndFoundFragment -->
     <string name="lost_and_found_info_browsing">失卡招领信息浏览</string>

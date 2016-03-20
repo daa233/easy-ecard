@@ -52,7 +52,7 @@ public class ManagementFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(!(context instanceof StartManageBasicInformationCallback)) {
+        if (!(context instanceof StartManageBasicInformationCallback)) {
             throw new IllegalStateException("fragment所在的Activity必须实现Callbacks接口");
         }
         // 把绑定的activity当成callback对象
@@ -133,7 +133,7 @@ public class ManagementFragment extends Fragment implements
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 // 跳转到ManageReportLossActivity
                                 startActivity(new Intent(getActivity(), ManageReportLossActivity.class));
-                                alertDialog.dismiss();
+                                sweetAlertDialog.dismiss();
                             }
                         })
                         .show();
@@ -143,6 +143,8 @@ public class ManagementFragment extends Fragment implements
             case R.drawable.manage_net_charge:
                 break;
             case R.drawable.manage_change_password:
+                // 修改查询密码
+                startActivity(new Intent(this.getContext(), ManageChangePasswordActivity.class));
                 break;
             default:
                 break;

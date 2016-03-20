@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.duang.easyecard.GlobalData.MyApplication"
+        android:name=".GlobalData.MyApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,7 +29,7 @@
         <activity
             android:name=".Activity.ManageBasicInformationActivity"
             android:label="@string/title_activity_manage_basic_information"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.ManageTradingInquiryActivity"
             android:label="@string/title_activity_manage_trading_inquiry"
@@ -37,19 +37,23 @@
         <activity
             android:name=".Activity.ManageReportLossActivity"
             android:label="@string/title_activity_manage_report_loss"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.ManageChangePasswordActivity"
+            android:label="@string/title_activity_manage_change_password"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingActivity"
             android:label="@string/title_activity_lost_and_found_information_browsing"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingViewDetailActivity"
             android:label="@string/title_activity_lost_and_found_information_browsing_view_detail"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundRegistrationActivity"
             android:label="@string/title_activity_lost_and_found_registration"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 
