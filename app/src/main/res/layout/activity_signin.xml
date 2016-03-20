@@ -18,45 +18,92 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <com.rey.material.widget.Spinner
-                android:id="@+id/signin_type_spinner"
-                style="@style/Material.Widget.Spinner"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                app:rd_style="@style/Material.Drawable.Ripple.Wave" />
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/signin_account_edit_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="@string/stu_id_input_hint"
-                android:inputType="number"
-                android:maxLength="15"
-                app:met_clearButton="true"
-                app:met_errorColor="@color/red"
-                app:met_floatingLabel="highlight"
-                app:met_floatingLabelText="@string/stu_id"
-                app:met_minBottomTextLines="1" />
+                android:orientation="horizontal">
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/signin_password_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/password_input_hint"
-                android:inputType="numberPassword"
-                android:maxLength="6"
-                app:met_clearButton="true"
-                app:met_errorColor="@color/red"
-                app:met_floatingLabel="highlight"
-                app:met_floatingLabelText="@string/card_query_password"
-                app:met_maxCharacters="6" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/signin_type" />
+
+                <com.rey.material.widget.Spinner
+                    android:id="@+id/signin_type_spinner"
+                    style="@style/Material.Widget.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/signin_account"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="center_vertical"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/signin_account_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@string/stu_id_input_hint"
+                    android:inputType="number"
+                    android:maxLength="15"
+                    app:met_clearButton="true"
+                    app:met_errorColor="@color/red"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="@string/stu_id"
+                    app:met_minBottomTextLines="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/signin_password"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_gravity="center_vertical"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/signin_password_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password_input_hint"
+                    android:inputType="numberPassword"
+                    android:maxLength="6"
+                    app:met_clearButton="true"
+                    app:met_errorColor="@color/red"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="@string/card_query_password"
+                    app:met_maxCharacters="6" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/signin_checkcode"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_gravity="center_vertical"/>
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/signin_checkcode_edit_text"
                     android:layout_width="0dp"
@@ -128,10 +175,10 @@
             <com.rey.material.widget.Button
                 android:id="@+id/signin_signin_button"
                 style="@style/button_ripple_wave"
-                android:layout_marginLeft="0dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginRight="0dp"
                 android:layout_marginEnd="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginStart="0dp"
                 android:background="@drawable/green_button_selector"
                 android:onClick="onSigninButtonClick"
                 android:text="@string/signin" />

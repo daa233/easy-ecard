@@ -225,7 +225,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                                           Throwable error) {
                         // 网络错误
                         LogUtil.e(TAG, new String(responseBody));
-                        Toast.makeText(getContext(), R.string.network_error,
+                        Toast.makeText(getContext(), getString(R.string.network_error),
                                 Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
@@ -284,7 +284,7 @@ public class ManageTradingInquiryHistoryFragment extends Fragment implements Vie
                 mChildList.get(groupPosition).get(childPosition).getTradingDate()
                         + "-" +
                         mChildList.get(groupPosition).get(childPosition).getTradingTime()
-                        + "  " + R.string.balance_after_trading +
+                        + "  " + getString(R.string.balance_after_trading) +
                         mChildList.get(groupPosition).get(childPosition).getBalance(),
                 Toast.LENGTH_SHORT).show();
         return false;

@@ -43,8 +43,9 @@ public class ManagementFragment extends Fragment implements
             R.drawable.manage_net_charge,
             R.drawable.manage_change_password,
     };
-
     private String[] iconText;
+
+    private final String TAG = "ManagementFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +90,7 @@ public class ManagementFragment extends Fragment implements
                 itemList.add(simpleItem);
             }
         } else {
-            LogUtil.e(getTag(), "Error: Arrays' lengths don't match.");
+            LogUtil.e(TAG, "Error: Arrays' lengths don't match.");
         }
         return itemList;
     }

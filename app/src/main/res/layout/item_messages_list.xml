@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@drawable/background_view_right_angle"
     android:orientation="horizontal"
     android:padding="10dp">
 
@@ -10,7 +10,8 @@
         android:id="@+id/messages_list_view_item_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_launcher" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
 
     <TextView
         android:id="@+id/messages_list_view_item_title"
@@ -20,6 +21,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:text="收件箱"
+        android:textColor="@color/dark"
         android:textSize="20sp" />
 
     <com.duang.easyecard.View.CircleTextView
@@ -27,8 +29,7 @@
         style="@style/circle_text_view"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:visibility="invisible"/>
+        android:layout_marginStart="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,12 +38,11 @@
 
         <ImageView
             android:id="@+id/messages_list_view_item_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/chevron_default" />
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
     </LinearLayout>
 
 </LinearLayout>

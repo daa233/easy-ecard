@@ -183,7 +183,7 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                         // 网络错误
                         LogUtil.e(TAG, new String(responseBody));
                         error.printStackTrace();
-                        Toast.makeText(getContext(), R.string.network_error,
+                        Toast.makeText(getContext(), getString(R.string.network_error),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -197,7 +197,7 @@ public class ManageTradingInquiryWeekFragment extends Fragment implements
                 mChildList.get(groupPosition).get(childPosition).getTradingDate()
                         + "-" +
                         mChildList.get(groupPosition).get(childPosition).getTradingTime()
-                        + "  " + R.string.balance_after_trading +
+                        + "  " + getString(R.string.balance_after_trading) +
                         mChildList.get(groupPosition).get(childPosition).getBalance(),
                 Toast.LENGTH_SHORT).show();
         return false;

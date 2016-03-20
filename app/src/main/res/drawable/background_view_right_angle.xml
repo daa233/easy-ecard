@@ -11,7 +11,6 @@
                     android:angle="270.0"
                     android:endColor="@color/base_end_color_pressed"
                     android:startColor="@color/base_start_color_pressed" />
-                <corners android:radius="8dp" />
             </shape>
         </item>
         <item>
@@ -23,7 +22,6 @@
                     android:angle="270.0"
                     android:endColor="@color/base_end_color_default"
                     android:startColor="@color/base_start_color_default" />
-                <corners android:radius="8dp" />
             </shape>
         </item>
     </selector>

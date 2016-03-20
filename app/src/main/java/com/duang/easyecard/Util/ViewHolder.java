@@ -99,6 +99,12 @@ public class ViewHolder {
         return this;
     }
 
+    public ViewHolder setVisibility(int viewId, int visibility) {
+        View v = getView(viewId);
+        v.setVisibility(visibility);
+        return this;
+    }
+
     public void useGlideToLoadImages(int viewId, Object imageAddress) {
         Glide
                 .with(mContext)

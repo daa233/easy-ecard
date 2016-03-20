@@ -13,6 +13,7 @@ public class MessagesListViewItem {
     private int iconResId;
     private String title;
     private String newMessagesCount;
+    private int newMessageVisibility;
     private int arrowResId;
 
     public MessagesListViewItem() {
@@ -44,6 +45,14 @@ public class MessagesListViewItem {
 
     public void setNewMessagesCount(String newMessagesCount) {
         this.newMessagesCount = newMessagesCount;
+    }
+
+    public int getNewMessageVisibility() {
+        return newMessageVisibility;
+    }
+
+    public void setNewMessageVisibility(int newMessageVisibility) {
+        this.newMessageVisibility = newMessageVisibility;
     }
 
     public int getArrowResId() {

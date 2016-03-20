@@ -450,7 +450,7 @@ public class SigninActivity extends BaseActivity {
             toRememberPassword(rememberPasswordFlag);
         } else {
             // 用户登录失败并退出应用
-            LogUtil.d(TAG, "User signed in failed and exit.");
+            LogUtil.d(TAG, "User signed in failed and exit, or the app was covered.");
         }
     }
 }
