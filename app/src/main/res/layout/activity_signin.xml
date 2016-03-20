@@ -35,7 +35,7 @@
                     android:id="@+id/signin_type_spinner"
                     style="@style/Material.Widget.Spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     app:rd_style="@style/Material.Drawable.Ripple.Wave" />
             </LinearLayout>
 

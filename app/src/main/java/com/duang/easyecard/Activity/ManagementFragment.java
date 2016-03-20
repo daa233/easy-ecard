@@ -1,5 +1,6 @@
 package com.duang.easyecard.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ public class ManagementFragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
     private View viewFragment;
+    private StartManageBasicInformationCallback startManageBasicInformationCallback;
 
     private GridView mGridView;
     private ImageView mCampusImageView;
@@ -46,6 +48,16 @@ public class ManagementFragment extends Fragment implements
     private String[] iconText;
 
     private final String TAG = "ManagementFragment";
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(!(context instanceof StartManageBasicInformationCallback)) {
+            throw new IllegalStateException("fragment所在的Activity必须实现Callbacks接口");
+        }
+        // 把绑定的activity当成callback对象
+        startManageBasicInformationCallback = (StartManageBasicInformationCallback) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,8 +112,8 @@ public class ManagementFragment extends Fragment implements
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
-                // 跳转到ManageViewBasicInfoActivity
-                startActivity(new Intent(this.getContext(), ManageBasicInformationActivity.class));
+                // 更新基本信息并跳转activity
+                startManageBasicInformationCallback.sendGETRequestToMobile(true);
                 break;
             case R.drawable.manage_trading_inquiry:
                 startActivity(new Intent(this.getContext(), ManageTradingInquiryActivity.class));
@@ -135,5 +147,10 @@ public class ManagementFragment extends Fragment implements
             default:
                 break;
         }
+    }
+
+    // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
+    public interface StartManageBasicInformationCallback {
+        void sendGETRequestToMobile(boolean openActivityFlag);
     }
 }

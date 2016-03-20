@@ -1,5 +1,6 @@
 package com.duang.easyecard.Activity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,7 +34,8 @@ import cz.msebera.android.httpclient.Header;
  * 应用主界面
  * Created by MrD on 2016/2/4.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements
+        ManagementFragment.StartManageBasicInformationCallback {
 
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
@@ -43,6 +45,7 @@ public class MainActivity extends BaseActivity {
     private UserBasicInformation userBasicInformation;
     private List<String> userBasicInformationDataList;
     private String response;
+    private boolean startManageBasicInformationActivityFlag;
     private final String TAG = "MainActivity";
 
     @Override
@@ -90,11 +93,12 @@ public class MainActivity extends BaseActivity {
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         // 发送GET请求，获取基本信息
-        sendGETRequestToMobile();
+        sendGETRequestToMobile(false);
     }
 
     // 向“掌上校园”发送GET请求，有时该服务器会存在问题，失效时向校园卡服务平台发送GET请求
-    private void sendGETRequestToMobile() {
+    public void sendGETRequestToMobile(boolean startActivityFlag) {
+        startManageBasicInformationActivityFlag = startActivityFlag;
         httpClient.get(UrlConstant.MOBILE_MANAGE_BASIC_INFO, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -247,6 +251,10 @@ public class MainActivity extends BaseActivity {
         myApp.setUserBasicInformation(userBasicInformation);
         if (myApp.getUserBasicInformation() != null) {
             LogUtil.d(TAG, "Add UserBasicInformation to Application successfully.");
+            if (startManageBasicInformationActivityFlag) {
+                // 跳转到基本信息
+                startActivity(new Intent(this, ManageBasicInformationActivity.class));
+            }
         } else {
             LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");
             new Throwable().printStackTrace();
