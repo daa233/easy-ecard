@@ -30,7 +30,7 @@ public class ManagementFragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
     private View viewFragment;
-    private StartManageBasicInformationCallback startManageBasicInformationCallback;
+    private StartActivitiesCallback startActivitiesCallback;
 
     private GridView mGridView;
     private ImageView mCampusImageView;
@@ -52,11 +52,11 @@ public class ManagementFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof StartManageBasicInformationCallback)) {
+        if (!(context instanceof StartActivitiesCallback)) {
             throw new IllegalStateException("fragment所在的Activity必须实现Callbacks接口");
         }
         // 把绑定的activity当成callback对象
-        startManageBasicInformationCallback = (StartManageBasicInformationCallback) context;
+        startActivitiesCallback = (StartActivitiesCallback) context;
     }
 
     @Override
@@ -113,30 +113,16 @@ public class ManagementFragment extends Fragment implements
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
                 // 更新基本信息并跳转activity
-                startManageBasicInformationCallback.sendGETRequestToMobile(true);
+                startActivitiesCallback.sendGETRequestToMobile(
+                        MainActivity.CONSTANT_START_BASIC_INFORMATION);
                 break;
             case R.drawable.manage_trading_inquiry:
                 startActivity(new Intent(this.getContext(), ManageTradingInquiryActivity.class));
                 break;
             case R.drawable.manage_report_loss:
-                // 先给出用户挂失的提示
-                final SweetAlertDialog alertDialog = new SweetAlertDialog(this.getContext(),
-                        SweetAlertDialog.WARNING_TYPE);
-                alertDialog
-                        .setTitleText(getString(R.string.hint_start_report_loss_warning_title))
-                        .setContentText(getString(R.string.hint_start_report_loss_warning_content))
-                        .setConfirmText(getString(R.string.OK))
-                        .setCancelText(getString(R.string.Cancel))
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            // 用户确定挂失
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                // 跳转到ManageReportLossActivity
-                                startActivity(new Intent(getActivity(), ManageReportLossActivity.class));
-                                sweetAlertDialog.dismiss();
-                            }
-                        })
-                        .show();
+                // 调用接口，先检查用户是否已经挂失
+                startActivitiesCallback.sendGETRequestToMobile(
+                        MainActivity.CONSTANT_START_REPORT_LOSS);
                 break;
             case R.drawable.manage_recharge:
                 break;
@@ -152,7 +138,8 @@ public class ManagementFragment extends Fragment implements
     }
 
     // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
-    public interface StartManageBasicInformationCallback {
-        void sendGETRequestToMobile(boolean openActivityFlag);
+    public interface StartActivitiesCallback {
+        void sendGETRequestToMobile(int openActivityFlag);
     }
+
 }

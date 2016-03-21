@@ -110,6 +110,7 @@
     <string name="report_loss_wrong_password">查询密码错误！</string>
     <string name="report_loss">挂失</string>
     <string name="report_loss_success">挂失成功！</string>
+    <string name="report_loss_the_card_has_been_reported_loss">您的校园卡已经挂失，请勿重复操作。</string>
     <!-- ManageChangePasswordActivity -->
     <string name="title_activity_manage_change_password">修改查询密码</string>
     <string name="change_password_new_card_query_password">新查询密码</string>

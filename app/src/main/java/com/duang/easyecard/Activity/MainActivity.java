@@ -35,7 +35,7 @@ import cz.msebera.android.httpclient.Header;
  * Created by MrD on 2016/2/4.
  */
 public class MainActivity extends BaseActivity implements
-        ManagementFragment.StartManageBasicInformationCallback {
+        ManagementFragment.StartActivitiesCallback {
 
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
@@ -45,8 +45,11 @@ public class MainActivity extends BaseActivity implements
     private UserBasicInformation userBasicInformation;
     private List<String> userBasicInformationDataList;
     private String response;
-    private boolean startManageBasicInformationActivityFlag;
+    private int startManageActivityFlag;
     private final String TAG = "MainActivity";
+    protected final int CONSTANT_START_NOTHING = 0;
+    protected static final int CONSTANT_START_BASIC_INFORMATION = 1;
+    protected static final int CONSTANT_START_REPORT_LOSS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +96,12 @@ public class MainActivity extends BaseActivity implements
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         // 发送GET请求，获取基本信息
-        sendGETRequestToMobile(false);
+        sendGETRequestToMobile(CONSTANT_START_NOTHING);
     }
 
     // 向“掌上校园”发送GET请求，有时该服务器会存在问题，失效时向校园卡服务平台发送GET请求
-    public void sendGETRequestToMobile(boolean startActivityFlag) {
-        startManageBasicInformationActivityFlag = startActivityFlag;
+    public void sendGETRequestToMobile(int startActivityFlag) {
+        startManageActivityFlag = startActivityFlag;
         httpClient.get(UrlConstant.MOBILE_MANAGE_BASIC_INFO, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -251,9 +254,39 @@ public class MainActivity extends BaseActivity implements
         myApp.setUserBasicInformation(userBasicInformation);
         if (myApp.getUserBasicInformation() != null) {
             LogUtil.d(TAG, "Add UserBasicInformation to Application successfully.");
-            if (startManageBasicInformationActivityFlag) {
+            if (startManageActivityFlag == CONSTANT_START_BASIC_INFORMATION) {
                 // 跳转到基本信息
                 startActivity(new Intent(this, ManageBasicInformationActivity.class));
+            } else if (startManageActivityFlag == CONSTANT_START_REPORT_LOSS) {
+                if (userBasicInformation.getReportLossState().contains("正常卡")) {
+                    // 正常卡，可以挂失
+                    LogUtil.d(TAG, "Report state: Normal.");
+                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(getString(R.string.hint_start_report_loss_warning_title))
+                            .setContentText(getString(
+                                    R.string.hint_start_report_loss_warning_content))
+                            .setConfirmText(getString(R.string.OK))
+                            .setCancelText(getString(R.string.Cancel))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                // 用户确定挂失
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    // 跳转到ManageReportLossActivity
+                                    startActivity(new Intent(MainActivity.this,
+                                            ManageReportLossActivity.class));
+                                    sweetAlertDialog.dismiss();
+                                }
+                            })
+                            .show();
+                } else {
+                    // 已经挂失
+                    LogUtil.d(TAG, "Report state: Loss.");
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText(getString(
+                                    R.string.report_loss_the_card_has_been_reported_loss))
+                            .setConfirmText(getString(R.string.OK))
+                            .show();
+                }
             }
         } else {
             LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");

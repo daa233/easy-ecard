@@ -36,7 +36,7 @@ public class MyApplication extends Application {
         return userBasicInformation;
     }
 
-    public static void setUserBasicInformation(UserBasicInformation userBasicInformation) {
+    public void setUserBasicInformation(UserBasicInformation userBasicInformation) {
         MyApplication.userBasicInformation = userBasicInformation;
     }
 }
