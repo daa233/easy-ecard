@@ -176,5 +176,12 @@
     <string name="messages_board">留言板</string>
     <string name="messages_questions">常见问题</string>
 
+    <!-- MessagesInboxActivity -->
+    <string name="title_activity_messages_inbox">收件箱</string>
+
+    <!-- MessagesCreateNoticeActivity -->
+    <string name="title_activity_messages_create_notice">发消息</string>
+
     <string name="hello_blank_fragment">你好</string>
+
 </resources>

@@ -41,7 +41,7 @@
         <activity
             android:name=".Activity.ManageChangePasswordActivity"
             android:label="@string/title_activity_manage_change_password"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingActivity"
             android:label="@string/title_activity_lost_and_found_information_browsing"
@@ -54,7 +54,14 @@
             android:name=".Activity.LostAndFoundRegistrationActivity"
             android:label="@string/title_activity_lost_and_found_registration"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <activity
+            android:name=".Activity.MessagesCreateNoticeActivity"
+            android:label="@string/title_activity_messages_create_notice"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.MessagesInboxActivity"
+            android:label="@string/title_activity_messages_inbox"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
