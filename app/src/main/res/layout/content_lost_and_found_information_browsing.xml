@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <!-- ListView -->
-            <com.rey.material.widget.ListView
+            <ListView
                 android:id="@+id/lost_and_found_information_browsing_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

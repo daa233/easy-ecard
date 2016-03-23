@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +22,6 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.LostAndFoundEventAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.rey.material.widget.ListView;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;

@@ -1,19 +1,20 @@
 package com.duang.easyecard.Activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.Model.MessagesListViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesListViewAdapter;
-import com.rey.material.widget.ListView;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         mAdapter = new MessagesListViewAdapter(MyApplication.getContext(), dataList,
-                R.layout.item_messages_list);
+                R.layout.item_messages_fragment_list);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
     }
@@ -110,6 +111,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             case 0:
                 // 打开收件箱
                 LogUtil.d(TAG, "onItemClick: " + 0);
+                startActivity(new Intent(MyApplication.getContext(), MessagesInboxActivity.class));
                 break;
             case 1:
                 // 已发送

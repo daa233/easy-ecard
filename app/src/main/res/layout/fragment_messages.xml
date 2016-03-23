@@ -9,7 +9,7 @@
         android:id="@+id/messages_pull_to_refresh_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.rey.material.widget.ListView
+        <ListView
             android:id="@+id/messages_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

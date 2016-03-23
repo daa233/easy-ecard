@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_view_right_angle"
     android:orientation="horizontal"
     android:padding="10dp">
 
@@ -20,7 +19,6 @@
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
-        android:text="收件箱"
         android:textColor="@color/dark"
         android:textSize="20sp" />
 

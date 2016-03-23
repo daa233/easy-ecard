@@ -54,14 +54,17 @@
             android:name=".Activity.LostAndFoundRegistrationActivity"
             android:label="@string/title_activity_lost_and_found_registration"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Activity.MessagesCreateNoticeActivity"
-            android:label="@string/title_activity_messages_create_notice"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".Activity.MessagesInboxActivity"
             android:label="@string/title_activity_messages_inbox"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".Activity.MessagesCreateNoticeActivity"
+            android:label="@string/title_activity_messages_create_notice"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
