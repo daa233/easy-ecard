@@ -7,14 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.baoyz.swipemenulistview.SwipeMenuView;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.Notice;
@@ -37,12 +41,14 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
 public class MessagesInboxActivity extends BaseActivity implements
-        SwipeMenuView.OnSwipeItemClickListener, AdapterView.OnItemClickListener,
+        SwipeMenuListView.OnMenuItemClickListener, AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
 
     private SwipeMenuListView mListView;
     private PullToRefreshView mPullToRefreshView;
     private SweetAlertDialog sweetAlertDialog;
+    private PopupWindow mPopupWindowAtTop;
+    private TextView mCheckedCountTextView;
     private List<Notice> dataList;
     private MessagesNoticeListAdapter mAdapter;
     private AsyncHttpClient httpClient;
@@ -87,21 +93,12 @@ public class MessagesInboxActivity extends BaseActivity implements
         // 设置creator
         mListView.setMenuCreator(creator);
         // 监听MenuItem的点击事件
-        mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                switch (index) {
-                    case 0:
-                        // delete the item
-                        break;
-                    default:
-                        break;
-                }
-                return false;
-            }
-        });
+        mListView.setOnMenuItemClickListener(this);
         // 设置Swipe的方向
         mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
+        // 监听Item的点击事件
+        mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
         // 监听PullToRefreshView的下拉刷新事件
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
@@ -110,9 +107,6 @@ public class MessagesInboxActivity extends BaseActivity implements
                 initData();
             }
         });
-        // 监听Item的点击事件
-        mListView.setOnItemClickListener(this);
-        mListView.setOnItemLongClickListener(this);
     }
 
     private void initData() {
@@ -162,7 +156,7 @@ public class MessagesInboxActivity extends BaseActivity implements
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
-                LogUtil.d(TAG, "GET reponse success.");
+                LogUtil.d(TAG, "GET response success.");
                 response = new String(responseBody);
                 // 解析网页响应
                 new JsoupHtmlData().execute();
@@ -171,7 +165,7 @@ public class MessagesInboxActivity extends BaseActivity implements
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
-                LogUtil.d(TAG, "GET reponse failed.");
+                LogUtil.d(TAG, "GET response failed.");
                 // 网络错误
                 sweetAlertDialog
                         .setTitleText(getString(R.string.network_error))
@@ -182,18 +176,13 @@ public class MessagesInboxActivity extends BaseActivity implements
         });
     }
 
-    // SwipeItem的点击事件
-    @Override
-    public void onItemClick(SwipeMenuView view, SwipeMenu menu, int index) {
-
-    }
-
     // ListItem的点击事件
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        LogUtil.d(TAG, "onItemClick.");
+        LogUtil.d(TAG, "onItemClick at " + position);
         if (TO_DELETE_FLAG) {
             // 处于正在删除的选择状态
+            LogUtil.d(TAG, "In state to Delete.");
             if (dataList.get(position).isChecked()) {
                 // 已经选中，则置为未选中
                 dataList.get(position).setChecked(false);
@@ -209,8 +198,14 @@ public class MessagesInboxActivity extends BaseActivity implements
                     dataList.get(i).setToDelete(false);
                     dataList.get(i).setChecked(false);
                 }
+                // 让PopupWindow消失
+                mPopupWindowAtTop.dismiss();
+                // 激活下拉刷新
+                mPullToRefreshView.setEnabled(true);
                 TO_DELETE_FLAG = false;
             }
+            mCheckedCountTextView.setText(getString(R.string.has_selected) + checkedToDeleteCount +
+                    getString(R.string.item));
             mAdapter.notifyDataSetChanged();
         } else {
             // 未处在删除状态，跳转查看详细内容Activity
@@ -222,15 +217,87 @@ public class MessagesInboxActivity extends BaseActivity implements
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         LogUtil.d(TAG, "onItemLongClick.");
+        // 显示PopupWindow
+        showPopupWindow();
+        // 此时禁止下拉刷新
+        mPullToRefreshView.setEnabled(false);
         TO_DELETE_FLAG = true;
         for (int i = 0; i < dataList.size(); i++) {
             dataList.get(i).setToDelete(true);
+            dataList.get(i).setChecked(false);  // 防止长按另一个Item时checkedToDeleteCount无法清零
         }
         dataList.get(position).setChecked(true);
+        checkedToDeleteCount = 0;
         checkedToDeleteCount++;
+        mCheckedCountTextView.setText(getString(R.string.has_selected) + checkedToDeleteCount +
+                getString(R.string.item));
         mAdapter.notifyDataSetChanged();
+        return true;
+    }
+
+    // 监听MenuItem的点击事件
+    @Override
+    public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+        LogUtil.d(TAG, "onMenuItemClick at " + position);
+        switch (index) {
+            case 0:
+                // delete the item
+                LogUtil.d(TAG, "To delete the item at " + position + " Id: " +
+                        dataList.get(position).getId());
+                break;
+            default:
+                break;
+        }
         return false;
     }
+
+    // 显示PopupWindow
+    private void showPopupWindow() {
+        // 根据PopupWindow状态，确定是否新建
+        if (mPopupWindowAtTop == null || !mPopupWindowAtTop.isShowing()) {
+            // PopupWindow自定义布局
+            View contentView = LayoutInflater.from(MyApplication.getContext()).inflate(
+                    R.layout.popup_window_in_inbox_and_sent, null);
+            mPopupWindowAtTop = new PopupWindow(contentView, Toolbar.LayoutParams.MATCH_PARENT,
+                    dp2px(56), true);
+            contentView.findViewById(R.id.popup_window_in_inbox_and_sent_cancel_button)
+                    .setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 取消
+                    for (int i = 0; i < dataList.size(); i++) {
+                        dataList.get(i).setToDelete(false);
+                        dataList.get(i).setChecked(false);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    mPopupWindowAtTop.dismiss();
+                }
+            });
+            final Button selectButton = (Button) contentView.findViewById(
+                    R.id.popup_window_in_inbox_and_sent_select_all_button);
+            selectButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 全选
+                    for (int i = 0; i < dataList.size(); i++) {
+                        dataList.get(i).setChecked(true);
+                        checkedToDeleteCount = dataList.size();
+                        mCheckedCountTextView.setText(getString(R.string.has_selected) +
+                                checkedToDeleteCount + getString(R.string.item));
+                    }
+                    selectButton.setText(getString(R.string.select_nothing));
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+            mCheckedCountTextView = (TextView) contentView.findViewById(
+                    R.id.popup_window_in_inbox_and_sent_selected_text_view);
+        }
+        mPopupWindowAtTop.setFocusable(false);
+        mPopupWindowAtTop.setOutsideTouchable(false);
+        mPopupWindowAtTop.showAtLocation(findViewById(R.id.activity_messages_inbox),
+                Gravity.TOP, 0, 0);
+    }
+
 
     // 解析响应数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {

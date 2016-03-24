@@ -9,6 +9,9 @@
     <string name="shut_down_caused_by_accident">抱歉，由于意外的错误，此应用暂时无法使用</string>
     <string name="OK">确定</string>
     <string name="Cancel">取消</string>
+    <string name="select_all">全选</string>
+    <string name="select_nothing">全不选</string>
+    <string name="delete">删除</string>
 
     <!-- SigninActivity -->
     <string name="title_activity_signin">登录</string>
@@ -178,6 +181,8 @@
 
     <!-- MessagesInboxActivity -->
     <string name="title_activity_messages_inbox">收件箱</string>
+    <string name="has_selected">已选择</string>
+    <string name="item">项</string>
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>

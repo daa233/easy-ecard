@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tab="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:orientation="vertical">
+
     <android.support.v4.view.ViewPager
         android:id="@+id/main_view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
     <!-- 分割线 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#50909090"
+        android:layout_marginLeft="1dp"
         android:layout_marginRight="1dp"
-        android:layout_marginLeft="1dp"/>
+        android:background="#50909090" />
+
     <com.duang.changeiconcolorwithtext.ChangeColorTab
         android:id="@+id/main_change_color_tab"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/main_tab_bg">
+
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_management"
             android:layout_width="0dp"
