@@ -184,12 +184,15 @@
     <string name="has_selected">已选择</string>
     <string name="item">项</string>
     <string name="confirm_to_delete">您确定要删除这</string>
-    <string name="question_mark">吗？</string>
+    <string name="question_mark">条消息吗？</string>
+    <string name="confirm_to_delete_one">您确定要删除这条消息吗？</string>
     <string name="success_to_delete">删除成功！</string>
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>
 
-    <string name="hello_blank_fragment">你好</string>
+    <!-- MessagesNoticeDetailActivity -->
+    <string name="title_activity_messages_notice_detail">查看消息</string>
 
+    <string name="hello_blank_fragment">你好</string>
 </resources>

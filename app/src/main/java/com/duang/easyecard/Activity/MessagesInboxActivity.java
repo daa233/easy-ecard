@@ -258,11 +258,18 @@ public class MessagesInboxActivity extends BaseActivity implements
     @Override
     public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
         LogUtil.d(TAG, "onMenuItemClick at " + position);
+        final int itemPosition = position;
         switch (index) {
             case 0:
-                // delete the item
-                LogUtil.d(TAG, "To delete the item at " + position + " Id: " +
-                        dataList.get(position).getId());
+                Snackbar.make(findViewById(R.id.activity_messages_inbox_and_sent_coordinator_layout),
+                        getString(R.string.confirm_to_delete_one), Snackbar.LENGTH_LONG)
+                        .setAction(getString(R.string.OK), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        sendPOSTRequest(dataList.get(itemPosition).getId());
+                                    }
+                                }
+                        ).show();
                 break;
             default:
                 break;
@@ -271,26 +278,29 @@ public class MessagesInboxActivity extends BaseActivity implements
     }
 
     // DeleteFab的点击事件
+
     public void onDeleteFabClick(View v) {
         LogUtil.d(TAG, "onDeleteFabClick.");
         // 显示Snackbar
         Snackbar.make(findViewById(R.id.activity_messages_inbox_and_sent_coordinator_layout),
                 getString(R.string.confirm_to_delete) + checkedToDeleteHashSet.size()
-                        + getString(R.string.item) + getString(R.string.question_mark),
-                Snackbar.LENGTH_LONG).setAction(getString(R.string.OK), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtil.d(TAG, "On snackbar confirm click.");
-                // 删除相关Notice
-                String[] checkedToDeleteStringArray = checkedToDeleteHashSet.toArray(new String[0]);
-                String checkedToDeleteIds = checkedToDeleteStringArray[0];
-                for (int i = 1; i < checkedToDeleteStringArray.length; i++) {
-                    checkedToDeleteIds = checkedToDeleteIds + "," + checkedToDeleteStringArray[i];
-                }
-                // 发送POST请求，删除相关消息
-                sendPOSTRequest(checkedToDeleteIds);
-            }
-        }).setCallback(new Snackbar.Callback() {
+                        + getString(R.string.question_mark), Snackbar.LENGTH_LONG)
+                .setAction(getString(R.string.OK), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LogUtil.d(TAG, "On snackbar confirm click.");
+                        // 删除相关Notice
+                        String[] checkedToDeleteStringArray =
+                                checkedToDeleteHashSet.toArray(new String[0]);
+                        String checkedToDeleteIds = checkedToDeleteStringArray[0];
+                        for (int i = 1; i < checkedToDeleteStringArray.length; i++) {
+                            checkedToDeleteIds = checkedToDeleteIds + ","
+                                    + checkedToDeleteStringArray[i];
+                        }
+                        // 发送POST请求，删除相关消息
+                        sendPOSTRequest(checkedToDeleteIds);
+                    }
+                }).setCallback(new Snackbar.Callback() {
             @Override
             public void onShown(Snackbar snackbar) {
                 super.onShown(snackbar);

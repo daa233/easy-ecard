@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.duang.easyecard.Activity.MessagesNoticeDetailActivity"
+    tools:showIn="@layout/activity_messages_notice_detail">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/messages_notice_detail_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/messages_notice_detail_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="今天下午五点等我撒旦法撒旦法沙发沙发啥地方"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/messages_notice_detail_sender_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:text="发送人：吴彦祖"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/messages_notice_detail_receiver_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:text="接收人：杜2昂 （已读）"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/messages_notice_detail_sent_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="日    期：2016年3月25日 23:23"
+                android:textColor="@color/white"
+                android:paddingBottom="5dp"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/messages_notice_detail_operation_system"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="业务系统：服务平台"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/messages_notice_detail_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
+                    android:text="分类：我的消息"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:padding="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark"
+            android:textSize="18sp"
+            android:text="阿克打飞机啊老师的开房间啊上课了打飞机啊说的开了房间啊善良的开房间啊说的；弗利萨觉得疯狂拉升的减肥萨克雷打飞机啊受到罚款撒旦法圣诞节法卡山；老地方见啊说的；福建省的疯狂；啊时间打发打发卡时间豆腐块；萨拉附近萨克雷地方吉萨德开了房间啊时"/>
+    </LinearLayout>
+
+
+</ScrollView>
