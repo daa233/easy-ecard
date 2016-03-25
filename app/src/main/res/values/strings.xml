@@ -161,7 +161,7 @@
     <string name="lost_and_found_registration_contact_hint">联系方式 （必填，7—15位）</string>
     <string name="lost_and_found_registration_lost_place_hint">丢卡地点 （必填，最多128个字符）</string>
     <string name="lost_and_found_registration_description_hint">说明 （选填，最多256个字符）</string>
-    <string name="save_error">保存失败</string>
+    <string name="save_error">保存失败！</string>
     <string name="pick_up_card">标记为已招领</string>
     <string name="lost_and_found_registration_contact_is_empty">联系方式不能为空</string>
     <string name="lost_and_found_registration_contact_is_too_short">联系方式不能少于7位</string>
@@ -183,6 +183,9 @@
     <string name="title_activity_messages_inbox">收件箱</string>
     <string name="has_selected">已选择</string>
     <string name="item">项</string>
+    <string name="confirm_to_delete">您确定要删除这</string>
+    <string name="question_mark">吗？</string>
+    <string name="success_to_delete">删除成功！</string>
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>

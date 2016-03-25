@@ -2,7 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_messages_inbox"
+    android:id="@+id/activity_messages_inbox_and_sent_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/messages_inbox_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -22,6 +22,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_messages_inbox" />
+    <include layout="@layout/content_messages_inbox_and_sent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/messages_inbox_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="@dimen/fab_margin"
+        android:onClick="onDeleteFabClick"
+        android:src="@android:drawable/ic_menu_delete"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

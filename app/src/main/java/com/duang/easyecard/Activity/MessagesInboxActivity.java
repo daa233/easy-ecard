@@ -5,6 +5,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -27,14 +29,18 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesNoticeListAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.yalantis.phoenix.PullToRefreshView;
 
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -49,32 +55,37 @@ public class MessagesInboxActivity extends BaseActivity implements
     private SweetAlertDialog sweetAlertDialog;
     private PopupWindow mPopupWindowAtTop;
     private TextView mCheckedCountTextView;
+    private Button mCancelButton;
+    private Button mSelectButton;
+    private FloatingActionButton mDeleteFab;
+
     private List<Notice> dataList;
+    private HashSet<String> checkedToDeleteHashSet;  // 用于存储已经选中的NoticeId，不会重复
     private MessagesNoticeListAdapter mAdapter;
     private AsyncHttpClient httpClient;
     private String response;
     private int pageIndex;  // 访问的网页信息的页码
     private int maxPageIndex;  // 最大页码
-    private boolean FIRST_TIME_TO_PARSE_FLAG = true;  // 首次解析标志，默认为true
+    private boolean FIRST_TIME_TO_PARSE_FLAG;  // 首次解析标志，默认为true
     private boolean TO_DELETE_FLAG = false;
-    private int checkedToDeleteCount = 0;
 
     private final String TAG = "MessagesInboxActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_messages_inbox);
+        setContentView(R.layout.activity_messages_inbox_and_sent);
         initView();
         initData();
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.messages_inbox_toolbar);
         setSupportActionBar(toolbar);
         setDisplayHomeButton();
         // 实例化控件
         mListView = (SwipeMenuListView) findViewById(R.id.messages_inbox_list_view);
+        mDeleteFab = (FloatingActionButton) findViewById(R.id.messages_inbox_fab);
         mPullToRefreshView = (PullToRefreshView) findViewById(
                 R.id.messages_inbox_pull_to_refresh_view);
         // create a MenuCreator
@@ -115,15 +126,20 @@ public class MessagesInboxActivity extends BaseActivity implements
         httpClient = myApp.getHttpClient();
         // 初始化数据列表
         dataList = new ArrayList<>();
+        checkedToDeleteHashSet = new HashSet<>();
+        // 初始化初次解析标志
+        FIRST_TIME_TO_PARSE_FLAG = true;
         // 初始化页码，默认均为1
         pageIndex = 1;
         maxPageIndex = 1;
         // 显示对话框
-        sweetAlertDialog = new SweetAlertDialog(MessagesInboxActivity.this,
-                SweetAlertDialog.PROGRESS_TYPE);
-        sweetAlertDialog
-                .setTitleText(getString(R.string.loading))
-                .show();
+        if (sweetAlertDialog == null || !sweetAlertDialog.isShowing()) {
+            sweetAlertDialog = new SweetAlertDialog(MessagesInboxActivity.this,
+                    SweetAlertDialog.PROGRESS_TYPE);
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.loading))
+                    .show();
+        }
         sendPreGETRequest();
     }
 
@@ -186,26 +202,26 @@ public class MessagesInboxActivity extends BaseActivity implements
             if (dataList.get(position).isChecked()) {
                 // 已经选中，则置为未选中
                 dataList.get(position).setChecked(false);
-                checkedToDeleteCount--;
+                // 删除checkedToDeleteHashSet中存储的NoticeId
+                checkedToDeleteHashSet.remove(((Notice) parent.getItemAtPosition(position)).getId());
             } else {
                 // 原本未选中，则置为选中
                 dataList.get(position).setChecked(true);
-                checkedToDeleteCount++;
+                // 将NoticeId存储到checkedToDeleteHashSet
+                checkedToDeleteHashSet.add(((Notice) parent.getItemAtPosition(position)).getId());
             }
-            if (checkedToDeleteCount == 0) {
+            if (checkedToDeleteHashSet.size() == 0) {
                 // 如果一个都没有选中，退出删除编辑状态
-                for (int i = 0; i < dataList.size(); i++) {
-                    dataList.get(i).setToDelete(false);
-                    dataList.get(i).setChecked(false);
-                }
-                // 让PopupWindow消失
-                mPopupWindowAtTop.dismiss();
-                // 激活下拉刷新
-                mPullToRefreshView.setEnabled(true);
-                TO_DELETE_FLAG = false;
+                cancelDeleting();
+            } else if (checkedToDeleteHashSet.size() < dataList.size()) {
+                // 没有全选，此时全选按钮显示“全选”
+                mSelectButton.setText(getString(R.string.select_all));
+            } else {
+                // 已经全选，将按钮功能变为“全不选”
+                mSelectButton.setText(getString(R.string.select_nothing));
             }
-            mCheckedCountTextView.setText(getString(R.string.has_selected) + checkedToDeleteCount +
-                    getString(R.string.item));
+            mCheckedCountTextView.setText(getString(R.string.has_selected) +
+                    checkedToDeleteHashSet.size() + getString(R.string.item));
             mAdapter.notifyDataSetChanged();
         } else {
             // 未处在删除状态，跳转查看详细内容Activity
@@ -219,6 +235,8 @@ public class MessagesInboxActivity extends BaseActivity implements
         LogUtil.d(TAG, "onItemLongClick.");
         // 显示PopupWindow
         showPopupWindow();
+        // 显示mDeleteFab
+        mDeleteFab.setVisibility(View.VISIBLE);
         // 此时禁止下拉刷新
         mPullToRefreshView.setEnabled(false);
         TO_DELETE_FLAG = true;
@@ -227,10 +245,11 @@ public class MessagesInboxActivity extends BaseActivity implements
             dataList.get(i).setChecked(false);  // 防止长按另一个Item时checkedToDeleteCount无法清零
         }
         dataList.get(position).setChecked(true);
-        checkedToDeleteCount = 0;
-        checkedToDeleteCount++;
-        mCheckedCountTextView.setText(getString(R.string.has_selected) + checkedToDeleteCount +
-                getString(R.string.item));
+        // 清空checkedToDeleteHashSet
+        checkedToDeleteHashSet.clear();
+        checkedToDeleteHashSet.add(((Notice) parent.getItemAtPosition(position)).getId());
+        mCheckedCountTextView.setText(getString(R.string.has_selected) +
+                checkedToDeleteHashSet.size() + getString(R.string.item));
         mAdapter.notifyDataSetChanged();
         return true;
     }
@@ -251,42 +270,133 @@ public class MessagesInboxActivity extends BaseActivity implements
         return false;
     }
 
+    // DeleteFab的点击事件
+    public void onDeleteFabClick(View v) {
+        LogUtil.d(TAG, "onDeleteFabClick.");
+        // 显示Snackbar
+        Snackbar.make(findViewById(R.id.activity_messages_inbox_and_sent_coordinator_layout),
+                getString(R.string.confirm_to_delete) + checkedToDeleteHashSet.size()
+                        + getString(R.string.item) + getString(R.string.question_mark),
+                Snackbar.LENGTH_LONG).setAction(getString(R.string.OK), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtil.d(TAG, "On snackbar confirm click.");
+                // 删除相关Notice
+                String[] checkedToDeleteStringArray = checkedToDeleteHashSet.toArray(new String[0]);
+                String checkedToDeleteIds = checkedToDeleteStringArray[0];
+                for (int i = 1; i < checkedToDeleteStringArray.length; i++) {
+                    checkedToDeleteIds = checkedToDeleteIds + "," + checkedToDeleteStringArray[i];
+                }
+                // 发送POST请求，删除相关消息
+                sendPOSTRequest(checkedToDeleteIds);
+            }
+        }).setCallback(new Snackbar.Callback() {
+            @Override
+            public void onShown(Snackbar snackbar) {
+                super.onShown(snackbar);
+                // 需要暂时屏蔽掉“取消”按钮和“全选”按钮的点击功能，以防止事件冲突
+                mCancelButton.setClickable(false);
+                mSelectButton.setClickable(false);
+            }
+
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                super.onDismissed(snackbar, event);
+                // 恢复“取消”按钮和“全选”按钮的点击功能
+                mCancelButton.setClickable(true);
+                mSelectButton.setClickable(true);
+            }
+        }).show();
+    }
+
+    // 发送删除消息的POST请求
+    private void sendPOSTRequest(String ids) {
+        RequestParams params = new RequestParams();
+        params.add("ids", ids);
+        params.add("isSend", "0");
+        httpClient.post(UrlConstant.DELETE_NOTICE, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // 响应成功
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    if (response.getString("ret").equals("true")) {
+                        // 删除成功，刷新ListView
+                        LogUtil.d(TAG, "Success to delete. msg: " + response.getString("msg"));
+                        initData();
+                    } else {
+                        // 删除失败
+                        sweetAlertDialog
+                                .setTitleText(getString(R.string.operation_failed))
+                                .setContentText(response.getString("msg"))
+                                .setConfirmText(getString(R.string.OK))
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 删除失败
+                    sweetAlertDialog
+                            .setTitleText(getString(R.string.operation_failed))
+                            .setConfirmText(getString(R.string.OK))
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                                  Throwable throwable) {
+                // 网络错误
+                super.onFailure(statusCode, headers, responseString, throwable);
+                // 网络错误
+                sweetAlertDialog
+                        .setTitleText(getString(R.string.network_error))
+                        .setContentText(responseString)
+                        .setConfirmText(getString(R.string.OK))
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                throwable.printStackTrace();
+            }
+        });
+    }
+
     // 显示PopupWindow
     private void showPopupWindow() {
         // 根据PopupWindow状态，确定是否新建
         if (mPopupWindowAtTop == null || !mPopupWindowAtTop.isShowing()) {
             // PopupWindow自定义布局
             View contentView = LayoutInflater.from(MyApplication.getContext()).inflate(
-                    R.layout.popup_window_in_inbox_and_sent, null);
+                    R.layout.popup_window_in_inbox_and_sent_at_top, null);
+            // 实例化PopupWindow中的控件
+            mCancelButton = (Button) contentView.findViewById(
+                    R.id.popup_window_in_inbox_and_sent_cancel_button);
+            mSelectButton = (Button) contentView.findViewById(
+                    R.id.popup_window_in_inbox_and_sent_select_all_button);
             mPopupWindowAtTop = new PopupWindow(contentView, Toolbar.LayoutParams.MATCH_PARENT,
                     dp2px(56), true);
-            contentView.findViewById(R.id.popup_window_in_inbox_and_sent_cancel_button)
-                    .setOnClickListener(new View.OnClickListener() {
+            // 监听各按钮的点击事件
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // 取消
-                    for (int i = 0; i < dataList.size(); i++) {
-                        dataList.get(i).setToDelete(false);
-                        dataList.get(i).setChecked(false);
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    mPopupWindowAtTop.dismiss();
+                    cancelDeleting();
                 }
             });
-            final Button selectButton = (Button) contentView.findViewById(
-                    R.id.popup_window_in_inbox_and_sent_select_all_button);
-            selectButton.setOnClickListener(new View.OnClickListener() {
+            mSelectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // 全选
-                    for (int i = 0; i < dataList.size(); i++) {
-                        dataList.get(i).setChecked(true);
-                        checkedToDeleteCount = dataList.size();
-                        mCheckedCountTextView.setText(getString(R.string.has_selected) +
-                                checkedToDeleteCount + getString(R.string.item));
+                    if (checkedToDeleteHashSet.size() < dataList.size()) {
+                        // 全选
+                        for (int i = 0; i < dataList.size(); i++) {
+                            dataList.get(i).setChecked(true);
+                            checkedToDeleteHashSet.add(dataList.get(i).getId());
+                            mCheckedCountTextView.setText(getString(R.string.has_selected) +
+                                    checkedToDeleteHashSet.size() + getString(R.string.item));
+                        }
+                        mSelectButton.setText(getString(R.string.select_nothing));
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        // 全不选，并退出编辑状态
+                        cancelDeleting();
                     }
-                    selectButton.setText(getString(R.string.select_nothing));
-                    mAdapter.notifyDataSetChanged();
                 }
             });
             mCheckedCountTextView = (TextView) contentView.findViewById(
@@ -294,10 +404,22 @@ public class MessagesInboxActivity extends BaseActivity implements
         }
         mPopupWindowAtTop.setFocusable(false);
         mPopupWindowAtTop.setOutsideTouchable(false);
-        mPopupWindowAtTop.showAtLocation(findViewById(R.id.activity_messages_inbox),
-                Gravity.TOP, 0, 0);
+        mPopupWindowAtTop.showAtLocation(findViewById(
+                R.id.activity_messages_inbox_and_sent_coordinator_layout), Gravity.TOP, 0, 0);
     }
 
+    // 取消所有选择，使选择的项数减为0，退出删除状态
+    private void cancelDeleting() {
+        for (int i = 0; i < dataList.size(); i++) {
+            dataList.get(i).setToDelete(false);
+            dataList.get(i).setChecked(false);
+        }
+        mPopupWindowAtTop.dismiss();  // 让PopupWindow消失
+        mDeleteFab.setVisibility(View.GONE);  // 隐藏DeleteFab
+        mPullToRefreshView.setEnabled(true);  // 激活下拉刷新
+        TO_DELETE_FLAG = false;  // 删除状态标志位置为false
+        mAdapter.notifyDataSetChanged();  // 刷新列表
+    }
 
     // 解析响应数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
@@ -373,11 +495,21 @@ public class MessagesInboxActivity extends BaseActivity implements
                 mAdapter = new MessagesNoticeListAdapter(MyApplication.getContext(), dataList,
                         R.layout.item_messages_inbox_and_sent_list);
                 mListView.setAdapter(mAdapter);
-                // 显示加载成功的对话框
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.loading_complete))
-                        .setConfirmText(getString(R.string.OK))
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                if (TO_DELETE_FLAG) {
+                    // 显示删除成功对话框
+                    sweetAlertDialog
+                            .setTitleText(getString(R.string.success_to_delete))
+                            .setConfirmText(getString(R.string.OK))
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    // 退出删除状态
+                    cancelDeleting();
+                } else {
+                    // 显示加载成功的对话框
+                    sweetAlertDialog
+                            .setTitleText(getString(R.string.loading_complete))
+                            .setConfirmText(getString(R.string.OK))
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                }
                 // 关停PullToRefreshView的刷新
                 mPullToRefreshView.setRefreshing(false);
                 // 延迟一段时间后，关闭sweetAlertDialog

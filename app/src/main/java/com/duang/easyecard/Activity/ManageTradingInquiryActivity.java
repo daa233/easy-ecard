@@ -68,7 +68,8 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         // 显示home按钮
         setDisplayHomeButton();
         // 操作FloatingActionButton
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(
+                R.id.manage_trading_inquiry_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,10 +79,10 @@ public class ManageTradingInquiryActivity extends BaseActivity {
         });
 
         // 设置ViewPager
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.manage_trading_inquiry_tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
