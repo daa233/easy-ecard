@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.Model.MessagesListViewItem;
+import com.duang.easyecard.Model.Notice;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesListViewAdapter;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MessagesFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class MessagesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private View viewFragment;
     private PullToRefreshView mPullToRefreshView;
@@ -49,7 +50,6 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     // 初始化数据
     private void initData() {
         // ItemTitle
-        titleArray = new String[] {
+        titleArray = new String[]{
                 getString(R.string.messages_inbox),
                 getString(R.string.messages_sent),
                 getString(R.string.messages_send),
@@ -111,11 +111,14 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             case 0:
                 // 打开收件箱
                 LogUtil.d(TAG, "onItemClick: " + 0);
-                startActivity(new Intent(MyApplication.getContext(), MessagesInboxActivity.class));
+                startActivity(new Intent(MyApplication.getContext(),
+                        MessagesInboxAndSentActivity.class).putExtra("TYPE", Notice.RECEIVED_TYPE));
                 break;
             case 1:
                 // 已发送
                 LogUtil.d(TAG, "onItemClick: " + 1);
+                startActivity(new Intent(MyApplication.getContext(),
+                        MessagesInboxAndSentActivity.class).putExtra("TYPE", Notice.SENT_TYPE));
                 break;
             case 2:
                 // 发消息

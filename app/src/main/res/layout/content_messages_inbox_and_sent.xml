@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.duang.easyecard.Activity.MessagesInboxActivity"
+    tools:context=".Activity.MessagesInboxAndSentActivity"
     tools:showIn="@layout/activity_messages_inbox_and_sent">
 
     <com.yalantis.phoenix.PullToRefreshView

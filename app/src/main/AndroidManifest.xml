@@ -55,7 +55,7 @@
             android:label="@string/title_activity_lost_and_found_registration"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.MessagesInboxActivity"
+            android:name=".Activity.MessagesInboxAndSentActivity"
             android:label="@string/title_activity_messages_inbox"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

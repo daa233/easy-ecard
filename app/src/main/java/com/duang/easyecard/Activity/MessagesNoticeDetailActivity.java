@@ -3,9 +3,12 @@ package com.duang.easyecard.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -98,7 +101,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
         sendPOSTRequest();
         type = intent.getBooleanExtra("TYPE", true);
         titleTextView.setText(notice.getTitle());  // 设置消息标题
-        if (type == Notice.RECEIVED_TYPE) {
+        if (type) {
             // 收件箱消息详情
             senderNameTextView.setText(notice.getSenderName());
             receiverNameTextView.setText(getString(R.string.receiver) +
@@ -156,7 +159,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
             longSentTimeTextView.setVisibility(View.VISIBLE);  // 显示完整时间
             shortSentTimeTextView.setVisibility(View.GONE);  // 隐藏简略时间
             // 设置发送人和收件人
-            if (type == Notice.RECEIVED_TYPE) {
+            if (type) {
                 // 收件箱消息
                 senderNameTextView.setText(getString(R.string.sender) + notice.getSenderName());
                 receiverNameTextView.setText(getString(R.string.receiver) +
@@ -185,7 +188,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
             longSentTimeTextView.setVisibility(View.GONE);  // 隐藏完整时间
             shortSentTimeTextView.setVisibility(View.VISIBLE);  // 显示简略时间
             // 设置发送人和收件人
-            if (type == Notice.RECEIVED_TYPE) {
+            if (type) {
                 // 收件箱消息
                 senderNameTextView.setText(notice.getSenderName());
                 receiverNameTextView.setVisibility(View.GONE);
@@ -223,8 +226,18 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                     }
                     LogUtil.d(TAG, "content = " + content);
                 }
-                if (type == Notice.SENT_TYPE) {
+                if (!type) {
                     // 已发送消息，解析出详细的接收人及接收人是否已读消息
+                    Elements spans = doc.select("span");
+                    for (Element span : spans) {
+                        Elements ems = span.select("em");
+                        if (ems != null) {
+                            for (Element e : ems) {
+                                longReceiverName = longReceiverName + e.parent().text();
+                            }
+                            break;
+                        }
+                    }
                 }
             } catch (Exception e) {
                 LogUtil.e(TAG, "Jsoup error.");
@@ -251,6 +264,45 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                     .setConfirmText(getString(R.string.OK))
                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
             sweetAlertDialog.dismissWithAnimation();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_message_notice_detail, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_messages_notice_detail_reply:
+                // 回复消息
+                Snackbar.make(findViewById(R.id.activity_messages_notice_detail_coordinator_layout),
+                        getString(R.string.confirm_to_delete_one), Snackbar.LENGTH_LONG)
+                        .setAction(getString(R.string.OK), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LogUtil.d(TAG, "Reply the message.");
+                                    }
+                                }
+                        ).show();
+                return true;
+            case R.id.action_messages_notice_detail_delete:
+                // 删除消息
+                Snackbar.make(findViewById(R.id.activity_messages_notice_detail_coordinator_layout),
+                        getString(R.string.confirm_to_delete_one), Snackbar.LENGTH_LONG)
+                        .setAction(getString(R.string.OK), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        LogUtil.d(TAG, "Delete this message.");
+                                    }
+                                }
+                        ).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

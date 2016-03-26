@@ -179,8 +179,9 @@
     <string name="messages_board">留言板</string>
     <string name="messages_questions">常见问题</string>
 
-    <!-- MessagesInboxActivity -->
+    <!-- MessagesInboxAndSentActivity -->
     <string name="title_activity_messages_inbox">收件箱</string>
+    <string name="title_activity_messages_sent">已发送</string>
     <string name="has_selected">已选择</string>
     <string name="item">项</string>
     <string name="confirm_to_delete">您确定要删除这</string>
@@ -198,6 +199,8 @@
     <string name="sent_time">发送时间：</string>
     <string name="operation_system">业务系统：</string>
     <string name="category">分&#160;&#160;类：</string>
+    <string name="title_menu_reply">回复消息</string>
+    <string name="title_menu_delete">删除消息</string>
 
     <string name="hello_blank_fragment">你好</string>
 </resources>

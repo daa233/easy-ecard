@@ -47,7 +47,7 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
-public class MessagesInboxActivity extends BaseActivity implements
+public class MessagesInboxAndSentActivity extends BaseActivity implements
         SwipeMenuListView.OnMenuItemClickListener, AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
 
@@ -69,8 +69,8 @@ public class MessagesInboxActivity extends BaseActivity implements
     private int maxPageIndex;  // 最大页码
     private boolean FIRST_TIME_TO_PARSE_FLAG;  // 首次解析标志，默认为true
     private boolean TO_DELETE_FLAG = false;
-
-    private final String TAG = "MessagesInboxActivity";
+    private boolean type;
+    private final String TAG = "MessagesInboxAndSentActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +125,11 @@ public class MessagesInboxActivity extends BaseActivity implements
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
+        // 获得Intent传递的类型
+        Intent intent = this.getIntent();
+        type = intent.getBooleanExtra("TYPE", true);
+        setTitle(type ? getString(R.string.title_activity_messages_inbox)
+                : getString(R.string.title_activity_messages_sent));
         // 初始化数据列表
         dataList = new ArrayList<>();
         checkedToDeleteHashSet = new HashSet<>();
@@ -135,7 +140,7 @@ public class MessagesInboxActivity extends BaseActivity implements
         maxPageIndex = 1;
         // 显示对话框
         if (sweetAlertDialog == null || !sweetAlertDialog.isShowing()) {
-            sweetAlertDialog = new SweetAlertDialog(MessagesInboxActivity.this,
+            sweetAlertDialog = new SweetAlertDialog(MessagesInboxAndSentActivity.this,
                     SweetAlertDialog.PROGRESS_TYPE);
             sweetAlertDialog
                     .setTitleText(getString(R.string.loading))
@@ -168,8 +173,16 @@ public class MessagesInboxActivity extends BaseActivity implements
 
     // 发送GET请求
     private void sendGETRequest() {
-        UrlConstant.receivedNoticeIndex = pageIndex;
-        httpClient.get(UrlConstant.getReceivedNotice(), new AsyncHttpResponseHandler() {
+        String address;
+        // 根据类型确定GET请求的地址
+        if (type) {
+            UrlConstant.receivedNoticeIndex = pageIndex;
+            address = UrlConstant.getReceivedNotice();
+        } else {
+            UrlConstant.sentNoticeIndex = pageIndex;
+            address = UrlConstant.getSentNotice();
+        }
+        httpClient.get(address, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
@@ -227,9 +240,9 @@ public class MessagesInboxActivity extends BaseActivity implements
         } else {
             // 未处在删除状态，跳转查看详细内容Activity
             LogUtil.d(TAG, "Intent to start Detail Activity.");
-            Intent intent = new Intent(MessagesInboxActivity.this,
+            Intent intent = new Intent(MessagesInboxAndSentActivity.this,
                     MessagesNoticeDetailActivity.class);
-            intent.putExtra("TYPE", Notice.RECEIVED_TYPE);
+            intent.putExtra("TYPE", type);
             Bundle bundle = new Bundle();
             Notice notice = (Notice) parent.getItemAtPosition(position);
             bundle.putSerializable("Notice", notice);
@@ -470,27 +483,53 @@ public class MessagesInboxActivity extends BaseActivity implements
                     FIRST_TIME_TO_PARSE_FLAG = false;
                 }
                 Notice notice;
-                // 找到表格，并筛选元素
-                Elements rows = doc.select("tr");
-                for (Element single_row : rows) {
-                    if (single_row.hasAttr("anchor")) {  // 有效的一行记录
-                        // 新建Notice对象，并获取相关信息
-                        notice = new Notice(Notice.RECEIVED_TYPE);
-                        notice.setId(single_row.attr("anchor"));
-                        // 判断消息是否已读
-                        if (single_row.attr("style").contains("bold")) {
-                            // 未读
-                            notice.setUnread(true);
-                        } else {
-                            // 已读
-                            notice.setUnread(false);
+                if (type) {
+                    // 收件箱消息
+                    Elements rows = doc.select("tr");
+                    for (Element single_row : rows) {
+                        if (single_row.hasAttr("anchor")) {  // 有效的一行记录
+                            // 新建Notice对象，并获取相关信息
+                            notice = new Notice(Notice.RECEIVED_TYPE);
+                            notice.setId(single_row.attr("anchor"));
+                            // 判断消息是否已读
+                            if (single_row.attr("style").contains("bold")) {
+                                // 未读
+                                notice.setUnread(true);
+                            } else {
+                                // 已读
+                                notice.setUnread(false);
+                            }
+                            notice.setSentTime(single_row.child(1).text());
+                            notice.setTitle(single_row.child(2).child(0).text());
+                            notice.setSenderName(single_row.child(3).text());
+                            notice.setOperationSystem(single_row.child(4).text());
+                            notice.setCategory(single_row.child(5).text());
+                            dataList.add(notice);  // 将notice对象添加到数据列表
                         }
-                        notice.setSentTime(single_row.child(1).text());
-                        notice.setTitle(single_row.child(2).child(0).text());
-                        notice.setSenderName(single_row.child(3).text());
-                        notice.setOperationSystem(single_row.child(4).text());
-                        notice.setCategory(single_row.child(5).text());
-                        dataList.add(notice);  // 将notice对象添加到数据列表
+                    }
+                } else {
+                    // 已发送消息
+                    Elements rows = doc.select("tr");
+                    for (Element single_row : rows) {
+                        if (single_row.hasAttr("anchor")) {  // 有效的一行记录
+                            // 新建Notice对象，并获取相关信息
+                            notice = new Notice(Notice.SENT_TYPE);
+                            notice.setId(single_row.attr("anchor"));
+                            // 判断消息是否已读
+                            if (single_row.attr("style").contains("bold")) {
+                                // 未读
+                                notice.setUnread(true);
+                            } else {
+                                // 已读
+                                notice.setUnread(false);
+                            }
+                            notice.setTitle(single_row.child(1).child(0).text());
+                            notice.setSentTime(single_row.child(2).text());
+                            notice.setReceiverName(single_row.child(3).text());
+                            notice.setOperationSystem(single_row.child(4).text());
+                            notice.setCategory(single_row.child(5).text());
+                            dataList.add(notice);  // 将notice对象添加到数据列表
+                        }
                     }
                 }
             } catch (Exception e) {

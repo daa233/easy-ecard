@@ -73,7 +73,6 @@
                     android:id="@+id/messages_notice_detail_short_sent_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="40dp"
                     android:paddingBottom="5dp"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
