@@ -41,7 +41,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     private String[] titleArray;
     private String newMessagesCount = "";
     private int newMessageVisibility;
-    private int arrowResId = R.drawable.chevron_default;
+    private int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
 
     private final String TAG = "MessagesFragment";
 

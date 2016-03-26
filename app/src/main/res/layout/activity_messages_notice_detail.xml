@@ -24,14 +24,14 @@
     <include layout="@layout/content_messages_notice_detail" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/messages_"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:id="@+id/messages_notice_detail_fab"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
         android:scaleType="center"
-        android:src="@android:drawable/ic_menu_more"
+        android:onClick="onShowMoreFabClick"
         app:backgroundTint="@color/colorPrimary"
-        app:layout_anchor="@id/messages_notice_detail_header"
+        app:layout_anchor="@+id/messages_notice_detail_header"
         app:layout_anchorGravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>

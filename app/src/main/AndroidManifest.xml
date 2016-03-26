@@ -65,7 +65,7 @@
         <activity
             android:name=".Activity.MessagesNoticeDetailActivity"
             android:label="@string/title_activity_messages_notice_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

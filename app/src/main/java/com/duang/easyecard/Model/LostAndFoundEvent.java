@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Used in LostAndFoundInformationBrowsingListView
  * Created by MrD on 2016/3/11.
  */
-public class LostAndFoundEvent implements Serializable{
+public class LostAndFoundEvent implements Serializable {
 
     private int id;
     private String name;

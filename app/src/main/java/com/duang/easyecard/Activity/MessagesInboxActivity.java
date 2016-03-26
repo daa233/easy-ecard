@@ -1,5 +1,6 @@
 package com.duang.easyecard.Activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -226,6 +227,14 @@ public class MessagesInboxActivity extends BaseActivity implements
         } else {
             // 未处在删除状态，跳转查看详细内容Activity
             LogUtil.d(TAG, "Intent to start Detail Activity.");
+            Intent intent = new Intent(MessagesInboxActivity.this,
+                    MessagesNoticeDetailActivity.class);
+            intent.putExtra("TYPE", Notice.RECEIVED_TYPE);
+            Bundle bundle = new Bundle();
+            Notice notice = (Notice) parent.getItemAtPosition(position);
+            bundle.putSerializable("Notice", notice);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 

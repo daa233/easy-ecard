@@ -10,7 +10,7 @@
         android:id="@+id/manage_trading_inquiry_history_pick_date"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:src="@drawable/chevron_default" />
+                        android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -106,7 +106,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:src="@drawable/chevron_default" />
+                        android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
                 </LinearLayout>
             </LinearLayout>
 

@@ -1,11 +1,13 @@
 package com.duang.easyecard.Model;
 
+import java.io.Serializable;
+
 /**
  * 消息Bean
  * 收件箱和已发送都用这个原型
  * Created by MrD on 2016/3/23.
  */
-public class Notice {
+public class Notice implements Serializable {
     private String id;
     private boolean type;
     private boolean unread;
