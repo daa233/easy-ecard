@@ -131,6 +131,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             case 4:
                 // 常见问题
                 LogUtil.d(TAG, "onItemClick: " + 4);
+                startActivity(new Intent(MyApplication.getContext(),
+                        MessagesCommonProblemsActivity.class));
                 break;
             default:
                 break;

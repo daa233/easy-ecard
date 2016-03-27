@@ -53,7 +53,8 @@ public class ManagementFragment extends Fragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof StartActivitiesCallback)) {
-            throw new IllegalStateException("fragment所在的Activity必须实现Callbacks接口");
+            throw new IllegalStateException("The host activity must implement the" +
+                    " StartActivitiesCallback.");
         }
         // 把绑定的activity当成callback对象
         startActivitiesCallback = (StartActivitiesCallback) context;

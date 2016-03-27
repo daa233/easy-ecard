@@ -202,5 +202,8 @@
     <string name="title_menu_reply">回复消息</string>
     <string name="title_menu_delete">删除消息</string>
 
+    <!-- MessagesCommonProblemsActivity -->
+    <string name="title_activity_messages_common_problems">常见问题</string>
+
     <string name="hello_blank_fragment">你好</string>
 </resources>
