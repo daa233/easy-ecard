@@ -345,7 +345,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     private void sendPOSTRequest(String ids) {
         RequestParams params = new RequestParams();
         params.add("ids", ids);
-        params.add("isSend", "0");
+        params.add("isSend", type ? "0" : "1");
         httpClient.post(UrlConstant.DELETE_NOTICE, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

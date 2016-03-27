@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
@@ -224,27 +225,33 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                     if (divContent.ownText() != null || !divContent.ownText().isEmpty()) {
                         content = divContent.ownText();
                     }
-                    LogUtil.d(TAG, "content = " + content);
                 }
                 if (!type) {
                     // 已发送消息，解析出详细的接收人及接收人是否已读消息
-                    Elements spans = doc.select("span");
-                    for (Element span : spans) {
-                        Elements ems = span.select("em");
-                        if (ems != null) {
-                            for (Element e : ems) {
-                                longReceiverName = longReceiverName + e.parent().text();
+                    Elements ps = doc.select("p");
+                    int pCount = 0;
+                    for (Element p : ps) {
+                        if (pCount == 2) {
+                            Elements spans = p.select("span");
+                            boolean spanFlag = true;
+                            for (Element span : spans) {
+                                if (spanFlag) {
+                                    if (longReceiverName == null || longReceiverName.isEmpty()) {
+                                        longReceiverName = span.text();
+                                    } else {
+                                        longReceiverName = longReceiverName + "，" + span.text();
+                                    }
+                                }
+                                spanFlag = !spanFlag;
                             }
-                            break;
                         }
+                        pCount++;
                     }
                 }
             } catch (Exception e) {
                 LogUtil.e(TAG, "Jsoup error.");
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.network_error))
-                        .setConfirmText(getString(R.string.OK))
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                Toast.makeText(MessagesNoticeDetailActivity.this, getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
             return null;

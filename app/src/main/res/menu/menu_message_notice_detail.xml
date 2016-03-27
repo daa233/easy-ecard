@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/action_messages_notice_detail_reply"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_message_white_24dp"
         android:title="@string/title_menu_reply"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_messages_notice_detail_delete"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_delete_white_24dp"
         android:title="@string/title_menu_delete"
         app:showAsAction="always" />
 

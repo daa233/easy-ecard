@@ -31,7 +31,7 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="@dimen/fab_margin"
         android:onClick="onDeleteFabClick"
-        android:src="@android:drawable/ic_menu_delete"
+        android:src="@drawable/ic_delete_white_36dp"
         android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>
