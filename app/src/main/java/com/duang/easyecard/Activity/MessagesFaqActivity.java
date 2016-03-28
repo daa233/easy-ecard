@@ -8,40 +8,42 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
+import com.duang.easyecard.Model.FAQItem;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessagesCommonProblemsActivity extends BaseActivity implements
-        MessagesCommonProblemsFragment.GetSelectedTabListener{
+public class MessagesFaqActivity extends BaseActivity implements
+        MessagesFaqFragment.RefreshFaqListListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    protected static List<FAQItem> cardManageList;
+    protected static List<FAQItem> applicationCenterList;
+    protected static List<FAQItem> accountSecureList;
+    protected static List<FAQItem> onlinePayList;
+    private final String TAG = "MessagesFaqActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_messages_common_problems);
+        setContentView(R.layout.activity_messages_faq);
         // 初始化布局
         initView();
-        // 初始化数据
-        initData();
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.messages_common_problems_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.messages_faq_toolbar);
         setSupportActionBar(toolbar);
         setDisplayHomeButton();  // 显示Back按钮
         // 设置ViewPager
-        viewPager = (ViewPager) findViewById(R.id.messages_common_problems_viewpager);
+        viewPager = (ViewPager) findViewById(R.id.messages_faq_viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
-        tabLayout = (TabLayout) findViewById(R.id.messages_common_problems_tabs);
+        tabLayout = (TabLayout) findViewById(R.id.messages_faq_tabs);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private void initData() {
     }
 
     // Defines the number of tabs by setting appropriate fragment and tab name.
@@ -49,25 +51,46 @@ public class MessagesCommonProblemsActivity extends BaseActivity implements
         ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         Bundle bundle = new Bundle();
         bundle.putInt("POSITION", 0);
-        MessagesCommonProblemsFragment fragment = new MessagesCommonProblemsFragment();
+        MessagesFaqFragment fragment = new MessagesFaqFragment();
         fragment.setArguments(bundle);
-        mViewPagerAdapter.addFragment(fragment, "校园卡管理");
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.card_manage));
+        fragment = new MessagesFaqFragment();
+        bundle = new Bundle();
         bundle.putInt("POSITION", 1);
         fragment.setArguments(bundle);
-        mViewPagerAdapter.addFragment(fragment, "应用中心");
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.application_center));
+        fragment = new MessagesFaqFragment();
+        bundle = new Bundle();
         bundle.putInt("POSITION", 2);
         fragment.setArguments(bundle);
-        mViewPagerAdapter.addFragment(fragment, "帐户安全");
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.account_secure));
+        fragment = new MessagesFaqFragment();
+        bundle = new Bundle();
         bundle.putInt("POSITION", 3);
         fragment.setArguments(bundle);
-        mViewPagerAdapter.addFragment(fragment, "在线缴费");
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.online_pay));
         viewPager.setAdapter(mViewPagerAdapter);
     }
 
-    // 实现在Fragment中的接口，以便在Fragment中获取当前Tab的位置
     @Override
-    public int getSelectedTabPosition() {
-        return tabLayout.getSelectedTabPosition();
+    public void refreshList(int type) {
+        switch (type) {
+            case 0:
+                MessagesFaqActivity.cardManageList = new ArrayList<>();
+                break;
+            case 1:
+                MessagesFaqActivity.applicationCenterList = new ArrayList<>();
+                break;
+            case 2:
+                MessagesFaqActivity.accountSecureList = new ArrayList<>();
+                break;
+            case 3:
+                MessagesFaqActivity.onlinePayList = new ArrayList<>();
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
     }
 
     // Custom adapter class provides fragments required for the view pager.

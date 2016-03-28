@@ -6,6 +6,7 @@
     <string name="operaton_successed">操作成功</string>
     <string name="server_error">服务器错误</string>
     <string name="unknown_error">未知错误</string>
+    <string name="refresh_complete">刷新完成</string>
     <string name="shut_down_caused_by_accident">抱歉，由于意外的错误，此应用暂时无法使用</string>
     <string name="OK">确定</string>
     <string name="Cancel">取消</string>
@@ -202,8 +203,12 @@
     <string name="title_menu_reply">回复消息</string>
     <string name="title_menu_delete">删除消息</string>
 
-    <!-- MessagesCommonProblemsActivity -->
+    <!-- MessagesFaqActivity -->
     <string name="title_activity_messages_common_problems">常见问题</string>
+    <string name="card_manage">校园卡管理</string>
+    <string name="application_center">应用中心</string>
+    <string name="account_secure">帐户安全</string>
+    <string name="online_pay">在线缴费</string>
 
     <string name="hello_blank_fragment">你好</string>
 </resources>

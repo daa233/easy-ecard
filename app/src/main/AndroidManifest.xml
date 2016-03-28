@@ -67,7 +67,7 @@
             android:label="@string/title_activity_messages_notice_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.MessagesCommonProblemsActivity"
+            android:name=".Activity.MessagesFaqActivity"
             android:label="@string/title_activity_messages_common_problems"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

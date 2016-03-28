@@ -300,7 +300,6 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     }
 
     // DeleteFab的点击事件
-
     public void onDeleteFabClick(View v) {
         LogUtil.d(TAG, "onDeleteFabClick.");
         // 显示Snackbar

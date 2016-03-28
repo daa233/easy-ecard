@@ -13,15 +13,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
-import com.duang.easyecard.Model.SimpleItem;
+import com.duang.easyecard.Model.GridViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ManagementGridViewAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,15 +90,15 @@ public class ManagementFragment extends Fragment implements
     }
 
     // 获得数据List并返回
-    public List<SimpleItem> getDataLists(int[] imageResources, String[] textArray) {
-        List<SimpleItem> itemList = new ArrayList<>();
+    public List<GridViewItem> getDataLists(int[] imageResources, String[] textArray) {
+        List<GridViewItem> itemList = new ArrayList<>();
         if (imageResources.length == textArray.length) {
-            SimpleItem simpleItem;
+            GridViewItem gridViewItem;
             for (int i = 0; i < imageResources.length; i++) {
-                simpleItem = new SimpleItem();
-                simpleItem.setResourceId(imageResources[i]);
-                simpleItem.setString(textArray[i]);
-                itemList.add(simpleItem);
+                gridViewItem = new GridViewItem();
+                gridViewItem.setResourceId(imageResources[i]);
+                gridViewItem.setString(textArray[i]);
+                itemList.add(gridViewItem);
             }
         } else {
             LogUtil.e(TAG, "Error: Arrays' lengths don't match.");
@@ -143,4 +141,9 @@ public class ManagementFragment extends Fragment implements
         void sendGETRequestToMobile(int openActivityFlag);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        startActivitiesCallback = null;  // 移除前赋值为空
+    }
 }

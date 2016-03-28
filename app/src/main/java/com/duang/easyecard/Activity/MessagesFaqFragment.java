@@ -1,0 +1,300 @@
+package com.duang.easyecard.Activity;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Model.FAQItem;
+import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
+import com.duang.easyecard.Util.MessagesFaqListAdapter;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.yalantis.phoenix.PullToRefreshView;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
+
+/**
+ * 常见问题，不同类别均用此Fragment
+ * Created by MrD on 2016/3/27.
+ */
+public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemClickListener{
+
+    private View viewFragment;  // 缓存Fragment的View
+    private PullToRefreshView mPullToRefreshView;
+    private ListView mListView;
+
+    private RefreshFaqListListener refreshFaqListListener;
+    private MessagesFaqListAdapter mAdapter;
+    private AsyncHttpClient httpClient;
+    private String response;
+    private int type;
+    private final String TAG = "MessagesFaqFragment";
+    private final int CONSTANT_XYKGL = 0, CONSTANT_YYZX = 1, CONSTANT_ZHAQ = 2, CONSTANT_ZXJF = 3;
+    private boolean refreshingFlag = false;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof RefreshFaqListListener)) {
+            throw new IllegalStateException("The host activity must implement the" +
+                    " RefreshFaqListListener.");
+        }
+        // 把绑定的activity当成callback对象
+        refreshFaqListListener = (RefreshFaqListListener) context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        LogUtil.d(TAG, "onCreateView");
+        if (viewFragment == null) {
+            viewFragment = inflater.inflate(R.layout.fragment_messages_faq, container, false);
+        }
+        // 缓存的rootView需要判断是否已经被加过parent，
+        // 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误
+        ViewGroup parent = (ViewGroup) viewFragment.getParent();
+        if (parent != null) {
+            parent.removeView(viewFragment);
+        }
+        return viewFragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        LogUtil.d(TAG, "onActivityCreated");
+        initView();
+        initData();
+    }
+
+    private void initView() {
+        // 实例化控件
+        mPullToRefreshView = (PullToRefreshView) viewFragment.findViewById(
+                R.id.messages_faq_pull_to_refresh_view);
+        mListView = (ListView) viewFragment.findViewById(R.id.messages_faq_list_view);
+        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshingFlag = true;
+                refreshFaqListListener.refreshList(type);
+                sendGETRequest(type);
+            }
+        });
+        mListView.setOnItemClickListener(this);
+    }
+
+    private void initData() {
+        // 通过POSITION确定Fragment的类型，加载相应的数据
+        if (getArguments().containsKey("POSITION")) {
+            switch (getArguments().getInt("POSITION")) {
+                case 0:
+                    type = CONSTANT_XYKGL;
+                    break;
+                case 1:
+                    type = CONSTANT_YYZX;
+                    break;
+                case 2:
+                    type = CONSTANT_ZHAQ;
+                    break;
+                case 3:
+                    type = CONSTANT_ZXJF;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            LogUtil.e(TAG, "Can't get arguments: position.");
+        }
+        // 获得全局变量httpClient和userBasicInformation
+        MyApplication myApp = (MyApplication) getActivity().getApplication();
+        httpClient = myApp.getHttpClient();
+        sendGETRequest(type);
+    }
+
+    // 如果没有数据，发送GET请求获取数据；如果已经获得数据，直接设置Adapter
+    private void sendGETRequest(int type) {
+        String address = null;
+        switch (type) {
+            case CONSTANT_XYKGL:
+                if (MessagesFaqActivity.cardManageList != null
+                        && !MessagesFaqActivity.cardManageList.isEmpty()) {
+                    getDataFromList();
+                    return;
+                } else {
+                    address = UrlConstant.MOBILE_FAQ_XYKGL;
+                }
+                break;
+            case CONSTANT_YYZX:
+                if (MessagesFaqActivity.applicationCenterList != null
+                        && !MessagesFaqActivity.applicationCenterList.isEmpty()) {
+                    getDataFromList();
+                    return;
+                } else {
+                    address = UrlConstant.MOBILE_FAQ_YYZX;
+                }
+                break;
+            case CONSTANT_ZHAQ:
+                if (MessagesFaqActivity.accountSecureList != null
+                        && !MessagesFaqActivity.accountSecureList.isEmpty()) {
+                    getDataFromList();
+                    return;
+                } else {
+                    address = UrlConstant.MOBILE_FAQ_ZHAQ;
+                }
+                break;
+            case CONSTANT_ZXJF:
+                if (MessagesFaqActivity.onlinePayList != null
+                        && !MessagesFaqActivity.onlinePayList.isEmpty()) {
+                    getDataFromList();
+                    return;
+                } else {
+                    address = UrlConstant.MOBILE_FAQ_ZXJF;
+                }
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
+        // 发送GET请求
+        httpClient.get(address, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                // 响应成功
+                response = new String(responseBody);
+                // 解析响应数据
+                new JsoupHtmlData().execute();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // 网络错误
+                LogUtil.e(TAG, "Network error.");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+    }
+
+    // 从MessagesFaqActivity的Lists中获取数据，并设置Adapter
+    private void getDataFromList() {
+        switch (type) {
+            case CONSTANT_XYKGL:
+                mAdapter = new MessagesFaqListAdapter(MyApplication.getContext(),
+                        MessagesFaqActivity.cardManageList, R.layout.item_messages_faq_list);
+                break;
+            case CONSTANT_YYZX:
+                mAdapter = new MessagesFaqListAdapter(MyApplication.getContext(),
+                        MessagesFaqActivity.applicationCenterList, R.layout.item_messages_faq_list);
+                break;
+            case CONSTANT_ZHAQ:
+                mAdapter = new MessagesFaqListAdapter(MyApplication.getContext(),
+                        MessagesFaqActivity.accountSecureList, R.layout.item_messages_faq_list);
+                break;
+            case CONSTANT_ZXJF:
+                mAdapter = new MessagesFaqListAdapter(MyApplication.getContext(),
+                        MessagesFaqActivity.onlinePayList, R.layout.item_messages_faq_list);
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
+        mListView.setAdapter(mAdapter);
+        if (refreshingFlag) {
+            mPullToRefreshView.setRefreshing(false);
+            Toast.makeText(MyApplication.getContext(), getString(R.string.refresh_complete),
+                    Toast.LENGTH_SHORT).show();
+            refreshingFlag = false;
+        }
+    }
+
+    // ListView的Item点击事件
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        LogUtil.d(TAG, "onItemClick.");
+        FAQItem item = (FAQItem) parent.getItemAtPosition(position);
+        LogUtil.d(TAG, "Item.detailAddress = " + item.getDetailAddress());
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+
+        List<FAQItem> tempList = new ArrayList<>();
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            LogUtil.d(TAG, "Start Jsoup");
+            Document doc;
+            FAQItem item;
+            try {
+                doc = Jsoup.parse(response);
+                // 获取标题
+                for (Element span : doc.select("span")) {
+                    LogUtil.d(TAG, "span = " + span.text());
+                    item = new FAQItem();
+                    item.setTitle(span.text());
+                    // 获取详细界面链接
+                    for (Element a : span.parent().select("a")) {
+                        LogUtil.d(TAG, "a.href = " + a.attr("href"));
+                        item.setDetailAddress(UrlConstant.MOBILE_INDEX + a.attr("href"));
+                    }
+                    tempList.add(item);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            switch (type) {
+                case CONSTANT_XYKGL:
+                    MessagesFaqActivity.cardManageList = tempList;
+                    break;
+                case CONSTANT_YYZX:
+                    MessagesFaqActivity.applicationCenterList = tempList;
+                    break;
+                case CONSTANT_ZHAQ:
+                    MessagesFaqActivity.accountSecureList = tempList;
+                    break;
+                case CONSTANT_ZXJF:
+                    MessagesFaqActivity.onlinePayList = tempList;
+                    break;
+                default:
+                    LogUtil.e(TAG, "Unexpect type.");
+                    break;
+            }
+            getDataFromList();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        refreshFaqListListener = null;  // 移除前赋值为空
+    }
+
+    public interface RefreshFaqListListener {
+        void refreshList(int type);
+    }
+}
