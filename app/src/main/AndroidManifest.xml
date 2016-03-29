@@ -68,7 +68,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesFaqActivity"
-            android:label="@string/title_activity_messages_common_problems"
+            android:label="@string/title_activity_messages_faq"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.MessagesFaqDetailActivity"
+            android:label="@string/title_activity_messages_faq_detail"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

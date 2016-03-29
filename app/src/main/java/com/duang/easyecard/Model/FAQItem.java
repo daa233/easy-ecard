@@ -1,9 +1,12 @@
 package com.duang.easyecard.Model;
 
+import java.io.Serializable;
+
 /**
+ * FAQ: 常见问题，ListItem
  * Created by MrD on 2016/3/28.
  */
-public class FaqItem {
+public class FaqItem implements Serializable {
     private String title;
     private String detailAddress;
     private int type;

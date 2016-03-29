@@ -1,6 +1,7 @@
 package com.duang.easyecard.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -190,7 +191,12 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         LogUtil.d(TAG, "onItemClick.");
         FaqItem item = (FaqItem) parent.getItemAtPosition(position);
-        LogUtil.d(TAG, "Item.detailAddress = " + item.getDetailAddress());
+        // 跳转到查看详细信息界面，并传递FaqItem对象
+        Intent intent = new Intent(MyApplication.getContext(), MessagesFaqDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("FaqItem", item);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     // 解析响应数据
@@ -235,8 +241,10 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
         getDataListInitFlagListener = null;
     }
 
+    // 用于判断对应类型的Fragment是否初始化过
     public interface GetDataListInitFlagListener {
         boolean getDataListInitFlag(int type);
+
         void setDataListInitFlag(int type);
     }
 }
