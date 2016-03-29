@@ -3,12 +3,12 @@ package com.duang.easyecard.Model;
 /**
  * Created by MrD on 2016/3/28.
  */
-public class FAQItem {
+public class FaqItem {
     private String title;
     private String detailAddress;
     private int type;
 
-    public FAQItem() {
+    public FaqItem() {
     }
 
     public String getTitle() {

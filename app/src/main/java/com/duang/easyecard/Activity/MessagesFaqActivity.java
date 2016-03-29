@@ -8,22 +8,20 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
-import com.duang.easyecard.Model.FAQItem;
 import com.duang.easyecard.R;
-import com.duang.easyecard.Util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessagesFaqActivity extends BaseActivity implements
-        MessagesFaqFragment.RefreshFaqListListener {
+        MessagesFaqFragment.GetDataListInitFlagListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    protected static List<FAQItem> cardManageList;
-    protected static List<FAQItem> applicationCenterList;
-    protected static List<FAQItem> accountSecureList;
-    protected static List<FAQItem> onlinePayList;
+    private boolean cardManageListInitFlag = false;
+    private boolean applicationCenterInitFlag = false;
+    private boolean accountSecureListInitFlag = false;
+    private boolean onlinePayListInitFlag = false;
     private final String TAG = "MessagesFaqActivity";
 
     @Override
@@ -73,22 +71,37 @@ public class MessagesFaqActivity extends BaseActivity implements
     }
 
     @Override
-    public void refreshList(int type) {
+    public boolean getDataListInitFlag(int type) {
         switch (type) {
             case 0:
-                MessagesFaqActivity.cardManageList = new ArrayList<>();
+                return cardManageListInitFlag;
+            case 1:
+                return applicationCenterInitFlag;
+            case 2:
+                return accountSecureListInitFlag;
+            case 3:
+                return onlinePayListInitFlag;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void setDataListInitFlag(int type) {
+        switch (type) {
+            case 0:
+                cardManageListInitFlag = true;
                 break;
             case 1:
-                MessagesFaqActivity.applicationCenterList = new ArrayList<>();
+                applicationCenterInitFlag = true;
                 break;
             case 2:
-                MessagesFaqActivity.accountSecureList = new ArrayList<>();
+                accountSecureListInitFlag = true;
                 break;
             case 3:
-                MessagesFaqActivity.onlinePayList = new ArrayList<>();
+                onlinePayListInitFlag = true;
                 break;
             default:
-                LogUtil.e(TAG, "Unexpect type.");
                 break;
         }
     }
