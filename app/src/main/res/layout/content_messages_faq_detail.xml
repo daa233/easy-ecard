@@ -37,6 +37,16 @@
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <com.rey.material.widget.ProgressView
+            android:id="@+id/messages_faq_detail_progress_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            app:pv_autostart="true"
+            app:pv_progressMode="indeterminate"/>
+
         <TextView
             android:id="@+id/messages_faq_detail_content"
             android:layout_width="match_parent"

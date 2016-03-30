@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,6 +27,7 @@ public class MessagesFaqDetailActivity extends BaseActivity {
     private TextView titleTextView;
     private TextView publishTimeTextView;
     private TextView contentTextView;
+    private ProgressView progressView;
 
     private FaqItem faqItem;
     private String publishTime;
@@ -50,6 +53,7 @@ public class MessagesFaqDetailActivity extends BaseActivity {
         titleTextView = (TextView) findViewById(R.id.messages_faq_detail_title);
         publishTimeTextView = (TextView) findViewById(R.id.messages_faq_detail_publish_time);
         contentTextView = (TextView) findViewById(R.id.messages_faq_detail_content);
+        progressView = (ProgressView) findViewById(R.id.messages_faq_detail_progress_view);
     }
 
     private void initData() {
@@ -106,6 +110,8 @@ public class MessagesFaqDetailActivity extends BaseActivity {
                 LogUtil.e(TAG, "Network error.");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
+                // 隐藏ProgressView
+                progressView.setVisibility(View.GONE);
                 error.printStackTrace();
             }
         });
@@ -139,6 +145,8 @@ public class MessagesFaqDetailActivity extends BaseActivity {
             // 在UI中显示数据
             publishTimeTextView.setText(publishTime);
             contentTextView.setText(content);
+            // 隐藏ProgressView
+            progressView.setVisibility(View.GONE);
         }
     }
 }

@@ -287,7 +287,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
             case R.id.action_messages_notice_detail_reply:
                 // 回复消息
                 Snackbar.make(findViewById(R.id.activity_messages_notice_detail_coordinator_layout),
-                        getString(R.string.confirm_to_delete_one), Snackbar.LENGTH_LONG)
+                        getString(R.string.reply_hint), Snackbar.LENGTH_LONG)
                         .setAction(getString(R.string.OK), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {

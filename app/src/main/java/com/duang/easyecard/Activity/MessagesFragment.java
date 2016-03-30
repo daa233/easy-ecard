@@ -127,12 +127,12 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             case 3:
                 // 留言板
                 LogUtil.d(TAG, "onItemClick: " + 3);
+                startActivity(new Intent(MyApplication.getContext(), MessagesBoardActivity.class));
                 break;
             case 4:
                 // 常见问题
                 LogUtil.d(TAG, "onItemClick: " + 4);
-                startActivity(new Intent(MyApplication.getContext(),
-                        MessagesFaqActivity.class));
+                startActivity(new Intent(MyApplication.getContext(), MessagesFaqActivity.class));
                 break;
             default:
                 break;

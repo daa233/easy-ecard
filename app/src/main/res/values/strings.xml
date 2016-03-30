@@ -202,6 +202,7 @@
     <string name="category">分&#160;&#160;类：</string>
     <string name="title_menu_reply">回复消息</string>
     <string name="title_menu_delete">删除消息</string>
+    <string name="reply_hint">您确定要回复消息吗？</string>
 
     <!-- MessagesFaqActivity -->
     <string name="title_activity_messages_faq">常见问题</string>
@@ -209,9 +210,11 @@
     <string name="application_center">应用中心</string>
     <string name="account_secure">帐户安全</string>
     <string name="online_pay">在线缴费</string>
-
     <!-- MessagesFaqDetailActivity -->
     <string name="title_activity_messages_faq_detail">常见问题——</string>
+
+    <!-- MessagesBoardActivity -->
+    <string name="title_activity_messages_board">留言板</string>
 
     <string name="hello_blank_fragment">你好</string>
 </resources>

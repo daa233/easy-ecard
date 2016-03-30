@@ -20,6 +20,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesFaqListAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.rey.material.widget.ProgressView;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;
@@ -40,6 +41,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
     private View viewFragment;  // 缓存Fragment的View
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
+    private ProgressView mProgressView;
 
     private GetDataListInitFlagListener getDataListInitFlagListener;
     private MessagesFaqListAdapter mAdapter;
@@ -92,6 +94,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
         mPullToRefreshView = (PullToRefreshView) viewFragment.findViewById(
                 R.id.messages_faq_pull_to_refresh_view);
         mListView = (ListView) viewFragment.findViewById(R.id.messages_faq_list_view);
+        mProgressView = (ProgressView) viewFragment.findViewById(R.id.messages_faq_progress_view);
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -160,6 +163,8 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
                                   Throwable error) {
                 // 网络错误
                 LogUtil.e(TAG, "Network error.");
+                // 使PullToRefreshView退出刷新状态
+                mPullToRefreshView.setRefreshing(false);
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
@@ -170,7 +175,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
     // 从MessagesFaqActivity的Lists中获取数据，并设置Adapter
     private void setAdapter() {
         if (refreshingFlag) {
-            // 处于刷新刷新状态，表示不是首次加载
+            // 处于刷新状态，表示不是首次加载
             mAdapter.notifyDataSetChanged();
             mPullToRefreshView.setRefreshing(false);
             Toast.makeText(MyApplication.getContext(), getString(R.string.refresh_complete),
@@ -214,6 +219,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
                 for (Element span : doc.select("span")) {
                     LogUtil.d(TAG, "span = " + span.text());
                     item = new FaqItem();
+                    item.setType(type);
                     item.setTitle(span.text());
                     // 获取详细界面链接
                     for (Element a : span.parent().select("a")) {
@@ -231,7 +237,10 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            // 设置适配器
             setAdapter();
+            // 隐藏ProgressView
+            mProgressView.setVisibility(View.GONE);
         }
     }
 
