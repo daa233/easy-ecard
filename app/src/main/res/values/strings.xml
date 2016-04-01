@@ -217,4 +217,8 @@
     <string name="title_activity_messages_board">留言板</string>
 
     <string name="hello_blank_fragment">你好</string>
+
+    <!-- ImageDescription -->
+    <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
+    <string name="img_dsc_ic_nothing_founded">没有找到</string>
 </resources>

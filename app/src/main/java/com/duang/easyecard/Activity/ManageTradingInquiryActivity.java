@@ -29,16 +29,17 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ManageTradingInquiryActivity extends BaseActivity {
+public class ManageTradingInquiryActivity extends BaseActivity implements
+        ManageTradingInquiryFragment.GetDataListInitFlagListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    protected static AsyncHttpClient httpClient;
-    protected static TradingInquiryDateUtil myDateUtil;
-    protected static ArrayList<HashMap<String, String>> historyDataList = new ArrayList<>();
-    protected static ArrayList<HashMap<String, String>> todayDataList = new ArrayList<>();
-    protected static ArrayList<HashMap<String, String>> weekDataList = new ArrayList<>();
+    private AsyncHttpClient httpClient;
+    private boolean historyInitFlag = false;
+    private boolean todayInitFlag = false;
+    private boolean weekInitFlag = false;
+    private final String TAG = "ManageTradingInquiryActivity";
 
     /**
      * INIT_FLAG
@@ -47,9 +48,9 @@ public class ManageTradingInquiryActivity extends BaseActivity {
      * 2，加载完成，有数据
      * 3，加载完成，没有数据
      */
-    protected static int HISTORY_TAB_INIT_FLAG = 0;
-    protected static int TODAY_TAB_INIT_FLAG = 0;
-    protected static int WEEK_TAB_INIT_FLAG = 0;
+    private int HISTORY_TAB_INIT_FLAG = 0;
+    private static int TODAY_TAB_INIT_FLAG = 0;
+    private static int WEEK_TAB_INIT_FLAG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +89,6 @@ public class ManageTradingInquiryActivity extends BaseActivity {
 
     // 初始化数据
     private void initData() {
-        // 初始化DateUtil
-        myDateUtil = new TradingInquiryDateUtil(this);
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
@@ -103,13 +102,14 @@ public class ManageTradingInquiryActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 MyApplication myApp = (MyApplication) getApplication();
                 myApp.setHttpClient(httpClient);
-                LogUtil.d("ManageTradingInquiryAcitvity", new String(responseBody));
+                LogUtil.d(TAG, new String(responseBody));
             }
 
             // 网络错误
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
+                LogUtil.e(TAG, "Network error.");
                 Toast.makeText(ManageTradingInquiryActivity.this, R.string.network_error,
                         Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
@@ -120,12 +120,21 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     // Defines the number of tabs by setting appropriate fragment and tab name.
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new ManageTradingInquiryHistoryFragment(),
-                getResources().getString(R.string.history_trading_inquiry));
-        mViewPagerAdapter.addFragment(new ManageTradingInquiryTodayFragment(),
-                getResources().getString(R.string.day_trading_inquiry));
-        mViewPagerAdapter.addFragment(new ManageTradingInquiryWeekFragment(),
-                getResources().getString(R.string.week_trading_inquiry));
+        Bundle bundle = new Bundle();
+        bundle.putInt("POSITION", 0);
+        ManageTradingInquiryFragment fragment = new ManageTradingInquiryFragment();
+        fragment.setArguments(bundle);
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.history_trading_inquiry));
+        fragment = new ManageTradingInquiryFragment();
+        bundle = new Bundle();
+        bundle.putInt("POSITION", 1);
+        fragment.setArguments(bundle);
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.day_trading_inquiry));
+        fragment = new ManageTradingInquiryFragment();
+        bundle = new Bundle();
+        bundle.putInt("POSITION", 2);
+        fragment.setArguments(bundle);
+        mViewPagerAdapter.addFragment(fragment, getString(R.string.week_trading_inquiry));
         viewPager.setAdapter(mViewPagerAdapter);
     }
 
@@ -138,22 +147,11 @@ public class ManageTradingInquiryActivity extends BaseActivity {
     private void doBack() {
         switch (tabLayout.getSelectedTabPosition()) {
             case 0:
-                if (HISTORY_TAB_INIT_FLAG == 0) {
-                    // 位于“历史流水”时间选择界面，直接退出
-                    finish();
-                } else {
-                    // 将HISTORY_TAB_INIT_FLAG置为0
-                    ManageTradingInquiryActivity.HISTORY_TAB_INIT_FLAG = 0;
-                    // 位于“历史流水”查询结果界面，返回到时间选择界面
-                    ManageTradingInquiryHistoryFragment.pickDateView.setVisibility(View.VISIBLE);
-                    ManageTradingInquiryHistoryFragment.mListView.setVisibility(View.GONE);
-                    ManageTradingInquiryHistoryFragment.mProgressView.setVisibility(View.GONE);
-                    ManageTradingInquiryHistoryFragment.mNothingFoundedImageView.setVisibility(View.GONE);
-                }
+                // “历史流水”查询，根据Fragment的状态进行下一步操作
                 break;
             case 1:
             case 2:
-                // 不处于“历史流水”查询状态，则直接退出
+                // 不是“历史流水”查询，直接退出
                 finish();
                 break;
             default:
@@ -182,6 +180,39 @@ public class ManageTradingInquiryActivity extends BaseActivity {
             return false;
         }
         return false;
+    }
+
+    @Override
+    public boolean getDataListInitFlag(int type) {
+        switch (type) {
+            case 0:
+                return historyInitFlag;
+            case 1:
+                return todayInitFlag;
+            case 2:
+                return weekInitFlag;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                return false;
+        }
+    }
+
+    @Override
+    public void setDataListInitFlag(int type) {
+        switch (type) {
+            case 0:
+                historyInitFlag = true;
+                break;
+            case 1:
+                todayInitFlag = true;
+                break;
+            case 2:
+                weekInitFlag = true;
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
     }
 
     // Custom adapter class provides fragments required for the view pager.

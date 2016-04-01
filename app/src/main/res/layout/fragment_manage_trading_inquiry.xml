@@ -1,21 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".Activity.ManageTradingInquiryHistoryFragment">
+    android:layout_height="match_parent">
+
+    <com.rey.material.widget.ProgressView
+        android:id="@+id/manage_trading_inquiry_progress_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:visibility="gone"
+        app:pv_autostart="true"
+        app:pv_progressMode="indeterminate" />
 
     <ScrollView
-        android:id="@+id/manage_trading_inquiry_history_pick_date"
+        android:id="@+id/manage_trading_inquiry_pick_date"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/manage_trading_inquiry_set_start_time"
@@ -38,7 +46,6 @@
                     style="@style/table_view_large_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
                     android:layout_weight="8"
                     android:gravity="center" />
 
@@ -59,6 +66,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/img_dsc_ic_keyboard_arrow_right_black"
                         android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
                 </LinearLayout>
 
@@ -85,7 +93,6 @@
                     style="@style/table_view_large_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
                     android:layout_weight="8"
                     android:gravity="center" />
 
@@ -106,11 +113,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/img_dsc_ic_keyboard_arrow_right_black"
                         android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <com.rey.material.widget.Button
+            <Button
                 android:id="@+id/manage_trading_inquiry_query_button"
                 style="@style/button_ripple_wave"
                 android:layout_marginTop="60dp"
@@ -121,28 +129,17 @@
     </ScrollView>
 
     <com.duang.mypinnedheaderlistview.PinnedHeaderListView
-        android:id="@+id/manage_trading_inquiry_history_list_view"
+        android:id="@+id/manage_trading_inquiry_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:groupIndicator="@null" />
 
-    <com.rey.material.widget.ProgressView
-        android:id="@+id/manage_trading_inquiry_history_progress_view"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="80dp"
-        android:visibility="gone"
-        app:pv_autostart="true"
-        app:pv_circular="true"
-        app:pv_progressMode="indeterminate"
-        app:pv_progressStyle="@style/Material.Drawable.CircularProgress" />
-
     <ImageView
-        android:id="@+id/manage_trading_inquiry_history_nothing_founded_image_view"
+        android:id="@+id/manage_trading_inquiry_nothing_founded_image_view"
         android:layout_width="200dp"
         android:layout_height="250dp"
         android:layout_gravity="center"
+        android:contentDescription="@string/img_dsc_ic_nothing_founded"
         android:visibility="gone" />
-</FrameLayout>
 
+</FrameLayout>

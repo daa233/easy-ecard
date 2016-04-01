@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class MessagesFaqActivity extends BaseActivity implements
             case 3:
                 return onlinePayListInitFlag;
             default:
+                LogUtil.e(TAG, "Unexpect type.");
                 return false;
         }
     }
@@ -102,6 +104,7 @@ public class MessagesFaqActivity extends BaseActivity implements
                 onlinePayListInitFlag = true;
                 break;
             default:
+                LogUtil.e(TAG, "Unexpect type.");
                 break;
         }
     }
