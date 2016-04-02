@@ -1,12 +1,9 @@
 package com.duang.easyecard.Activity;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
-import com.duang.easyecard.Model.SimpleItem;
+import com.duang.easyecard.Model.GridViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.ManagementGridViewAdapter;
@@ -31,6 +28,7 @@ public class ManagementFragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
     private View viewFragment;
+    private StartActivitiesCallback startActivitiesCallback;
 
     private GridView mGridView;
     private ImageView mCampusImageView;
@@ -43,10 +41,22 @@ public class ManagementFragment extends Fragment implements
             R.drawable.manage_report_loss,
             R.drawable.manage_recharge,
             R.drawable.manage_net_charge,
-            R.drawable.manage_pay_fees,
+            R.drawable.manage_change_password,
     };
-
     private String[] iconText;
+
+    private final String TAG = "ManagementFragment";
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof StartActivitiesCallback)) {
+            throw new IllegalStateException("The host activity must implement the" +
+                    " StartActivitiesCallback.");
+        }
+        // 把绑定的activity当成callback对象
+        startActivitiesCallback = (StartActivitiesCallback) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,11 +77,11 @@ public class ManagementFragment extends Fragment implements
                 getResources().getString(R.string.report_loss_card),
                 getResources().getString(R.string.recharge),
                 getResources().getString(R.string.net_charge),
-                getResources().getString(R.string.pay_fees)
+                getResources().getString(R.string.change_password)
         };
         mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
                 getDataLists(iconImage, iconText),
-                R.layout.manage_grid_view_item);
+                R.layout.item_manage_grid_view);
         // 配置适配器
         mGridView.setAdapter(mAdapter);
         // 设置监听器
@@ -80,18 +90,18 @@ public class ManagementFragment extends Fragment implements
     }
 
     // 获得数据List并返回
-    public List<SimpleItem> getDataLists(int[] imageResources, String[] textArray) {
-        List<SimpleItem> itemList = new ArrayList<>();
+    public List<GridViewItem> getDataLists(int[] imageResources, String[] textArray) {
+        List<GridViewItem> itemList = new ArrayList<>();
         if (imageResources.length == textArray.length) {
-            SimpleItem simpleItem;
+            GridViewItem gridViewItem;
             for (int i = 0; i < imageResources.length; i++) {
-                simpleItem = new SimpleItem();
-                simpleItem.setResourceId(imageResources[i]);
-                simpleItem.setString(textArray[i]);
-                itemList.add(simpleItem);
+                gridViewItem = new GridViewItem();
+                gridViewItem.setResourceId(imageResources[i]);
+                gridViewItem.setString(textArray[i]);
+                itemList.add(gridViewItem);
             }
         } else {
-            LogUtil.e(getTag(), "Error: Arrays' lengths don't match.");
+            LogUtil.e(TAG, "Error: Arrays' lengths don't match.");
         }
         return itemList;
     }
@@ -101,76 +111,40 @@ public class ManagementFragment extends Fragment implements
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (iconImage[position]) {
             case R.drawable.manage_basic_info:
-                // 跳转到ManageViewBasicInfoActivity
-                Intent intent = new Intent(this.getContext(),
-                        ManageBasicInfoActivity.class);
-                startActivity(intent);
+                // 更新基本信息并跳转activity
+                startActivitiesCallback.sendGETRequestToMobile(
+                        MainActivity.CONSTANT_START_BASIC_INFORMATION);
                 break;
             case R.drawable.manage_trading_inquiry:
-                intent = new Intent(this.getContext(),
-                        ManageTradingInquiryActivity.class);
-                startActivity(intent);
+                startActivitiesCallback.sendPrePostRequestForTradingInquiry();
                 break;
             case R.drawable.manage_report_loss:
-                final String[] arrayDialogItems = new String[]{
-                        getResources().getString(R.string.by_ecard_service_platform),
-                        getResources().getString(R.string.by_call_report_line)};
-                Dialog alertDialog = new AlertDialog.Builder(getActivity()).
-                        setTitle(getResources().getString(
-                                R.string.please_choose_a_way_to_report_loss)).
-                        setIcon(R.drawable.manage_report_loss)
-                        .setItems(arrayDialogItems, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) {
-                                    // 跳转到ManageReportLossActivity
-                                    startActivity(new Intent(getActivity(),
-                                            ManageReportLossActivity.class));
-                                } else {
-                                    // 拨打挂失电话
-                                    AlertDialog.Builder callDialog =
-                                            new AlertDialog.Builder(getActivity());
-                                    callDialog.setMessage(
-                                            getResources().getString(R.string.phone_call_check));
-                                    callDialog.setPositiveButton(
-                                            getResources().getString(R.string.OK),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog,
-                                                                    int which) {
-                                                    // 通过Intent调用拨打电话程序
-                                                    Intent intent = new Intent(Intent.ACTION_CALL,
-                                                            Uri.parse("tel:" + "053266782221"));
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                    callDialog.setNegativeButton(
-                                            getResources().getString(R.string.Cancel),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog,
-                                                                    int which) {
-                                                }
-                                            });
-                                    callDialog.show();
-                                }
-                            }
-                        }).setNegativeButton(getResources().getString(R.string.Cancel),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                }).create();
-                alertDialog.show();
+                // 调用接口，先检查用户是否已经挂失
+                startActivitiesCallback.sendGETRequestToMobile(
+                        MainActivity.CONSTANT_START_REPORT_LOSS);
                 break;
             case R.drawable.manage_recharge:
                 break;
             case R.drawable.manage_net_charge:
                 break;
-            case R.drawable.manage_pay_fees:
+            case R.drawable.manage_change_password:
+                // 修改查询密码
+                startActivity(new Intent(this.getContext(), ManageChangePasswordActivity.class));
                 break;
             default:
                 break;
         }
+    }
+
+    // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
+    public interface StartActivitiesCallback {
+        void sendGETRequestToMobile(int openActivityFlag);
+        void sendPrePostRequestForTradingInquiry();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        startActivitiesCallback = null;  // 移除前赋值为空
     }
 }

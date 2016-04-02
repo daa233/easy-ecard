@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */
-	protected void setupActionBar() {
+	protected void setDisplayHomeButton() {
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			// Show the Up button in the action bar.

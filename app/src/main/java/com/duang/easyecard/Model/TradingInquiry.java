@@ -5,48 +5,48 @@ package com.duang.easyecard.Model;
  */
 public class TradingInquiry {
 
-    private String mTradingDate;  // 交易日期
-    private String mTradingTime;  // 交易时间
-    private String mMerchantName;  // 商户名称
-    private String mTradingName;  // 交易名称
-    private String mTransactionAmount;  // 交易金额
-    private String mBalance;  // 卡余额
+    private String tradingDate;  // 交易日期
+    private String tradingTime;  // 交易时间
+    private String merchantName;  // 商户名称
+    private String tradingName;  // 交易名称
+    private String transactionAmount;  // 交易金额
+    private String balance;  // 卡余额
 
     public String getTradingDate() {
-        return mTradingDate;
+        return tradingDate;
     }
-    public void setTradingDate(String mTradingDate) {
-        this.mTradingDate = mTradingDate;
+    public void setTradingDate(String tradingDate) {
+        this.tradingDate = tradingDate;
     }
 
     public String getTradingTime() {
-        return mTradingTime;
+        return tradingTime;
     }
-    public void setTradingTime(String mTradingTime) {
-        this.mTradingTime = mTradingTime;
+    public void setTradingTime(String tradingTime) {
+        this.tradingTime = tradingTime;
     }
     public String getMerchantName() {
-        return mMerchantName;
+        return merchantName;
     }
-    public void setMerchantName(String mMerchantName) {
-        this.mMerchantName = mMerchantName;
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
     public String getTradingName() {
-        return mTradingName;
+        return tradingName;
     }
-    public void setTradingName(String mTradingName) {
-        this.mTradingName = mTradingName;
+    public void setTradingName(String tradingName) {
+        this.tradingName = tradingName;
     }
     public String getTransactionAmount() {
-        return mTransactionAmount;
+        return transactionAmount;
     }
-    public void setTransactionAmount(String mTransactionAmount) {
-        this.mTransactionAmount = mTransactionAmount;
+    public void setTransactionAmount(String transactionAmount) {
+        this.transactionAmount = transactionAmount;
     }
     public String getBalance() {
-        return mBalance;
+        return balance;
     }
-    public void setBalance(String mBalance) {
-        this.mBalance = mBalance;
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 }

@@ -1,183 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_signin">
+    android:background="@drawable/background_signin"
+    android:orientation="vertical">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <!--
-         padding 内边距   layout_margin 外边距
-  		android:layout_alignParentTop 布局的位置是否处于顶部
-    -->
     <LinearLayout
-        android:id="@+id/signin_div"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="40dip"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:gravity="bottom"
-        android:background="@drawable/background_signin_div_bg"
-        android:padding="15dp" >
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/signin_type_text"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:textColor="@color/black_tab"
-                android:layout_gravity="center"
-                android:text="@string/signin_type" />
-            <com.rey.material.widget.Spinner
-                android:id="@+id/signin_type_spinner"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="50dp"
-                style="@style/Material.Widget.Spinner"
-                app:rd_style="@style/Material.Drawable.Ripple.Wave"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:id="@+id/signin_account_text"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textSize="16sp"
-                android:textColor="@color/black_tab"
-                android:gravity="center"
-                android:text="@string/stu_id" />
-            <AutoCompleteTextView
-                android:id="@+id/signin_account_input"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="50dp"
-                android:hint="@string/stu_id_input_hint"
-                android:inputType="number"
-                android:maxLength="15"
-                android:completionThreshold="1"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:id="@+id/signin_password_text"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="50dp"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:textColor="@color/black_tab"
-                android:layout_marginTop="3dp"
-                android:text="@string/password" />
-            <EditText
-                android:id="@+id/signin_password_input"
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="50dp"
-                android:hint="@string/password_input_hint"
-                android:maxLength="6"
-                android:inputType="textPassword"
-                android:singleLine="true" >
-            </EditText>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:paddingLeft="15dp"
-            android:paddingStart="15dp"
-            android:paddingRight="15dp"
-            android:paddingEnd="15dp">
-
-            <ImageView
-                android:id="@+id/signin_checkcode_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:clickable="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/default_checkcode_img"
-                android:contentDescription="@string/signin_checkcode_image"/>
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="50dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/signin_checkcode_input"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/signin_type" />
+
+                <com.rey.material.widget.Spinner
+                    android:id="@+id/signin_type_spinner"
+                    style="@style/Material.Widget.Spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/signin_account"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="center_vertical"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/signin_account_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@string/stu_id_input_hint"
                     android:inputType="number"
-                    android:textSize="15sp"
-                    android:maxLength="4"
-                    android:gravity="center"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginStart="15dp"
-                    android:hint="@string/checkcode_input_hint"/>
+                    android:maxLength="15"
+                    app:met_clearButton="true"
+                    app:met_errorColor="@color/red"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="@string/stu_id"
+                    app:met_minBottomTextLines="1" />
             </LinearLayout>
+
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="50dp"
-                android:gravity="center">
-                <com.rey.material.widget.CheckBox
-                    android:id="@+id/signin_remember_password_check_box"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:gravity="end|center_vertical"
-                    style="@style/Material.Drawable.CheckBox"
-                    android:text="@string/remember_password"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/signin_password"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_gravity="center_vertical"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/signin_password_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password_input_hint"
+                    android:inputType="numberPassword"
+                    android:maxLength="6"
+                    app:met_clearButton="true"
+                    app:met_errorColor="@color/red"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="@string/card_query_password"
+                    app:met_maxCharacters="6" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/signin_checkcode"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_gravity="center_vertical"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/signin_checkcode_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="2"
+                    android:hint="@string/checkcode_input_hint"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    app:met_floatingLabel="highlight"
+                    app:met_floatingLabelText="@string/checkcode"
+                    app:met_helperText="@string/signin_hint_click_image_if_not_clear"
+                    app:met_helperTextColor="@color/chocolate"
+                    app:met_maxCharacters="4" />
+
+                <ImageView
+                    android:id="@+id/signin_checkcode_image"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:contentDescription="@string/signin_checkcode_image"
+                    android:onClick="onCheckcodeImageClick"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start">
+
+                    <com.rey.material.widget.CheckBox
+                        android:id="@+id/signin_remember_password_check_box"
+                        style="@style/Material.Drawable.CheckBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end|center_vertical"
+                        android:text="@string/remember_password" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end">
+
+                    <com.rey.material.widget.CheckBox
+                        android:id="@+id/signin_auto_signin_check_box"
+                        style="@style/Material.Drawable.CheckBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:gravity="end|center_vertical"
+                        android:text="@string/auto_signin" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.rey.material.widget.Button
+                android:id="@+id/signin_signin_button"
+                style="@style/button_ripple_wave"
+                android:layout_marginEnd="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginStart="0dp"
+                android:background="@drawable/green_button_selector"
+                android:onClick="onSigninButtonClick"
+                android:text="@string/signin" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/signin_hint_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:gravity="end"/>
-
-        <com.rey.material.widget.Button
-            android:id="@+id/signin_signin_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:text="@string/signin"
-            style="@style/Material.Drawable.Ripple.Wave"
-            android:background="@drawable/green_button_selector"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/signin_pic_below"
@@ -185,7 +190,5 @@
             android:layout_height="160dp"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/signin_pic_below" />
-
     </LinearLayout>
-</LinearLayout>
 </ScrollView>

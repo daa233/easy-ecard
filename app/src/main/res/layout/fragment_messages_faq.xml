@@ -1,0 +1,27 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity.MessagesFaqFragment">
+
+    <com.rey.material.widget.ProgressView
+        android:id="@+id/messages_faq_progress_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        app:pv_autostart="true"
+        app:pv_progressMode="indeterminate" />
+
+    <com.yalantis.phoenix.PullToRefreshView
+        android:id="@+id/messages_faq_pull_to_refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/messages_faq_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.yalantis.phoenix.PullToRefreshView>
+</FrameLayout>

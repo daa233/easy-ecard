@@ -1,7 +1,6 @@
 package com.duang.easyecard.Util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -166,6 +165,12 @@ public class ExpandableListViewHolder {
 
     public ExpandableListViewHolder setImageURI(int viewId, Uri uri) {
         useGlideToLoadImages(viewId, uri);
+        return this;
+    }
+
+    public ExpandableListViewHolder setVisibility(int viewId, int visibility) {
+        View v = getView(viewId);
+        v.setVisibility(visibility);
         return this;
     }
 

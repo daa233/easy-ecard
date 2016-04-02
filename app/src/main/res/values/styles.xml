@@ -8,11 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- ActionBar Back Icon -->
-    <style name="style_titlebar_normal" parent="@style/AppTheme">
-        <item name="android:homeAsUpIndicator">@drawable/actionbar_back_icon</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -32,20 +27,45 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ellipsize">end</item>
-        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="table_view_like_linear_layout_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/background_view_rounded_corner</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
     </style>
 
     <!-- Button style -->
     <style name="button_ripple_wave" parent="Material.Drawable.Ripple">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">50dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">20sp</item>
-
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
         <item name="rd_maxRippleRadius">48dp</item>
         <item name="rd_rippleColor">#3FCCCCCC</item>
-        <item name="rd_rippleAnimDuration">500</item>
+        <item name="rd_rippleAnimDuration">400</item>
         <item name="rd_rippleType">wave</item>
+    </style>
+
+    <!-- CircleTextView style -->
+    <style name="circle_text_view">
+        <item name="android:maxLength">2</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="ct_backgroundColor">#ff0000</item>
+        <item name="ct_border_color">@color/red</item>
+        <item name="ct_border_width">3dp</item>
+        <item name="ct_type">shadow_gradual</item>
     </style>
 </resources>

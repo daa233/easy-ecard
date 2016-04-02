@@ -6,6 +6,7 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -99,10 +100,21 @@ public class ViewHolder {
         return this;
     }
 
+    public ViewHolder setVisibility(int viewId, int visibility) {
+        View v = getView(viewId);
+        v.setVisibility(visibility);
+        return this;
+    }
+
     public void useGlideToLoadImages(int viewId, Object imageAddress) {
         Glide
                 .with(mContext)
                 .load(imageAddress)
                 .into((ImageView) getView(viewId));
+    }
+
+    public void setChecked(int viewId, boolean isChecked) {
+        CheckBox checkBox = getView(viewId);
+        checkBox.setChecked(isChecked);
     }
 }
