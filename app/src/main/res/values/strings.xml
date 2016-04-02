@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Oh, you see!</string>
-    <string name="loading">正在努力加载...</string>
+    <string name="loading">正在努力加载&#8230;</string>
     <string name="network_error">网络错误</string>
     <string name="operation_failed">操作失败</string>
     <string name="operaton_successed">操作成功</string>
@@ -41,8 +41,8 @@
     <string name="signin_hint_click_image_if_not_clear">看不清？点击图片换一张</string>
     <string name="signin_error_when_encrypting">数据加密出错！</string>
     <string name="signin_error_when_decrypting">数据解密出错！</string>
-    <string name="signin_processing">正在登录...</string>
-    <string name="signin_processing_automatically">正在自动登录...</string>
+    <string name="signin_processing">正在登录&#8230;</string>
+    <string name="signin_processing_automatically">正在自动登录&#8230;</string>
     <string name="signin_success">登录成功</string>
     <string name="signin_failed">登录失败</string>
     <string name="signin_automatically_failed">自动登录失败，请重新登录</string>
@@ -105,7 +105,15 @@
     <string name="Friday">周五</string>
     <string name="Saturday">周六</string>
     <string name="error_day_of_week">ErrorDay!</string>
-    <string name="balance_after_trading">交易后余额：</string>
+    <string name="trading_time">交易时间：</string>
+    <string name="merchant_name">商户名称：</string>
+    <string name="trading_name">交易名称：</string>
+    <string name="transaction_amount">交易金额：￥</string>
+    <string name="balance_after_trading">交易后卡余额：￥</string>
+    <string name="start_and_end_date">起止日期：</string>
+    <string name="today_total_transaction_amount">今日总消费金额：￥</string>
+    <string name="week_total_transaction_amount">本周总消费金额：￥</string>
+    <string name="total_transaction_amount">本段时间总消费金额：￥</string>
     <!-- ManageReportLossActivity -->
     <string name="title_activity_manage_report_loss">挂失校园卡</string>
     <string name="report_loss_password_hint">请输入校园卡查询密码</string>

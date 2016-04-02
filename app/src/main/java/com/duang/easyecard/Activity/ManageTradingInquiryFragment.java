@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +71,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     private Button queryButton;
 
     private TradingInquiryExpandableListAdapter mAdapter;
-    private GetDataListInitFlagListener getDataListInitFlagListener;
+    private CommunicateListener communicateListener;
     private int type;
     private List<HashMap<String, String>> dataList;
     private List<Group> mGroupList;
@@ -79,6 +81,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     private String response;
     private int maxPageIndex;  // 最大页码
     private int pageIndex;
+    private double sumTransaction = 0;
     private boolean firstTimeToParseFlag = true;  // 首次解析标志，用于解析页码
 
     private final String TAG = "ManageTradingInquiryFragment";
@@ -94,12 +97,12 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     public void onAttach(Context context) {
         super.onAttach(context);
         LogUtil.d(TAG, "onAttach");
-        if (!(context instanceof GetDataListInitFlagListener)) {
+        if (!(context instanceof CommunicateListener)) {
             throw new IllegalStateException("The host activity must implement the" +
-                    "GetDataListInitFlagListener");
+                    "CommunicateListener");
         }
         // 把绑定的activity当成callback对象
-        getDataListInitFlagListener = (GetDataListInitFlagListener) context;
+        communicateListener = (CommunicateListener) context;
     }
 
     @Override
@@ -164,16 +167,12 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                     setStartTimeLayout.setOnClickListener(this);
                     setEndTimeLayout.setOnClickListener(this);
                     queryButton.setOnClickListener(this);
-                    // 传递Tag给Activity
-                    getDataListInitFlagListener.getFragmentTag(getTag());
                     break;
                 case 1:
                     type = CONSTANT_TODAY;
-                    mProgressView.setVisibility(View.VISIBLE);
                     break;
                 case 2:
                     type = CONSTANT_WEEK;
-                    mProgressView.setVisibility(View.VISIBLE);
                     break;
                 default:
                     break;
@@ -190,21 +189,26 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         // 初始化页码
         pageIndex = 1;
         maxPageIndex = 1;
+        // 传递Tag给Activity
+        communicateListener.getFragmentTag(type, getTag());
         // 创建Fragment时判断此Fragment之前是否已经加载（初始化）过
-        if (getDataListInitFlagListener.getDataListInitFlag(type)) {
+        if (communicateListener.getDataListInitFlag(type)) {
             // 已经初始化，无需操作
             LogUtil.d(TAG, "Has inited.");
         } else if (type == CONSTANT_HISTORY) {
-            if (!getDataListInitFlagListener.getDataListInitFlag(type)) {
-                // 历史流水，未经初始化，显示选择日期界面
-                mPickDateView.setVisibility(View.VISIBLE);
-                // 隐藏ListView，防止抢夺焦点
-                mListView.setVisibility(View.INVISIBLE);
-                // 显示默认时间
-                updateTimeTable();
-            }
+            // 历史流水，未经初始化，显示选择日期界面
+            mPickDateView.setVisibility(View.VISIBLE);
+            // 隐藏ListView，防止抢夺焦点
+            mListView.setVisibility(View.INVISIBLE);
+            // 隐藏ImageView
+            mImageView.setVisibility(View.INVISIBLE);
+            // 显示默认时间
+            updateTimeTable();
         } else {
             // 没有初始化过，发送GET请求
+            mProgressView.setVisibility(View.VISIBLE);
+            // 隐藏ImageView
+            mImageView.setVisibility(View.INVISIBLE);
             sendGETRequest();
         }
     }
@@ -361,6 +365,14 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                 int childPosition, long id) {
+        TradingInquiry tradingInquiry = mChildList.get(groupPosition).get(childPosition);
+        Toast.makeText(MyApplication.getContext(), getString(R.string.trading_time) +
+                        tradingInquiry.getTradingDate() + " " + tradingInquiry.getTradingTime() + "\n" +
+                        getString(R.string.merchant_name) + tradingInquiry.getMerchantName() + "\n" +
+                        getString(R.string.trading_name) + tradingInquiry.getTradingName() + "\n" +
+                        getString(R.string.transaction_amount) + tradingInquiry.getTransactionAmount() +
+                        "\n" + getString(R.string.balance_after_trading) + tradingInquiry.getBalance(),
+                Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -479,6 +491,10 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                     .with(MyApplication.getContext())
                     .load(R.drawable.nothing_founded_404)
                     .into(mImageView);
+            // 总交易额设为0
+            sumTransaction = 0;
+            // 设置初始化标志
+            communicateListener.setDataListInitFlag(type, true);
             // 隐藏ProgressView
             mProgressView.setVisibility(View.GONE);
         } else {
@@ -515,6 +531,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             }
             // 导入mChildList
             ArrayList<TradingInquiry> childTempList;
+            sumTransaction = 0;
             for (int i = 0; i < mGroupList.size(); i++) {
                 tempDate = mGroupList.get(i).getTitle();
                 // 进入一个新的组，要有一个新的childTempList
@@ -529,6 +546,11 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                         tradingInquiry.setMerchantName(dataList.get(j).get("MerchantName"));
                         tradingInquiry.setTradingName(dataList.get(j).get("TradingName"));
                         tradingInquiry.setTransactionAmount(dataList.get(j).get("TransactionAmount"));
+                        // 计算总消费额
+                        if (Double.valueOf(dataList.get(j).get("TransactionAmount")) < 0) {
+                            sumTransaction = sumTransaction +
+                                    Double.valueOf(dataList.get(j).get("TransactionAmount"));
+                        }
                         tradingInquiry.setBalance(dataList.get(j).get("Balance"));
                         childTempList.add(tradingInquiry);
                     }
@@ -559,8 +581,24 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         mListView.setOnHeaderUpdateListener(ManageTradingInquiryFragment.this);
         mListView.setOnGroupClickListener(ManageTradingInquiryFragment.this);
         mListView.setOnChildClickListener(ManageTradingInquiryFragment.this);
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (type == CONSTANT_HISTORY) {
+            Snackbar.make(getActivity().findViewById(
+                    R.id.activity_trading_inquiry_coordinator_layout),
+                    getString(R.string.start_and_end_date) + dateUtil.getHistoryStartDate() + "—" +
+                            dateUtil.getHistoryEndDate() + "\n" +
+                            getString(R.string.total_transaction_amount) +
+                            String.valueOf(df.format(-sumTransaction)),
+                    Snackbar.LENGTH_LONG).show();
+        } else if (type == CONSTANT_TODAY) {
+            Snackbar.make(getActivity().findViewById(
+                    R.id.activity_trading_inquiry_coordinator_layout),
+                    getString(R.string.today_total_transaction_amount) +
+                            String.valueOf(df.format(-sumTransaction)),
+                    Snackbar.LENGTH_LONG).show();
+        }
         // 设置初始化标志
-        getDataListInitFlagListener.setDataListInitFlag(type, true);
+        communicateListener.setDataListInitFlag(type, true);
         // 显示ListView
         mListView.setVisibility(View.VISIBLE);
         // 隐藏ProgressView
@@ -570,13 +608,41 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
-        getDataListInitFlagListener = null;
+        communicateListener = null;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        communicateListener.isOnStop(type);
+    }
+
+    // 显示sumTransaction
+    public void showSumTransaction() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (type == CONSTANT_HISTORY) {
+            Snackbar.make(getActivity().findViewById(
+                    R.id.activity_trading_inquiry_coordinator_layout),
+                    getString(R.string.start_and_end_date) + dateUtil.getHistoryStartDate() + "—" +
+                            dateUtil.getHistoryEndDate() + "\n" +
+                            getString(R.string.total_transaction_amount) +
+                            String.valueOf(df.format(-sumTransaction)),
+                    Snackbar.LENGTH_LONG).show();
+        } else if (type == CONSTANT_WEEK) {
+            Snackbar.make(getActivity().findViewById(
+                    R.id.activity_trading_inquiry_coordinator_layout),
+                    getString(R.string.week_total_transaction_amount) +
+                            String.valueOf(df.format(-sumTransaction)),
+                    Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    // 返回选择日期界面
     public void backToPickDateView() {
         if (type == CONSTANT_HISTORY) {
             mPickDateView.setVisibility(View.VISIBLE);
             mListView.setVisibility(View.INVISIBLE);
+            mImageView.setVisibility(View.INVISIBLE);
             // 刷新页码和数据列表
             pageIndex = 1;
             maxPageIndex = 1;
@@ -586,12 +652,12 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             mChildList.clear();
             mAdapter.notifyDataSetChanged();
             // 将其设置为未初始化
-            getDataListInitFlagListener.setDataListInitFlag(type, false);
+            communicateListener.setDataListInitFlag(type, false);
         }
     }
 
     // 用于判断对应类型的Fragment是否初始化过
-    public interface GetDataListInitFlagListener {
+    public interface CommunicateListener {
         // 用于获得初始化状态
         boolean getDataListInitFlag(int type);
 
@@ -599,6 +665,9 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         void setDataListInitFlag(int type, boolean flag);
 
         // 传递Tag
-        void getFragmentTag(String tag);
+        void getFragmentTag(int type, String tag);
+        
+        // 销毁时向Activity发送消息
+        void isOnStop(int type);
     }
 }

@@ -1,8 +1,6 @@
 package com.duang.easyecard.Activity;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,16 +9,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ManageTradingInquiryActivity extends BaseActivity implements
-        ManageTradingInquiryFragment.GetDataListInitFlagListener {
+        ManageTradingInquiryFragment.CommunicateListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -28,7 +26,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
     private boolean historyInitFlag = false;
     private boolean todayInitFlag = false;
     private boolean weekInitFlag = false;
-    private String fragmentTag;
+    private HashMap<String, String> fragmentTagHashMap;
     private final String TAG = "ManageTradingInquiryActivity";
 
     @Override
@@ -37,6 +35,8 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         setContentView(R.layout.activity_manage_trading_inquiry);
         // 初始化布局
         initView();
+        // 初始化fragmentTagHashMap
+        fragmentTagHashMap = new HashMap<>();
     }
 
     // 初始化布局
@@ -45,17 +45,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         setSupportActionBar(toolbar);
         // 显示home按钮
         setDisplayHomeButton();
-        // 操作FloatingActionButton
-        FloatingActionButton fab = (FloatingActionButton) findViewById(
-                R.id.manage_trading_inquiry_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // 设置ViewPager
         viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
         setupViewPager(viewPager);
@@ -122,8 +111,18 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
 
     // 获得Fragment传递过来的Tag，用于定位Fragment
     @Override
-    public void getFragmentTag(String tag) {
-        fragmentTag = tag;
+    public void getFragmentTag(int type, String tag) {
+        fragmentTagHashMap.put(String.valueOf(type), tag);
+    }
+
+    // 该类型Fragment已销毁
+    @Override
+    public void isOnStop(int type) {
+        // 获得Fragment的实例，当“历史流水”销毁时，在“一周流水”中显示交易额汇总；反之亦然
+        String tag = fragmentTagHashMap.get(String.valueOf(2 - type));
+        ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                getSupportFragmentManager().findFragmentByTag(tag);
+        fragment.showSumTransaction();
     }
 
     // Custom adapter class provides fragments required for the view pager.
@@ -169,8 +168,11 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
                 if (historyInitFlag) {
                     // 正在显示ListView(查询结果），返回到选择时间界面
                     ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
-                            getSupportFragmentManager().findFragmentByTag(fragmentTag);
+                            getSupportFragmentManager().findFragmentByTag(
+                                    fragmentTagHashMap.get(String.valueOf(0)));
                     fragment.backToPickDateView();
+                    // 设置初始化标志为false
+                    historyInitFlag = false;
                 } else {
                     // 正在选择时间，点击直接退出
                     finish();

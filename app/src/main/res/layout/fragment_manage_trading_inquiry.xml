@@ -18,6 +18,7 @@
         android:id="@+id/manage_trading_inquiry_pick_date"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background"
         android:visibility="gone">
 
         <LinearLayout
