@@ -116,7 +116,7 @@ public class ManagementFragment extends Fragment implements
                         MainActivity.CONSTANT_START_BASIC_INFORMATION);
                 break;
             case R.drawable.manage_trading_inquiry:
-                startActivity(new Intent(this.getContext(), ManageTradingInquiryActivity.class));
+                startActivitiesCallback.sendPrePostRequestForTradingInquiry();
                 break;
             case R.drawable.manage_report_loss:
                 // 调用接口，先检查用户是否已经挂失
@@ -139,6 +139,7 @@ public class ManagementFragment extends Fragment implements
     // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
     public interface StartActivitiesCallback {
         void sendGETRequestToMobile(int openActivityFlag);
+        void sendPrePostRequestForTradingInquiry();
     }
 
     @Override

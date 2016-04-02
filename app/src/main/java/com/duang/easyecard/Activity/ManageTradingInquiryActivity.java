@@ -12,22 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.duang.easyecard.GlobalData.MyApplication;
-import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
-import com.duang.easyecard.Util.TradingInquiryDateUtil;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
 
 public class ManageTradingInquiryActivity extends BaseActivity implements
         ManageTradingInquiryFragment.GetDataListInitFlagListener {
@@ -35,22 +25,11 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private AsyncHttpClient httpClient;
     private boolean historyInitFlag = false;
     private boolean todayInitFlag = false;
     private boolean weekInitFlag = false;
+    private String fragmentTag;
     private final String TAG = "ManageTradingInquiryActivity";
-
-    /**
-     * INIT_FLAG
-     * 0，未开始加载
-     * 1，正在加载
-     * 2，加载完成，有数据
-     * 3，加载完成，没有数据
-     */
-    private int HISTORY_TAB_INIT_FLAG = 0;
-    private static int TODAY_TAB_INIT_FLAG = 0;
-    private static int WEEK_TAB_INIT_FLAG = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +37,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         setContentView(R.layout.activity_manage_trading_inquiry);
         // 初始化布局
         initView();
-        // 初始化数据
-        initData();
     }
 
     // 初始化布局
@@ -87,36 +64,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    // 初始化数据
-    private void initData() {
-        // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        // 装填POST数据
-        RequestParams params = new RequestParams();
-        params.add("needHeader", "false");
-        // 发送POST请求
-        httpClient.post(UrlConstant.TRJN_QUERY, params, new AsyncHttpResponseHandler() {
-            // 成功响应，刷新全局httpClient
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                MyApplication myApp = (MyApplication) getApplication();
-                myApp.setHttpClient(httpClient);
-                LogUtil.d(TAG, new String(responseBody));
-            }
-
-            // 网络错误
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
-                                  Throwable error) {
-                LogUtil.e(TAG, "Network error.");
-                Toast.makeText(ManageTradingInquiryActivity.this, R.string.network_error,
-                        Toast.LENGTH_SHORT).show();
-                error.printStackTrace();
-            }
-        });
-    }
-
     // Defines the number of tabs by setting appropriate fragment and tab name.
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -138,50 +85,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         viewPager.setAdapter(mViewPagerAdapter);
     }
 
-    /**
-     * doBack方法
-     * 根据当前状态判断是否退出
-     * 如果不处于“历史流水”查询状态，则直接退出
-     * 如果处于“历史流水”查询状态，切换到时间选择界面
-     */
-    private void doBack() {
-        switch (tabLayout.getSelectedTabPosition()) {
-            case 0:
-                // “历史流水”查询，根据Fragment的状态进行下一步操作
-                break;
-            case 1:
-            case 2:
-                // 不是“历史流水”查询，直接退出
-                finish();
-                break;
-            default:
-                break;
-        }
-    }
-
-    // 菜单项选择
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                doBack();
-                break;
-            default:
-                break;
-        }
-        return false;
-    }
-
-    // 监听返回键
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            doBack();
-            return false;
-        }
-        return false;
-    }
-
+    // 让Fragment获得初始化状态
     @Override
     public boolean getDataListInitFlag(int type) {
         switch (type) {
@@ -197,22 +101,29 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         }
     }
 
+    // 设置Fragment的初始化状态
     @Override
-    public void setDataListInitFlag(int type) {
+    public void setDataListInitFlag(int type, boolean flag) {
         switch (type) {
             case 0:
-                historyInitFlag = true;
+                historyInitFlag = flag;
                 break;
             case 1:
-                todayInitFlag = true;
+                todayInitFlag = flag;
                 break;
             case 2:
-                weekInitFlag = true;
+                weekInitFlag = flag;
                 break;
             default:
                 LogUtil.e(TAG, "Unexpect type.");
                 break;
         }
+    }
+
+    // 获得Fragment传递过来的Tag，用于定位Fragment
+    @Override
+    public void getFragmentTag(String tag) {
+        fragmentTag = tag;
     }
 
     // Custom adapter class provides fragments required for the view pager.
@@ -243,5 +154,58 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    /**
+     * doBack方法
+     * 根据当前状态判断是否退出
+     * 如果不处于“历史流水”查询状态，则直接退出
+     * 如果处于“历史流水”查询状态，切换到时间选择界面
+     */
+    private void doBack() {
+        switch (tabLayout.getSelectedTabPosition()) {
+            case 0:
+                // 位于“历史流水”查询
+                if (historyInitFlag) {
+                    // 正在显示ListView(查询结果），返回到选择时间界面
+                    ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                            getSupportFragmentManager().findFragmentByTag(fragmentTag);
+                    fragment.backToPickDateView();
+                } else {
+                    // 正在选择时间，点击直接退出
+                    finish();
+                }
+                break;
+            case 1:
+            case 2:
+                // 不处于“历史流水”查询状态，则直接退出
+                finish();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // 菜单项选择
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                doBack();
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    // 监听返回键
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            doBack();
+            return false;
+        }
+        return false;
     }
 }

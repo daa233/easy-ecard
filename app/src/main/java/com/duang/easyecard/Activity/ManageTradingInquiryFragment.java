@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
@@ -75,7 +76,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     private List<List<TradingInquiry>> mChildList;
     private TradingInquiryDateUtil dateUtil;
     private AsyncHttpClient httpClient;
-    private String address;
     private String response;
     private int maxPageIndex;  // 最大页码
     private int pageIndex;
@@ -164,6 +164,8 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                     setStartTimeLayout.setOnClickListener(this);
                     setEndTimeLayout.setOnClickListener(this);
                     queryButton.setOnClickListener(this);
+                    // 传递Tag给Activity
+                    getDataListInitFlagListener.getFragmentTag(getTag());
                     break;
                 case 1:
                     type = CONSTANT_TODAY;
@@ -179,7 +181,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         } else {
             LogUtil.e(TAG, "Can't get arguments: position.");
         }
-        // 获得全局变量httpClient和userBasicInformation
+        // 获得全局变量httpClient，新建dateUtil
         MyApplication myApp = (MyApplication) getActivity().getApplication();
         httpClient = myApp.getHttpClient();
         dateUtil = new TradingInquiryDateUtil(MyApplication.getContext());
@@ -196,7 +198,10 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             if (!getDataListInitFlagListener.getDataListInitFlag(type)) {
                 // 历史流水，未经初始化，显示选择日期界面
                 mPickDateView.setVisibility(View.VISIBLE);
+                // 隐藏ListView，防止抢夺焦点
                 mListView.setVisibility(View.INVISIBLE);
+                // 显示默认时间
+                updateTimeTable();
             }
         } else {
             // 没有初始化过，发送GET请求
@@ -216,7 +221,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                     dateUtil.getHistoryEndMonth() + "-" +
                     dateUtil.getHistoryEndDayOfMonth();
             // 刷新页码
-            UrlConstant.trjnListPageIndex = pageIndex;
+            UrlConstant.historyTrjnListPageIndex = pageIndex;
             LogUtil.d(TAG, "History Url = " + UrlConstant.getTrjnListHistory());
             // 发送GET请求
             httpClient.get(UrlConstant.getTrjnListHistory(),
@@ -240,34 +245,34 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                     });
         } else if (type == CONSTANT_TODAY) {  // 当日流水
             // 刷新页码
-            UrlConstant.trjnListPageIndex = pageIndex;
-            httpClient.get(UrlConstant.getTrjnListToday(),
-                    new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            // 成功响应
-                            response = new String(responseBody);
-                            LogUtil.d(TAG, new String(responseBody));
-                            new JsoupHtmlData().execute();
-                        }
+            UrlConstant.todayTrjnListPageIndex = pageIndex;
+            LogUtil.d(TAG, "Today Url = " + UrlConstant.getTrjnListToday());
+            httpClient.get(UrlConstant.getTrjnListToday(), new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    // 成功响应
+                    response = new String(responseBody);
+                    LogUtil.d(TAG, new String(responseBody));
+                    new JsoupHtmlData().execute();
+                }
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
-                                              Throwable error) {
-                            // 网络错误
-                            LogUtil.e(TAG, "Network error. " + new String(responseBody));
-                            Toast.makeText(MyApplication.getContext(),
-                                    getString(R.string.network_error), Toast.LENGTH_SHORT).show();
-                            error.printStackTrace();
-                        }
-                    });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                      Throwable error) {
+                    // 网络错误
+                    LogUtil.e(TAG, "Network error. " + new String(responseBody));
+                    Toast.makeText(MyApplication.getContext(),
+                            getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                    error.printStackTrace();
+                }
+            });
         } else if (type == CONSTANT_WEEK) {  // 一周流水
             // 组装Url地址
             UrlConstant.trjnListStartTime = dateUtil.getWeekStartYear() + "-" +
                     dateUtil.getWeekStartMonth() + "-" + dateUtil.getWeekStartDayOfMonth();
             UrlConstant.trjnListEndTime = dateUtil.getWeekEndYear() + "-" +
                     dateUtil.getWeekEndMonth() + "-" + dateUtil.getWeekEndDayOfMonth();
-            UrlConstant.trjnListPageIndex = pageIndex;
+            UrlConstant.historyTrjnListPageIndex = pageIndex;
             LogUtil.d(TAG, "Week Url = " + UrlConstant.getTrjnListHistory());
             // 发送GET请求
             httpClient.get(UrlConstant.getTrjnListHistory(),
@@ -354,7 +359,8 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     }
 
     @Override
-    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+                                int childPosition, long id) {
         return false;
     }
 
@@ -365,11 +371,19 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
 
     @Override
     public View getPinnedHeader() {
-        return null;
+        View headerView = getActivity().getLayoutInflater().inflate(
+                R.layout.item_manage_trading_inquiry_group, null);
+        headerView.setLayoutParams(new AbsListView.LayoutParams(
+                AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.WRAP_CONTENT));
+        return headerView;
     }
 
     @Override
-    public void updatePinnedHeader(View view, int i) {
+    public void updatePinnedHeader(View headerView, int firstVisibleGroupPosition) {
+        Group firstVisibleGroup = mAdapter.getGroup(firstVisibleGroupPosition);
+        TextView textView = (TextView) headerView.findViewById(
+                R.id.manage_traing_inquiry_group_item_text);
+        textView.setText(firstVisibleGroup.getTitle());
     }
 
     /**
@@ -377,7 +391,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
      * 首次解析会得到最大页码maxIndex
      * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
      * 结果保存在ManageTradingInquiryActivity中的historyDataList
-     * <p>
+     * <p/>
      * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
      * 所以要通过firstTimeToParseFlag进行标识，仅在首次解析时获取maxIndex
      */
@@ -457,72 +471,81 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
      * 从historyDataList中获取数据，配置mGroupList和mChildList
      */
     private void matchDataWithAdapterLists() {
-        // 初始化mGroupList和mChildList
-        mGroupList = new ArrayList<>();
-        mChildList = new ArrayList<>();
-        // 没有搜索到数据
+        LogUtil.d(TAG, "Type :" + type + " matchDataWithAdapterLists.");
         if (dataList.isEmpty()) {
-            // 显示未找到数据图像
-        }
-
-        // 导入mGroupList
-        String tempDate = null;
-        String tempDateFromHashMapList;  // 直接从HashMapList中获取的日期
-        // 通过循环遍历historyDataList来得到mGroupList
-        for (int i = 0; i < dataList.size(); i++) {
-            tempDateFromHashMapList = dataList.get(i).get("TradingDate");
-            if (mGroupList.size() == 0) {
-                tempDate = tempDateFromHashMapList;
-                LogUtil.d("tempDate", tempDate);
-                Group group = new Group();
-                group.setTitle(tempDate);
-                mGroupList.add(group);
-            } else if (mGroupList.size() > 0) {
-                // 如果日期不同，则把新日期添加到mGroupList
-                if (!tempDate.equals(tempDateFromHashMapList)) {
+            // 没有搜索到数据，显示未找到数据图像
+            mImageView.setVisibility(View.VISIBLE);
+            Glide
+                    .with(MyApplication.getContext())
+                    .load(R.drawable.nothing_founded_404)
+                    .into(mImageView);
+            // 隐藏ProgressView
+            mProgressView.setVisibility(View.GONE);
+        } else {
+            // 有数据
+            // 初始化mGroupList和mChildList
+            mGroupList = new ArrayList<>();
+            mChildList = new ArrayList<>();
+            // 导入mGroupList
+            String tempDate = "";
+            String tempDateFromHashMapList;  // 直接从HashMapList中获取的日期
+            // 通过循环遍历historyDataList来得到mGroupList
+            for (int i = 0; i < dataList.size(); i++) {
+                tempDateFromHashMapList = dataList.get(i).get("TradingDate");
+                if (mGroupList.size() == 0) {
                     tempDate = tempDateFromHashMapList;
                     LogUtil.d("tempDate", tempDate);
                     Group group = new Group();
                     group.setTitle(tempDate);
                     mGroupList.add(group);
+                } else if (mGroupList.size() > 0) {
+                    // 如果日期不同，则把新日期添加到mGroupList
+                    if (!tempDate.equals(tempDateFromHashMapList)) {
+                        tempDate = tempDateFromHashMapList;
+                        LogUtil.d("tempDate", tempDate);
+                        Group group = new Group();
+                        group.setTitle(tempDate);
+                        mGroupList.add(group);
+                    }
                 }
             }
-        }
-        // 打印mGroupList结果
-        for (int k = 0; k < mGroupList.size(); k++) {
-            LogUtil.d("groupTitle", mGroupList.get(k).getTitle());
-        }
-        // 导入mChildList
-        ArrayList<TradingInquiry> childTempList;
-        for (int i = 0; i < mGroupList.size(); i++) {
-            tempDate = mGroupList.get(i).getTitle();
-            // 进入一个新的组，要有一个新的childTempList
-            childTempList = new ArrayList<>();
-            for (int j = 0; j < dataList.size(); j++) {
-                String childDate = dataList.get(j).get("TradingDate");
-                // 如果日期相同（包含组名）则属于该组
-                if (childDate.contains(tempDate)) {
-                    TradingInquiry tradingInquiry = new TradingInquiry();
-                    tradingInquiry.setTradingDate(dataList.get(j).get("TradingDate"));
-                    tradingInquiry.setTradingTime(dataList.get(j).get("TradingTime"));
-                    tradingInquiry.setMerchantName(dataList.get(j).get("MerchantName"));
-                    tradingInquiry.setTradingName(dataList.get(j).get("TradingName"));
-                    tradingInquiry.setTransactionAmount(dataList.get(j).get("TransactionAmount"));
-                    tradingInquiry.setBalance(dataList.get(j).get("Balance"));
-                    childTempList.add(tradingInquiry);
-                }
+            // 打印mGroupList结果
+            for (int k = 0; k < mGroupList.size(); k++) {
+                LogUtil.d("groupTitle", mGroupList.get(k).getTitle());
             }
-            // 把这一组的childTempList添加到mChildList
-            mChildList.add(childTempList);
+            // 导入mChildList
+            ArrayList<TradingInquiry> childTempList;
+            for (int i = 0; i < mGroupList.size(); i++) {
+                tempDate = mGroupList.get(i).getTitle();
+                // 进入一个新的组，要有一个新的childTempList
+                childTempList = new ArrayList<>();
+                for (int j = 0; j < dataList.size(); j++) {
+                    String childDate = dataList.get(j).get("TradingDate");
+                    // 如果日期相同（包含组名）则属于该组
+                    if (childDate.contains(tempDate)) {
+                        TradingInquiry tradingInquiry = new TradingInquiry();
+                        tradingInquiry.setTradingDate(dataList.get(j).get("TradingDate"));
+                        tradingInquiry.setTradingTime(dataList.get(j).get("TradingTime"));
+                        tradingInquiry.setMerchantName(dataList.get(j).get("MerchantName"));
+                        tradingInquiry.setTradingName(dataList.get(j).get("TradingName"));
+                        tradingInquiry.setTransactionAmount(dataList.get(j).get("TransactionAmount"));
+                        tradingInquiry.setBalance(dataList.get(j).get("Balance"));
+                        childTempList.add(tradingInquiry);
+                    }
+                }
+                // 把这一组的childTempList添加到mChildList
+                mChildList.add(childTempList);
+            }
+            setupWithAdapter();
         }
-        setupWithAdapter();
     }
 
     /**
      * 设置Adapter及监听ListView相关事件
      */
     private void setupWithAdapter() {
-        mAdapter = new TradingInquiryExpandableListAdapter(getContext(),
+        LogUtil.d(TAG, "Type :" + type + " setupWithAdapter.");
+        mAdapter = new TradingInquiryExpandableListAdapter(MyApplication.getContext(),
                 mGroupList, R.layout.item_manage_trading_inquiry_group,
                 mChildList, R.layout.item_manage_trading_inquiry_child);
         mListView.setAdapter(mAdapter);
@@ -537,7 +560,9 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         mListView.setOnGroupClickListener(ManageTradingInquiryFragment.this);
         mListView.setOnChildClickListener(ManageTradingInquiryFragment.this);
         // 设置初始化标志
-        getDataListInitFlagListener.setDataListInitFlag(type);
+        getDataListInitFlagListener.setDataListInitFlag(type, true);
+        // 显示ListView
+        mListView.setVisibility(View.VISIBLE);
         // 隐藏ProgressView
         mProgressView.setVisibility(View.GONE);
     }
@@ -548,10 +573,32 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         getDataListInitFlagListener = null;
     }
 
+    public void backToPickDateView() {
+        if (type == CONSTANT_HISTORY) {
+            mPickDateView.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.INVISIBLE);
+            // 刷新页码和数据列表
+            pageIndex = 1;
+            maxPageIndex = 1;
+            firstTimeToParseFlag = true;
+            dataList.clear();
+            mGroupList.clear();
+            mChildList.clear();
+            mAdapter.notifyDataSetChanged();
+            // 将其设置为未初始化
+            getDataListInitFlagListener.setDataListInitFlag(type, false);
+        }
+    }
+
     // 用于判断对应类型的Fragment是否初始化过
     public interface GetDataListInitFlagListener {
+        // 用于获得初始化状态
         boolean getDataListInitFlag(int type);
 
-        void setDataListInitFlag(int type);
+        // 设置初始化状态
+        void setDataListInitFlag(int type, boolean flag);
+
+        // 传递Tag
+        void getFragmentTag(String tag);
     }
 }

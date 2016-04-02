@@ -49,7 +49,8 @@ public class MainActivity extends BaseActivity implements
     private final String TAG = "MainActivity";
     protected final int CONSTANT_START_NOTHING = 0;
     protected static final int CONSTANT_START_BASIC_INFORMATION = 1;
-    protected static final int CONSTANT_START_REPORT_LOSS = 2;
+    protected static final int CONSTANT_START_TRADING_INQUIRY = 2;
+    protected static final int CONSTANT_START_REPORT_LOSS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,36 @@ public class MainActivity extends BaseActivity implements
                                   Throwable error) {
                 // 网络错误
                 Toast.makeText(MainActivity.this, R.string.network_error,
+                        Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void sendPrePostRequestForTradingInquiry() {
+        // 装填POST数据
+        RequestParams params = new RequestParams();
+        params.add("needHeader", "false");
+        // 发送POST请求
+        httpClient.post(UrlConstant.TRJN_QUERY, params, new AsyncHttpResponseHandler() {
+            // 成功响应，刷新全局httpClient
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                MyApplication myApp = (MyApplication) getApplication();
+                myApp.setHttpClient(httpClient);
+                LogUtil.d(TAG, new String(responseBody));
+                // 转到ManageTradingInquiryActivity
+                startActivity(new Intent(MyApplication.getContext(),
+                        ManageTradingInquiryActivity.class));
+            }
+
+            // 网络错误
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                LogUtil.e(TAG, "Network error.");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
