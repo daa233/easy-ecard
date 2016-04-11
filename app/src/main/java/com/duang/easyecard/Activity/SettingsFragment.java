@@ -99,10 +99,16 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        LogUtil.d(TAG, "onItemClick: " + position);
         switch (position) {
             case 0:
-                // 打开收件箱
-                LogUtil.d(TAG, "onItemClick: " + 0);
+                // 打开“个人信息”
+                break;
+            case 1:
+                // 打开“问题反馈”
+                break;
+            case 2:
+                // 打开“关于软件”
                 break;
             default:
                 break;

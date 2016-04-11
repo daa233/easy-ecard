@@ -231,4 +231,7 @@
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
+    <string name="title_activity_settings_personal_information">
+        SettingsPersonalInformationActivity
+    </string>
 </resources>
