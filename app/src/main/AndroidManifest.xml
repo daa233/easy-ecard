@@ -81,6 +81,10 @@
         <activity
             android:name=".Activity.SettingsPersonalInformationActivity"
             android:label="@string/title_activity_settings_personal_information"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.SettingsFeedbackActivity"
+            android:label="@string/title_activity_settings_feedback"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

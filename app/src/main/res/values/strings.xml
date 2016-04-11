@@ -234,4 +234,5 @@
     <string name="title_activity_settings_personal_information">
         SettingsPersonalInformationActivity
     </string>
+    <string name="title_activity_settings_feedback">SettingsFeedbackActivity</string>
 </resources>
