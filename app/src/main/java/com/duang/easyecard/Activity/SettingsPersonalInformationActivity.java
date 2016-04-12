@@ -6,25 +6,36 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
+import com.duang.easyecard.Model.UserBasicInformation;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.rey.material.widget.ProgressView;
 
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
 public class SettingsPersonalInformationActivity extends BaseActivity
@@ -35,6 +46,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     UITableView mTableView;
 
     private AsyncHttpClient httpClient;
+    private UserBasicInformation userBasicInformation;
     private String response;
     private List<String> dataList;
 
@@ -66,6 +78,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         // 获得全局变量httpClient
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
+        userBasicInformation = myApp.getUserBasicInformation();
         // 初始化数据列表
         dataList = new ArrayList<>();
         // 发送GET请求
@@ -87,6 +100,9 @@ public class SettingsPersonalInformationActivity extends BaseActivity
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
+                mProgressView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -107,11 +123,46 @@ public class SettingsPersonalInformationActivity extends BaseActivity
             Document doc;
             try {
                 doc = Jsoup.parse(response);
+                Elements inputs = doc.select("input");
+                for (Element input : inputs) {
+                    if (input.attr("type").equals("text")) {
+                        dataList.add(input.attr("value"));
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            LogUtil.d(TAG, "onPostExecute.");
+            // 创建TableView
+            createTableViewDataList();
+            // 隐藏ProgressView，显示TableView
+            mProgressView.setVisibility(View.INVISIBLE);
+            mTableView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    // 创建TableView
+    private void createTableViewDataList() {
+        generateCustomItem(mTableView, getString(R.string.platform_account),
+                userBasicInformation.getStuId(), false);
+        generateCustomItem(mTableView, getString(R.string.nickname), dataList.get(0), true);
+        generateCustomItem(mTableView, getString(R.string.name),
+                userBasicInformation.getName(), false);
+        generateCustomItem(mTableView, getString(R.string.stu_id),
+                userBasicInformation.getStuId(), false);
+        generateCustomItem(mTableView, getString(R.string.card_account),
+                userBasicInformation.getCardAccount(), false);
+        generateCustomItem(mTableView, getString(R.string.email), dataList.get(1), true);
+        generateCustomItem(mTableView, getString(R.string.phone), dataList.get(2), true);
+        generateCustomItem(mTableView, getString(R.string.msn), dataList.get(3), true);
+        generateCustomItem(mTableView, getString(R.string.qq), dataList.get(4), true);
+        mTableView.commit();
     }
 
     // 构造UItableView的列表项，传入title和content和clickable
@@ -128,5 +179,67 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         ViewItem v = new ViewItem(relativeLayout);
         v.setClickable(clickable);  // Set clickable
         tableView.addViewItem(v);
+    }
+
+    // 创建菜单选项
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_settings_personal_information, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // 菜单的选择事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings_personal_information_sync:
+                // 从一卡通同步信息
+                LogUtil.d(TAG, "Sync information from one-card.");
+                // 显示ProgressView，隐藏TableView
+                mProgressView.setVisibility(View.VISIBLE);
+                mTableView.setVisibility(View.INVISIBLE);
+                // 发送POST请求
+                sendPOSTRequest();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // 发送POST请求，从一卡通同步用户信息
+    private void sendPOSTRequest() {
+        httpClient.post(UrlConstant.ONE_KEY_SYNC, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                // 响应成功
+                try {
+                    if (response.getString("ret").equals("true")) {
+                        // 同步响应成功，重新发送GET请求获取数据
+                        sendGETRequest();
+                    } else {
+                        // 同步失败
+                        new SweetAlertDialog(MyApplication.getContext(), SweetAlertDialog.ERROR_TYPE)
+                                .setTitleText(getString(R.string.sync_from_one_card_error))
+                                .setConfirmText(getString(R.string.OK))
+                                .show();
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                                  Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                // 网络错误
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
+                throwable.printStackTrace();
+            }
+        });
     }
 }

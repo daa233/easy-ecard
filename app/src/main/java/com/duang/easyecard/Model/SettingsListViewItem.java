@@ -8,7 +8,8 @@ public class SettingsListViewItem {
     private String title;
     private int arrowResId;
 
-    public SettingsListViewItem() {
+    public SettingsListViewItem(String title) {
+        this.title = title;
     }
 
     public int getIconResId() {

@@ -10,9 +10,10 @@ import java.util.List;
 /**
  * Created by MrD on 2016/4/9.
  */
-public class SettingsListViewAdapter  extends CommonAdapter<SettingsListViewItem> {
+public class SettingsListViewAdapter extends CommonAdapter<SettingsListViewItem> {
 
-    public SettingsListViewAdapter(Context context, List<SettingsListViewItem> datas, int itemLayoutId) {
+    public SettingsListViewAdapter(Context context, List<SettingsListViewItem> datas,
+                                   int itemLayoutId) {
         super(context, datas, itemLayoutId);
     }
 

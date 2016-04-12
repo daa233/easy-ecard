@@ -226,13 +226,23 @@
 
     <!-- SettingsFragment -->
     <string name="settings_personal_information">个人信息</string>
+    <string name="settings_feedback">问题反馈</string>
+    <string name="about">关于软件</string>
     <string name="sign_off">退出登录</string>
+    <!-- SettingsPersonalInformationActivity -->
+    <string name="title_activity_settings_personal_information">个人信息</string>
+    <string name="platform_account">平台账号</string>
+    <string name="nickname">昵称</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="msn">MSN</string>
+    <string name="qq">QQ</string>
+    <string name="sync_from_one_card">从一卡通同步信息</string>
+    <string name="sync_from_one_card_error">同步失败！</string>
+    <!-- SettingsFeedbackActivity -->
+    <string name="title_activity_settings_feedback">问题反馈</string>
 
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
-    <string name="title_activity_settings_personal_information">
-        SettingsPersonalInformationActivity
-    </string>
-    <string name="title_activity_settings_feedback">SettingsFeedbackActivity</string>
 </resources>

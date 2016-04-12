@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.duang.easyecard.Activity.SettingsPersonalInformationActivity"
     tools:showIn="@layout/activity_settings_personal_information">
@@ -19,7 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="80dp"
             app:pv_autostart="true"
-            app:pv_progressMode="indeterminate"/>
+            app:pv_progressMode="indeterminate" />
 
         <br.com.dina.ui.widget.UITableView
             android:id="@+id/settings_personal_information_table_view"

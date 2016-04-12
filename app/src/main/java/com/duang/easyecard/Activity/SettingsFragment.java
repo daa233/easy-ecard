@@ -1,6 +1,6 @@
 package com.duang.easyecard.Activity;
 
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +14,6 @@ import com.duang.easyecard.Model.SettingsListViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.SettingsListViewAdapter;
-import com.rey.material.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +26,18 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
 
     private View viewFragment;
     private ListView mListView;
-    private Button mSignOffButton;
 
     private List<SettingsListViewItem> dataList;
     private SettingsListViewAdapter mAdapter;
 
     private int[] iconImageArray = {
-            R.drawable.messages_question
+            R.mipmap.ic_launcher,
+            R.mipmap.ic_launcher,
+            R.mipmap.ic_launcher,
+            R.mipmap.ic_launcher
     };
     private String[] titleArray;
-    private int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
+    private final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
 
     private final String TAG = "SettingsFragment";
 
@@ -58,27 +59,21 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
     private void initView() {
         // 实例化控件
         mListView = (ListView) viewFragment.findViewById(R.id.settings_list_view);
-        mSignOffButton = (Button) viewFragment.findViewById(R.id.settings_sign_off_button);
-
-        mSignOffButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSignOffButtonClick(v);
-            }
-        });
     }
 
     private void initData() {
         // ItemTitle
         titleArray = new String[]{
-                getString(R.string.settings_personal_information)
+                getString(R.string.settings_personal_information),
+                getString(R.string.settings_feedback),
+                getString(R.string.about),
+                getString(R.string.sign_off)
         };
         dataList = new ArrayList<>();
         SettingsListViewItem item;
         if (iconImageArray.length == titleArray.length) {
             for (int i = 0; i < titleArray.length; i++) {
-                item = new SettingsListViewItem();
-                item.setTitle(titleArray[i]);
+                item = new SettingsListViewItem(titleArray[i]);
                 item.setIconResId(iconImageArray[i]);
                 item.setArrowResId(arrowResId);
                 dataList.add(item);
@@ -103,9 +98,13 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         switch (position) {
             case 0:
                 // 打开“个人信息”
+                startActivity(new Intent(MyApplication.getContext(),
+                        SettingsPersonalInformationActivity.class));
                 break;
             case 1:
                 // 打开“问题反馈”
+                startActivity(new Intent(MyApplication.getContext(),
+                        SettingsFeedbackActivity.class));
                 break;
             case 2:
                 // 打开“关于软件”
