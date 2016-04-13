@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,7 +42,6 @@ import cz.msebera.android.httpclient.Header;
 public class SettingsPersonalInformationActivity extends BaseActivity
         implements UITableView.ClickListener {
 
-    FloatingActionButton mFab;
     ProgressView mProgressView;
     UITableView mTableView;
 
@@ -66,7 +66,6 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         // 显示Back按钮
         setDisplayHomeButton();
         // 实例化控件
-        mFab = (FloatingActionButton) findViewById(R.id.settings_personal_information_fab);
         mProgressView = (ProgressView) findViewById(
                 R.id.settings_personal_information_progress_view);
         mTableView = (UITableView) findViewById(R.id.settings_personal_information_table_view);
@@ -199,6 +198,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                 // 显示ProgressView，隐藏TableView
                 mProgressView.setVisibility(View.VISIBLE);
                 mTableView.setVisibility(View.INVISIBLE);
+                mTableView.clear();
                 // 发送POST请求
                 sendPOSTRequest();
                 break;
@@ -219,6 +219,8 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                     if (response.getString("ret").equals("true")) {
                         // 同步响应成功，重新发送GET请求获取数据
                         sendGETRequest();
+                        Toast.makeText(MyApplication.getContext(), getString(
+                                R.string.sync_from_one_card_success), Toast.LENGTH_SHORT).show();
                     } else {
                         // 同步失败
                         new SweetAlertDialog(MyApplication.getContext(), SweetAlertDialog.ERROR_TYPE)
@@ -226,7 +228,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                                 .setConfirmText(getString(R.string.OK))
                                 .show();
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

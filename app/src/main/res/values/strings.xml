@@ -238,6 +238,7 @@
     <string name="msn">MSN</string>
     <string name="qq">QQ</string>
     <string name="sync_from_one_card">从一卡通同步信息</string>
+    <string name="sync_from_one_card_success">从一卡通同步信息成功！</string>
     <string name="sync_from_one_card_error">同步失败！</string>
     <!-- SettingsFeedbackActivity -->
     <string name="title_activity_settings_feedback">问题反馈</string>

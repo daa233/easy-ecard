@@ -270,6 +270,8 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         TextView titleText = (TextView) relativeLayout.getChildAt(0);
         titleText.setText(title);
         TextView contentText = (TextView) relativeLayout.getChildAt(1);
+        // 将contentText设置为可以选择，方便复制联系方式
+        contentText.setTextIsSelectable(true);
         contentText.setText(content);
         ViewItem v = new ViewItem(relativeLayout);
         v.setClickable(false);
