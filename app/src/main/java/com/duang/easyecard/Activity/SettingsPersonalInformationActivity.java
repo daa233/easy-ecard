@@ -1,10 +1,9 @@
 package com.duang.easyecard.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,11 +50,21 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     private List<String> dataList;
 
     private final String TAG = "SettingsPersonalInformationActivity";
+    private final int CONSTANT_NICKNAME = 1;
+    private final int CONSTANT_EMAIL = 5;
+    private final int CONSTANT_PHONE = 6;
+    private final int CONSTANT_MSN = 7;
+    private final int CONSTANT_QQ = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_personal_information);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initView();
         initData();
     }
@@ -110,7 +119,31 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     @Override
     public void onClick(int i) {
         LogUtil.d(TAG, "UITableView onClick at " + i);
-        // 跳转到修改个人信息Activity，或者弹出修改信息对话框
+        // 跳转到修改个人信息Activity，请求码为点击位置
+        Intent intent = new Intent(MyApplication.getContext(),
+                SettingsModifyPersonalInformationActivity.class);
+        intent.putExtra("TYPE", i);
+        intent.putExtra("CONTENT", getDataAt(i));
+        startActivity(intent);
+    }
+
+    // 通过UITableView的点击位置获得dataList中对应的数据
+    private String getDataAt(int position) {
+        switch (position) {
+            case CONSTANT_NICKNAME:
+                return dataList.get(0);
+            case CONSTANT_EMAIL:
+                return dataList.get(1);
+            case CONSTANT_PHONE:
+                return  dataList.get(2);
+            case CONSTANT_MSN:
+                return dataList.get(3);
+            case CONSTANT_QQ:
+                return dataList.get(4);
+            default:
+                LogUtil.e(TAG, "Unexpected position in dataList.");
+                return null;
+        }
     }
 
     // 解析响应数据
@@ -138,6 +171,8 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             LogUtil.d(TAG, "onPostExecute.");
+            // 先清空TableView
+            mTableView.clear();
             // 创建TableView
             createTableViewDataList();
             // 隐藏ProgressView，显示TableView
@@ -198,7 +233,6 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                 // 显示ProgressView，隐藏TableView
                 mProgressView.setVisibility(View.VISIBLE);
                 mTableView.setVisibility(View.INVISIBLE);
-                mTableView.clear();
                 // 发送POST请求
                 sendPOSTRequest();
                 break;

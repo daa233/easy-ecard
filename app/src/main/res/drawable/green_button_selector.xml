@@ -23,7 +23,7 @@
                 android:radius="8dp" />
         </shape>
     </item>
-<!-- default -->
+    <!-- default -->
     <item>        
         <shape>
             <gradient
@@ -34,4 +34,5 @@
                 android:radius="8dp" />
         </shape>
     </item>
+
 </selector>

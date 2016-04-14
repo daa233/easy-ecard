@@ -240,10 +240,26 @@
     <string name="sync_from_one_card">从一卡通同步信息</string>
     <string name="sync_from_one_card_success">从一卡通同步信息成功！</string>
     <string name="sync_from_one_card_error">同步失败！</string>
+    <!-- SettingsModifyPersonalInformationActivity -->
+    <string name="title_activity_settings_modify_personal_information_nickname">修改昵称</string>
+    <string name="title_activity_settings_modify_personal_information_email">修改Email</string>
+    <string name="title_activity_settings_modify_personal_information_phone">修改Phone</string>
+    <string name="title_activity_settings_modify_personal_information_msn">修改MSN</string>
+    <string name="title_activity_settings_modify_personal_information_qq">修改QQ</string>
+    <string name="settings_modify_personal_information_nickname_hint">请输入您的昵称</string>
+    <string name="settings_modify_personal_information_email_hint">请输入您的Email</string>
+    <string name="settings_modify_personal_information_phone_hint">请输入您的电话</string>
+    <string name="settings_modify_personal_information_msn_hint">请输入您的MSN</string>
+    <string name="settings_modify_personal_information_qq_hint">请输入您的QQ</string>
+    <string name="did_not_modify_anything">未作修改</string>
+    <string name="submit">提交</string>
     <!-- SettingsFeedbackActivity -->
-    <string name="title_activity_settings_feedback">问题反馈</string>
+    <string name="title_activity_settings_feedback">意见反馈</string>
 
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
+    <string name="title_activity_settings_modify_personal_information2">
+        SettingsModifyPersonalInformationActivity2
+    </string>
 </resources>

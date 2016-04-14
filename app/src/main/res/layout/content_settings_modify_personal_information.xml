@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.duang.easyecard.Activity.SettingsModifyPersonalInformationActivity"
+    tools:showIn="@layout/activity_settings_personal_information">
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/settings_modify_personal_information_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:maxLength="50"
+        app:met_floatingLabel="highlight"
+        app:met_helperTextColor="@color/chocolate" />
+
+    <Button
+        android:id="@+id/settings_modify_personal_information_submit_button"
+        style="@style/button_ripple_wave"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/green_button_selector"
+        android:enabled="false"
+        android:onClick="onSubmitButtonClick"
+        android:text="@string/submit" />
+</LinearLayout>
