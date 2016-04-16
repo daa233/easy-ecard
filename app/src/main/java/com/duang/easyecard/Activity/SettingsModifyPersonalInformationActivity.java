@@ -8,11 +8,20 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
+import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class SettingsModifyPersonalInformationActivity extends BaseActivity {
 
@@ -20,9 +29,15 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
     private Button button;
 
     private AsyncHttpClient httpClient;
-    private String response;
+    private String id;
+    private String account;
     private int type;
     private String content;
+    private String nickname;
+    private String email;
+    private String phone;
+    private String msn;
+    private String qq;
 
     private final String TAG = "SettingsModifyPersonalInformationActivity";
     private final int CONSTANT_NICKNAME = 1;
@@ -72,9 +87,19 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
     }
 
     private void initData() {
+        // 获得全局变量httpClient
+        MyApplication myApp = (MyApplication) getApplication();
+        httpClient = myApp.getHttpClient();
         // 获得由SettingsPersonalInformationActivity传递来的数据
         Intent intent = getIntent();
+        id = intent.getStringExtra("ID");
+        account = intent.getStringExtra("ACCOUNT");
         type = intent.getIntExtra("TYPE", 0);
+        nickname = intent.getStringExtra("NICKNAME");
+        email = intent.getStringExtra("EMAIL");
+        phone = intent.getStringExtra("PHONE");
+        msn = intent.getStringExtra("MSN");
+        qq = intent.getStringExtra("QQ");
         content = intent.getStringExtra("CONTENT");
         LogUtil.d(TAG, "type = " + type);
         LogUtil.d(TAG, "content = " + content);
@@ -140,6 +165,7 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 break;
             default:
+                LogUtil.e(TAG, "Unexpected type.");
                 break;
         }
     }
@@ -147,5 +173,89 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
     // “提交”按钮的点击事件
     public void onSubmitButtonClick(View v) {
         LogUtil.d(TAG, "onSubmitButtonClick.");
+        // 装填POST数据
+        RequestParams params = new RequestParams();
+        params.add("ID", id);
+        params.add("Account", account);
+        params.add("Introduction", "/");
+        params.add("PwdFetch.Code", "JuniorSchool");
+        params.add("PwdFetchCode", "/");
+        switch (type) {
+            case CONSTANT_NICKNAME:
+                // 修改昵称
+                params.add("NickName", editText.getText().toString());
+                params.add("Contact.Email", email);
+                params.add("Contact.Phone", phone);
+                params.add("Contact.MSN", msn);
+                params.add("Contact.QQ", qq);
+                break;
+            case CONSTANT_EMAIL:
+                // 修改Email
+                params.add("NickName", editText.getText().toString());
+                params.add("Contact.Email", email);
+                params.add("Contact.Phone", phone);
+                params.add("Contact.MSN", msn);
+                params.add("Contact.QQ", qq);
+                params.add("Contact.Email", editText.getText().toString());
+                break;
+            case CONSTANT_PHONE:
+                // 修改Phone
+                params.add("NickName", nickname);
+                params.add("Contact.Email", email);
+                params.add("Contact.Phone", editText.getText().toString());
+                params.add("Contact.MSN", msn);
+                params.add("Contact.QQ", qq);
+                break;
+            case CONSTANT_MSN:
+                // 修改MSN
+                params.add("NickName", nickname);
+                params.add("Contact.Email", email);
+                params.add("Contact.Phone", phone);
+                params.add("Contact.MSN", editText.getText().toString());
+                params.add("Contact.QQ", qq);
+                break;
+            case CONSTANT_QQ:
+                // 修改QQ
+                params.add("NickName", nickname);
+                params.add("Contact.Email", email);
+                params.add("Contact.Phone", phone);
+                params.add("Contact.MSN", msn);
+                params.add("Contact.QQ", editText.getText().toString());
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpected type.");
+                break;
+        }
+        // 发送POST请求
+        httpClient.post(UrlConstant.EDIT_USER_INFO, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    if (response.getBoolean("ret")) {
+                        LogUtil.d(TAG, "Success to submit.");
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.modify_successed), Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        LogUtil.e(TAG, "Fail to submit. Returned false.");
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.modify_failed), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LogUtil.e(TAG, "Fail to submit. Throwed an exception.");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                                  Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                LogUtil.e(TAG, "Fail to submit. Network error.");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

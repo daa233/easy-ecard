@@ -48,6 +48,13 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     private UserBasicInformation userBasicInformation;
     private String response;
     private List<String> dataList;
+    private String id;
+    private String account;
+    private String nickname;
+    private String email;
+    private String phone;
+    private String msn;
+    private String qq;
 
     private final String TAG = "SettingsPersonalInformationActivity";
     private final int CONSTANT_NICKNAME = 1;
@@ -87,6 +94,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         userBasicInformation = myApp.getUserBasicInformation();
+        account = userBasicInformation.getStuId();
         // 初始化数据列表
         dataList = new ArrayList<>();
         // 发送GET请求
@@ -122,7 +130,14 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         // 跳转到修改个人信息Activity，请求码为点击位置
         Intent intent = new Intent(MyApplication.getContext(),
                 SettingsModifyPersonalInformationActivity.class);
+        intent.putExtra("ID", id);
+        intent.putExtra("ACCOUNT", account);
         intent.putExtra("TYPE", i);
+        intent.putExtra("NICKNAME", nickname);
+        intent.putExtra("EMAIL", email);
+        intent.putExtra("PHONE", phone);
+        intent.putExtra("MSN", msn);
+        intent.putExtra("QQ", qq);
         intent.putExtra("CONTENT", getDataAt(i));
         startActivity(intent);
     }
@@ -131,15 +146,15 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     private String getDataAt(int position) {
         switch (position) {
             case CONSTANT_NICKNAME:
-                return dataList.get(0);
+                return nickname;
             case CONSTANT_EMAIL:
-                return dataList.get(1);
+                return email;
             case CONSTANT_PHONE:
-                return  dataList.get(2);
+                return  phone;
             case CONSTANT_MSN:
-                return dataList.get(3);
+                return msn;
             case CONSTANT_QQ:
-                return dataList.get(4);
+                return qq;
             default:
                 LogUtil.e(TAG, "Unexpected position in dataList.");
                 return null;
@@ -157,8 +172,13 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                 doc = Jsoup.parse(response);
                 Elements inputs = doc.select("input");
                 for (Element input : inputs) {
+                    // 获取之前的内容
                     if (input.attr("type").equals("text")) {
                         dataList.add(input.attr("value"));
+                    }
+                    // 获取ID
+                    if (input.attr("id").equals("ID")) {
+                        id = input.attr("value");
                     }
                 }
             } catch (Exception e) {
@@ -171,6 +191,11 @@ public class SettingsPersonalInformationActivity extends BaseActivity
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             LogUtil.d(TAG, "onPostExecute.");
+            nickname = dataList.get(0);
+            email = dataList.get(1);
+            phone = dataList.get(2);
+            msn = dataList.get(3);
+            qq = dataList.get(4);
             // 先清空TableView
             mTableView.clear();
             // 创建TableView
@@ -257,10 +282,8 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                                 R.string.sync_from_one_card_success), Toast.LENGTH_SHORT).show();
                     } else {
                         // 同步失败
-                        new SweetAlertDialog(MyApplication.getContext(), SweetAlertDialog.ERROR_TYPE)
-                                .setTitleText(getString(R.string.sync_from_one_card_error))
-                                .setConfirmText(getString(R.string.OK))
-                                .show();
+                        Toast.makeText(MyApplication.getContext(), getString(
+                                R.string.sync_from_one_card_error), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

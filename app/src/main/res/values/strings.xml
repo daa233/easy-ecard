@@ -251,15 +251,14 @@
     <string name="settings_modify_personal_information_phone_hint">请输入您的电话</string>
     <string name="settings_modify_personal_information_msn_hint">请输入您的MSN</string>
     <string name="settings_modify_personal_information_qq_hint">请输入您的QQ</string>
-    <string name="did_not_modify_anything">未作修改</string>
+    <string name="did_not_modify_anything">未作任何修改</string>
     <string name="submit">提交</string>
+    <string name="modify_successed">修改成功！</string>
+    <string name="modify_failed">修改失败！</string>
     <!-- SettingsFeedbackActivity -->
     <string name="title_activity_settings_feedback">意见反馈</string>
 
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
-    <string name="title_activity_settings_modify_personal_information2">
-        SettingsModifyPersonalInformationActivity2
-    </string>
 </resources>
