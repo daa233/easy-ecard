@@ -114,6 +114,7 @@
     <string name="today_total_transaction_amount">今日总消费金额：￥</string>
     <string name="week_total_transaction_amount">本周总消费金额：￥</string>
     <string name="total_transaction_amount">本段时间总消费金额：￥</string>
+    <string name="title_menu_info">相关信息</string>
     <!-- ManageReportLossActivity -->
     <string name="title_activity_manage_report_loss">挂失校园卡</string>
     <string name="report_loss_password_hint">请输入校园卡查询密码</string>
@@ -226,7 +227,7 @@
 
     <!-- SettingsFragment -->
     <string name="settings_personal_information">个人信息</string>
-    <string name="settings_feedback">问题反馈</string>
+    <string name="settings_feedback">意见反馈</string>
     <string name="about">关于软件</string>
     <string name="sign_off">退出登录</string>
     <!-- SettingsPersonalInformationActivity -->

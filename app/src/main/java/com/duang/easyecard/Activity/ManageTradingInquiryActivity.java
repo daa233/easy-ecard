@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.duang.easyecard.R;
@@ -115,16 +117,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         fragmentTagHashMap.put(String.valueOf(type), tag);
     }
 
-    // 该类型Fragment已销毁
-    @Override
-    public void isOnStop(int type) {
-        // 获得Fragment的实例，当“历史流水”销毁时，在“一周流水”中显示交易额汇总；反之亦然
-        String tag = fragmentTagHashMap.get(String.valueOf(2 - type));
-        ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
-                getSupportFragmentManager().findFragmentByTag(tag);
-        fragment.showSumTransaction();
-    }
-
     // Custom adapter class provides fragments required for the view pager.
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -188,12 +180,58 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         }
     }
 
+    // 创建菜单项
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_manage_trading_inquiry, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     // 菜单项选择
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // Back
             case android.R.id.home:
                 doBack();
+                break;
+            // Info，本段时间消费总额
+            case R.id.action_manage_trading_inquiry_info:
+                switch (tabLayout.getSelectedTabPosition()) {
+                    case 0:
+                        if (historyInitFlag) {
+                            ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                                    getSupportFragmentManager().findFragmentByTag(
+                                            fragmentTagHashMap.get(String.valueOf(0)));
+                            fragment.showSumTransaction();
+                        } else {
+                            LogUtil.e(TAG, "History not init.");
+                        }
+                        break;
+                    case 1:
+                        if (todayInitFlag) {
+                            ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                                    getSupportFragmentManager().findFragmentByTag(
+                                            fragmentTagHashMap.get(String.valueOf(1)));
+                            fragment.showSumTransaction();
+                        } else {
+                            LogUtil.e(TAG, "Today not init.");
+                        }
+                        break;
+                    case 2:
+                        if (weekInitFlag) {
+                            ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                                    getSupportFragmentManager().findFragmentByTag(
+                                            fragmentTagHashMap.get(String.valueOf(2)));
+                            fragment.showSumTransaction();
+                        } else {
+                            LogUtil.e(TAG, "Week not init.");
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 break;
             default:
                 break;
