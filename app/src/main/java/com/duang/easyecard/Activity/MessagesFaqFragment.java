@@ -121,7 +121,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
                     break;
                 case 2:
                     type = CONSTANT_ZHAQ;
-                    address = UrlConstant.MOBILE_FAQ_ZXJF;
+                    address = UrlConstant.MOBILE_FAQ_ZHAQ;
                     break;
                 case 3:
                     type = CONSTANT_ZXJF;
