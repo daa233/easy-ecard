@@ -18,6 +18,8 @@ import com.duang.easyecard.Util.SettingsListViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * SettingsFragment 设置
  * A simple {@link Fragment} subclass.
@@ -88,10 +90,6 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         mListView.setOnItemClickListener(this);
     }
 
-    private void onSignOffButtonClick(View v) {
-        LogUtil.d(TAG, "onSignOffButtonClick.");
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         LogUtil.d(TAG, "onItemClick: " + position);
@@ -102,15 +100,44 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
                         SettingsPersonalInformationActivity.class));
                 break;
             case 1:
-                // 打开“问题反馈”
+                // 打开“意见反馈”
                 startActivity(new Intent(MyApplication.getContext(),
                         SettingsFeedbackActivity.class));
                 break;
             case 2:
                 // 打开“关于软件”
                 break;
+            case 3:
+                // “退出登录”
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.sign_off))
+                        .setContentText(getString(R.string.sign_off_config))
+                        .setConfirmText(getString(R.string.OK))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                // 点击“确定”按钮，销毁MainActivity，跳转到SigninActivity
+                                signOff();
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .setCancelText(getString(R.string.Cancel))
+                        .show();
+                break;
             default:
                 break;
         }
+    }
+
+    // 注销
+    private void signOff() {
+        // 将全局变量httpClient和userBasicInformation设置为null
+        MyApplication myApp = (MyApplication) getActivity().getApplication();
+        myApp.setHttpClient(null);
+        myApp.setUserBasicInformation(null);
+        // 跳转到SigninActivity
+        startActivity(new Intent(MyApplication.getContext(), SigninActivity.class));
+        // 销毁MainActivity
+        getActivity().finish();
     }
 }
