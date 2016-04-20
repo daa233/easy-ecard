@@ -15,20 +15,16 @@ import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
+import com.duang.easyecard.Util.EncryptorUtil;
 import com.duang.easyecard.Util.ImageUtil;
 import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.duang.easyecard.Util.LogUtil;
-import com.duang.easyecard.Util.EncryptorUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.Base64;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 import com.rey.material.widget.Spinner;
-
-import org.json.JSONObject;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -56,6 +52,9 @@ public class SigninActivity extends BaseActivity {
     private boolean rememberPasswordFlag = false;
     private boolean autoSigninFlag = false;
     private boolean signinSuccessFlag = false;
+    private String signinType;
+    private String account;
+    private String password;
 
     private String signtype = "SynSno";  // 登录类型，{"SynSno", "SynCard"}，默认为"SynSno"
     private final String TAG = "SigninActivity.";
@@ -71,7 +70,6 @@ public class SigninActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-        setTitle(getString(R.string.title_activity_signin));
         initView();
         initData();
     }
@@ -160,56 +158,26 @@ public class SigninActivity extends BaseActivity {
         httpClient = new AsyncHttpClient();
         // 初始化USER_SEED，Use ANDROID_ID as the USER_SEED
         USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        // 初始化SharedPreferences
-        sharedPreferences = this.getSharedPreferences(SIGNIN_PREFERENCES, MODE_PRIVATE);
-        // 获取用户设置记住密码及自动登录的选中状态
-        rememberPasswordFlag = sharedPreferences.getBoolean(REMEMBER_PASSWORD, false);
-        autoSigninFlag = sharedPreferences.getBoolean(AUTO_SIGNIN, false);
+        // 获取验证码
+        getCheckcodeImage();
+        // 获取Intent，以及Intent传递的数据
+        Intent intent = getIntent();
+        rememberPasswordFlag = intent.getBooleanExtra(REMEMBER_PASSWORD, false);
         if (rememberPasswordFlag) {
-            // 用户之前选择了记住密码。获取已经在本地记住的用户数据，将相关数据填充到布局
-            String signinType = sharedPreferences.getString(SIGNIN_TYPE, "");
-            String account = sharedPreferences.getString(USER_ACCOUNT, "");
-            String password = sharedPreferences.getString(USER_PASSWORD, "");
-            // 对账号、密码进行解密
-            try {
-                account = EncryptorUtil.decrypt(USER_SEED, account);
-                password = EncryptorUtil.decrypt(USER_SEED, password);
-            } catch (GeneralSecurityException e) {
-                Toast.makeText(SigninActivity.this,
-                        getString(R.string.signin_error_when_decrypting),
-                        Toast.LENGTH_SHORT).show();
-                LogUtil.e(TAG, "Error: when decrypting.");
-                account = "";
-                password = "";
-                e.printStackTrace();
-            }
+            // 用户选择了记住密码
+            autoSigninFlag = intent.getBooleanExtra(AUTO_SIGNIN, false);
+            signinType = intent.getStringExtra(SIGNIN_TYPE);
+            account = intent.getStringExtra(USER_ACCOUNT);
+            password = intent.getStringExtra(USER_PASSWORD);
             // 根据登录类型选取SigninTypeSpinner应该选取的位置
             signinTypeSpinner.setSelection(signinType.equals("SynSno") ? 0 : 1);
             accountEditText.setText(account);
             passwordEditText.setText(password);
             rememberPasswordCheckBox.setChecked(rememberPasswordFlag);
             autoSigninCheckBox.setChecked(autoSigninFlag);
-            if (autoSigninFlag) {
-                sweetAlertDialog = new SweetAlertDialog(
-                        SigninActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.signin_processing))
-                        .show();
-                // 不允许退出SweetAlertDialog
-                sweetAlertDialog.setCancelable(false);
-                // 自动登录
-                autoSignin(signinType, account, password);
-            } else {
-                // 记住了密码，但没选择自动登录，将数据填充到布局
-                LogUtil.d(TAG, "Has remembered the password. Load data into layout.");
-                // 获取验证码
-                getCheckcodeImage();
-            }
         } else {
-            // 不记住密码
+            // 用户没有选择记住密码
             LogUtil.d(TAG, "User did't choose to remember password.");
-            // 获取验证码
-            getCheckcodeImage();
         }
     }
 
@@ -246,8 +214,8 @@ public class SigninActivity extends BaseActivity {
             checkcodeEditText.setError(getString(R.string.signin_checkcode_is_empty));
         } else {
             // 所有EditText都有输入，显示SweetAlertDialog，准备发送POST请求
-            sweetAlertDialog = new SweetAlertDialog(
-                    SigninActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+            sweetAlertDialog = new SweetAlertDialog(SigninActivity.this,
+                    SweetAlertDialog.PROGRESS_TYPE);
             sweetAlertDialog
                     .setTitleText(getString(R.string.signin_processing))
                     .show();
@@ -256,53 +224,6 @@ public class SigninActivity extends BaseActivity {
             // 发送POST请求
             sendPOSTRequest();
         }
-    }
-
-    // 自动登录
-    private void autoSignin(String signType, String account, String password) {
-        LogUtil.d(TAG, "Auto signin is called.");
-        // 装填POST数据
-        RequestParams params = new RequestParams();
-        params.add("signType", signType);
-        params.add("UserAccount", account);
-        params.add("Password", Base64.encodeToString(password.getBytes(), Base64.DEFAULT));
-        httpClient.post(UrlConstant.MOBILE_LOGIN, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                // 成功响应
-                try {
-                    if (response.getString("success").equals("true")) {
-                        // 登录成功
-                        onSigninSuccess();
-                    } else {
-                        // 登录失败
-                        LogUtil.e(TAG,
-                                "Auto signin failed. There is something wrong with the data.");
-                        sweetAlertDialog
-                                .setTitleText(getString(R.string.signin_automatically_failed))
-                                .setConfirmText(getString(R.string.OK))
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                        // 重置布局中的所有数据
-                        signinTypeSpinner.setSelection(0);
-                        accountEditText.setText("");
-                        passwordEditText.setText("");
-                        checkcodeEditText.setText("");
-                        rememberPasswordCheckBox.setChecked(false);
-                        autoSigninCheckBox.setChecked(false);
-                    }
-                } catch (Exception e) {
-                    LogUtil.e(TAG, "Auto signin failed.");
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                                  Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-            }
-        });
     }
 
     // 发送POST请求

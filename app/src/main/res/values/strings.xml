@@ -45,7 +45,8 @@
     <string name="signin_processing_automatically">正在自动登录&#8230;</string>
     <string name="signin_success">登录成功</string>
     <string name="signin_failed">登录失败</string>
-    <string name="signin_automatically_failed">自动登录失败，请重新登录</string>
+    <string name="signin_automatically_success">自动登录成功</string>
+    <string name="signin_automatically_failed">自动登录失败</string>
     <string name="signin_the_card_has_been_reported_loss">抱歉，该校园卡已挂失，请解挂后再登录</string>
 
     <!-- MainActivity -->
