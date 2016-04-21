@@ -199,6 +199,7 @@
     <string name="question_mark">条消息吗？</string>
     <string name="confirm_to_delete_one">您确定要删除这条消息吗？</string>
     <string name="success_to_delete">删除成功！</string>
+    <string name="fail_to_delete">删除失败！</string>
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>

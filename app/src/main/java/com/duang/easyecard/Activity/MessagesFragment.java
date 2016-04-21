@@ -47,6 +47,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     private MessagesListViewAdapter mAdapter;
     private List<MessagesListViewItem> dataList;
     private String sysUserID = "";
+    private boolean refreshingFlag = false;
     private int[] iconImageArray = {
             R.drawable.messages_inbox,
             R.drawable.messages_sent,
@@ -87,6 +88,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
         mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                // 设置refreshingFlag为true
+                refreshingFlag = true;
                 // 发送GET请求到Index，以解析sysUserID，然后获取未读消息数目
                 sendGETRequestToIndex();
             }
@@ -192,10 +195,18 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
-                mPullToRefreshView.setRefreshing(false);
+                stopRefreshing();
                 error.printStackTrace();
             }
         });
+    }
+
+    // 停止PullToRefreshView的刷新
+    private void stopRefreshing() {
+        // 停止PullToRefreshView的刷新
+        mPullToRefreshView.setRefreshing(false);
+        // 设置refreshingFlag为fasle
+        refreshingFlag = false;
     }
 
     // 发送GET请求，获取未读消息数目
@@ -207,8 +218,12 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 newMessagesCount = new String(responseBody);
                 // 组建列表
                 createList();
+                if (refreshingFlag) {
+                    Toast.makeText(MyApplication.getContext(), getString(R.string.refresh_complete),
+                            Toast.LENGTH_SHORT).show();
+                }
                 // 停止PullToRefreshView的刷新
-                mPullToRefreshView.setRefreshing(false);
+                stopRefreshing();
             }
 
             @Override
@@ -218,7 +233,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
-                mPullToRefreshView.setRefreshing(false);
+                stopRefreshing();
                 error.printStackTrace();
             }
         });
