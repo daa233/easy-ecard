@@ -203,6 +203,9 @@
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>
+    <string name="add_receiver_hint">学工号/姓名/校园卡账号</string>
+    <string name="receiver_list">接收人列表：</string>
+    <string name="send">发送</string>
 
     <!-- MessagesNoticeDetailActivity -->
     <string name="title_activity_messages_notice_detail">消息详情</string>
@@ -265,4 +268,6 @@
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
+    <string name="img_dsc_ic_add_circle_white">白色圆形添加图标</string>
+    <string name="img_dsc_ic_send_white">白色发送图标</string>
 </resources>
