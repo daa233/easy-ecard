@@ -1,69 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.duang.easyecard.Activity.MessagesCreateNoticeActivity"
     tools:showIn="@layout/activity_messages_create_notice">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="10dp">
 
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="65dp"
-            android:layout_weight="1"
-            android:hint="@string/add_receiver_hint" />
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="6dp"
-            android:foreground="@color/background"
-            android:src="@drawable/ic_add_circle_outline_black_48dp"
-            android:contentDescription="@string/img_dsc_ic_add_circle_white"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingStart="10dp"
-        android:paddingRight="10dp"
-        android:paddingEnd="10dp"
-        android:text="@string/receiver_list" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.wefika.flowlayout.FlowLayout
+        <!-- 添加标题 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start|top"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="吴彦祖（13200222002）" />
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/notice_title"
+                android:textColor="@color/black" />
 
-            <Button
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/messages_create_notice_title_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/notice_title_hint"
+                android:inputType="text"
+                android:maxLength="50"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey" />
+
+        <!-- 添加接收人 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="吴彦祖（13200222002）" />
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/send_to"
+                android:textColor="@color/black" />
 
-            <Button
-                android:layout_width="wrap_content"
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/messages_create_notice_add_receiver_edit_text"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="吴彦祖（13200222002）" />
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:hint="@string/add_receiver_hint"
+                android:maxLength="20"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/img_dsc_ic_add_circle_outline_blue_500_36dp"
+                android:onClick="onAddButtonClick"
+                android:src="@drawable/ic_add_circle_outline_blue_500_36dp" />
+        </LinearLayout>
+
+        <com.wefika.flowlayout.FlowLayout
+            android:id="@+id/messages_create_notice_receiver_flow_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|top">
+
+            <TextView
+                android:id="@+id/messages_create_notice_receiver_flow_layout_hint_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:hint="@string/add_receiver_flow_layout_hint"
+                android:textSize="12sp" />
         </com.wefika.flowlayout.FlowLayout>
-    </ScrollView>
 
-</LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey" />
+
+        <EditText
+            android:id="@+id/messages_create_notice_content_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:gravity="start|top"
+            android:hint="@string/notice_content"
+            android:maxLength="200"
+            android:minLines="4"
+            android:textSize="16sp" />
+    </LinearLayout>
+</ScrollView>

@@ -140,6 +140,8 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         } else {
             LogUtil.d(TAG, "btn Click: User is viewing someone else's lost and found event.");
             // 用户正在查看他人的丢失信息，点击按钮后通过平台向该丢卡用户发消息
+            startActivity(new Intent(MyApplication.getContext(), MessagesCreateNoticeActivity.class)
+                    .putExtra("USER_STU_ID", event.getStuId()));
         }
     }
 

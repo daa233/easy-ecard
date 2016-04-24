@@ -160,6 +160,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             case 2:
                 // 发消息
                 LogUtil.d(TAG, "onItemClick: " + 2);
+                startActivity(new Intent(MyApplication.getContext(),
+                        MessagesCreateNoticeActivity.class));
                 break;
             case 3:
                 // 留言板

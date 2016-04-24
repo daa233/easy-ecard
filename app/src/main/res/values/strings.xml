@@ -203,9 +203,22 @@
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>
-    <string name="add_receiver_hint">学工号/姓名/校园卡账号</string>
-    <string name="receiver_list">接收人列表：</string>
     <string name="send">发送</string>
+    <string name="notice_title">标题</string>
+    <string name="notice_title_hint">请输入消息标题，应小于50个字符</string>
+    <string name="notice_title_null_error">标题不能为空</string>
+    <string name="send_to">发给</string>
+    <string name="add_receiver_hint">学工号/姓名/校园卡账号</string>
+    <string name="add_receiver_null_input_error">接收人不能为空</string>
+    <string name="add_receiver_duplicate_error">不能重复添加</string>
+    <string name="add_receiver_list_is_null">尚未添加任何接收人到列表</string>
+    <string name="add_receiver_can_not_found_user">添加失败，用户不存在</string>
+    <string name="add_receiver_failure">发生错误，添加失败</string>
+    <string name="add_receiver_flow_layout_hint">提示：需要点击“+”按钮将接收人添加到列表</string>
+    <string name="notice_content">请输入消息内容，应小于200个字符</string>
+    <string name="notice_content_null_error">消息内容不能为空</string>
+    <string name="send_success">发送成功！</string>
+    <string name="send_failure">发送失败，请重试</string>
 
     <!-- MessagesNoticeDetailActivity -->
     <string name="title_activity_messages_notice_detail">消息详情</string>
@@ -268,6 +281,6 @@
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
-    <string name="img_dsc_ic_add_circle_white">白色圆形添加图标</string>
+    <string name="img_dsc_ic_add_circle_outline_blue_500_36dp">蓝色圆形添加图标</string>
     <string name="img_dsc_ic_send_white">白色发送图标</string>
 </resources>
