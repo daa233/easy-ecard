@@ -22,8 +22,10 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -98,9 +100,9 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
         // 获得Intent传递的Notice对象
         Intent intent = this.getIntent();
         notice = (Notice) intent.getSerializableExtra("Notice");
-        // 发送POST请求，获取消息的详细内容
-        sendPOSTRequest();
         type = intent.getBooleanExtra("TYPE", true);
+        // 发送预请求，获取消息的详细内容
+        sendPreGETRequest(type);
         titleTextView.setText(notice.getTitle());  // 设置消息标题
         if (type) {
             // 收件箱消息详情
@@ -124,6 +126,31 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                 notice.getCategory());  // 分类
     }
 
+    // 发送预请求
+    private void sendPreGETRequest(boolean type) {
+        String address;
+        if (type) {
+            address = UrlConstant.getReceivedNotice();
+        } else {
+            address = UrlConstant.getSentNotice();
+        }
+        httpClient.get(address, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                // 响应成功，发送POST请求
+                sendPOSTRequest();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
+                // 网络错误
+                LogUtil.e(TAG, "Network error.");
+                error.printStackTrace();
+            }
+        });
+    }
+
     // 发送POST请求，获取消息的详细内容
     private void sendPOSTRequest() {
         // 装填POST数据
@@ -135,6 +162,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 成功响应
                 response = new String(responseBody);
+                // 解析响应数据
                 new JsoupHtmlData().execute();
             }
 
@@ -304,6 +332,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                                     @Override
                                     public void onClick(View v) {
                                         LogUtil.d(TAG, "Delete this message.");
+                                        sendPOSTRequestToDelete(notice.getId());
                                     }
                                 }
                         ).show();
@@ -311,5 +340,46 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // 发送删除消息的POST请求
+    private void sendPOSTRequestToDelete(String ids) {
+        RequestParams params = new RequestParams();
+        params.add("ids", ids);
+        params.add("isSend", type ? "0" : "1");
+        httpClient.post(UrlConstant.DELETE_NOTICE, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // 响应成功
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    if (response.getString("ret").equals("true")) {
+                        // 删除成功
+                        LogUtil.d(TAG, "Success to delete. msg: " + response.getString("msg"));
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.success_to_delete), Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        // 删除失败
+                        LogUtil.e(TAG, "Failed to delete. msg: " + response.getString("msg"));
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.fail_to_delete), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    // 删除失败
+                    LogUtil.e(TAG, "Failed to delete. Caught an exception.");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                                  Throwable throwable) {
+                // 网络错误
+                super.onFailure(statusCode, headers, responseString, throwable);
+                LogUtil.e(TAG, "Network error.");
+                throwable.printStackTrace();
+            }
+        });
     }
 }

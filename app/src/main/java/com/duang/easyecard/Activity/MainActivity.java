@@ -103,6 +103,8 @@ public class MainActivity extends BaseActivity implements
     // 向“掌上校园”发送GET请求，有时该服务器会存在问题，失效时向校园卡服务平台发送GET请求
     public void sendGETRequestToMobile(int startActivityFlag) {
         startManageActivityFlag = startActivityFlag;
+        // 设置重试次数为1，Timeout时间为1秒。否则移动版出问题时，会等待较长时间
+        httpClient.setMaxRetriesAndTimeout(1, 1000);
         httpClient.get(UrlConstant.MOBILE_MANAGE_BASIC_INFO, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -116,8 +118,9 @@ public class MainActivity extends BaseActivity implements
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
-                Toast.makeText(MainActivity.this, R.string.network_error,
-                        Toast.LENGTH_SHORT).show();
+                LogUtil.d(TAG, "Failed to get data from MOBILE. Now send POST Request to platform");
+                // 向服务平台发送POST请求
+                sendPOSTRequestToServicePlatform();
                 error.printStackTrace();
             }
         });

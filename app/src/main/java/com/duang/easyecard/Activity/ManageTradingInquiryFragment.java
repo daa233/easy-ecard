@@ -581,22 +581,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         mListView.setOnHeaderUpdateListener(ManageTradingInquiryFragment.this);
         mListView.setOnGroupClickListener(ManageTradingInquiryFragment.this);
         mListView.setOnChildClickListener(ManageTradingInquiryFragment.this);
-        DecimalFormat df = new DecimalFormat("0.00");
-        if (type == CONSTANT_HISTORY) {
-            Snackbar.make(getActivity().findViewById(
-                    R.id.activity_trading_inquiry_coordinator_layout),
-                    getString(R.string.start_and_end_date) + dateUtil.getHistoryStartDate() + "—" +
-                            dateUtil.getHistoryEndDate() + "\n" +
-                            getString(R.string.total_transaction_amount) +
-                            String.valueOf(df.format(-sumTransaction)),
-                    Snackbar.LENGTH_LONG).show();
-        } else if (type == CONSTANT_TODAY) {
-            Snackbar.make(getActivity().findViewById(
-                    R.id.activity_trading_inquiry_coordinator_layout),
-                    getString(R.string.today_total_transaction_amount) +
-                            String.valueOf(df.format(-sumTransaction)),
-                    Snackbar.LENGTH_LONG).show();
-        }
         // 设置初始化标志
         communicateListener.setDataListInitFlag(type, true);
         // 显示ListView
@@ -614,7 +598,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     @Override
     public void onStop() {
         super.onStop();
-        communicateListener.isOnStop(type);
     }
 
     // 显示sumTransaction
@@ -627,13 +610,19 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                             dateUtil.getHistoryEndDate() + "\n" +
                             getString(R.string.total_transaction_amount) +
                             String.valueOf(df.format(-sumTransaction)),
-                    Snackbar.LENGTH_LONG).show();
+                    Snackbar.LENGTH_SHORT).show();
+        } else if (type == CONSTANT_TODAY) {
+            Snackbar.make(getActivity().findViewById(
+                    R.id.activity_trading_inquiry_coordinator_layout),
+                    getString(R.string.today_total_transaction_amount) +
+                            String.valueOf(df.format(-sumTransaction)),
+                    Snackbar.LENGTH_SHORT).show();
         } else if (type == CONSTANT_WEEK) {
             Snackbar.make(getActivity().findViewById(
                     R.id.activity_trading_inquiry_coordinator_layout),
                     getString(R.string.week_total_transaction_amount) +
                             String.valueOf(df.format(-sumTransaction)),
-                    Snackbar.LENGTH_LONG).show();
+                    Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -666,8 +655,5 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
 
         // 传递Tag
         void getFragmentTag(int type, String tag);
-        
-        // 销毁时向Activity发送消息
-        void isOnStop(int type);
     }
 }

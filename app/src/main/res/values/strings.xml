@@ -45,7 +45,8 @@
     <string name="signin_processing_automatically">正在自动登录&#8230;</string>
     <string name="signin_success">登录成功</string>
     <string name="signin_failed">登录失败</string>
-    <string name="signin_automatically_failed">自动登录失败，请重新登录</string>
+    <string name="signin_automatically_success">自动登录成功</string>
+    <string name="signin_automatically_failed">自动登录失败</string>
     <string name="signin_the_card_has_been_reported_loss">抱歉，该校园卡已挂失，请解挂后再登录</string>
 
     <!-- MainActivity -->
@@ -114,6 +115,7 @@
     <string name="today_total_transaction_amount">今日总消费金额：￥</string>
     <string name="week_total_transaction_amount">本周总消费金额：￥</string>
     <string name="total_transaction_amount">本段时间总消费金额：￥</string>
+    <string name="title_menu_info">相关信息</string>
     <!-- ManageReportLossActivity -->
     <string name="title_activity_manage_report_loss">挂失校园卡</string>
     <string name="report_loss_password_hint">请输入校园卡查询密码</string>
@@ -197,9 +199,26 @@
     <string name="question_mark">条消息吗？</string>
     <string name="confirm_to_delete_one">您确定要删除这条消息吗？</string>
     <string name="success_to_delete">删除成功！</string>
+    <string name="fail_to_delete">删除失败！</string>
 
     <!-- MessagesCreateNoticeActivity -->
     <string name="title_activity_messages_create_notice">发消息</string>
+    <string name="send">发送</string>
+    <string name="notice_title">标题</string>
+    <string name="notice_title_hint">请输入消息标题，应小于50个字符</string>
+    <string name="notice_title_null_error">标题不能为空</string>
+    <string name="send_to">发给</string>
+    <string name="add_receiver_hint">学工号/姓名/校园卡账号</string>
+    <string name="add_receiver_null_input_error">接收人不能为空</string>
+    <string name="add_receiver_duplicate_error">不能重复添加</string>
+    <string name="add_receiver_list_is_null">尚未添加任何接收人到列表</string>
+    <string name="add_receiver_can_not_found_user">添加失败，用户不存在</string>
+    <string name="add_receiver_failure">发生错误，添加失败</string>
+    <string name="add_receiver_flow_layout_hint">提示：需要点击“+”按钮将接收人添加到列表</string>
+    <string name="notice_content">请输入消息内容，应小于200个字符</string>
+    <string name="notice_content_null_error">消息内容不能为空</string>
+    <string name="send_success">发送成功！</string>
+    <string name="send_failure">发送失败，请重试</string>
 
     <!-- MessagesNoticeDetailActivity -->
     <string name="title_activity_messages_notice_detail">消息详情</string>
@@ -224,9 +243,44 @@
     <!-- MessagesBoardActivity -->
     <string name="title_activity_messages_board">留言板</string>
 
-    <string name="hello_blank_fragment">你好</string>
+    <!-- SettingsFragment -->
+    <string name="settings_personal_information">个人信息</string>
+    <string name="settings_feedback">意见反馈</string>
+    <string name="about">关于软件</string>
+    <string name="sign_off">退出登录</string>
+    <string name="sign_off_config">您确定要注销这个账号，重新登录吗？</string>
+    <!-- SettingsPersonalInformationActivity -->
+    <string name="title_activity_settings_personal_information">个人信息</string>
+    <string name="platform_account">平台账号</string>
+    <string name="nickname">昵称</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="msn">MSN</string>
+    <string name="qq">QQ</string>
+    <string name="sync_from_one_card">从一卡通同步信息</string>
+    <string name="sync_from_one_card_success">从一卡通同步信息成功！</string>
+    <string name="sync_from_one_card_error">同步失败！</string>
+    <!-- SettingsModifyPersonalInformationActivity -->
+    <string name="title_activity_settings_modify_personal_information_nickname">修改昵称</string>
+    <string name="title_activity_settings_modify_personal_information_email">修改Email</string>
+    <string name="title_activity_settings_modify_personal_information_phone">修改Phone</string>
+    <string name="title_activity_settings_modify_personal_information_msn">修改MSN</string>
+    <string name="title_activity_settings_modify_personal_information_qq">修改QQ</string>
+    <string name="settings_modify_personal_information_nickname_hint">请输入您的昵称</string>
+    <string name="settings_modify_personal_information_email_hint">请输入您的Email</string>
+    <string name="settings_modify_personal_information_phone_hint">请输入您的电话</string>
+    <string name="settings_modify_personal_information_msn_hint">请输入您的MSN</string>
+    <string name="settings_modify_personal_information_qq_hint">请输入您的QQ</string>
+    <string name="did_not_modify_anything">未作任何修改</string>
+    <string name="submit">提交</string>
+    <string name="modify_successed">修改成功！</string>
+    <string name="modify_failed">修改失败！</string>
+    <!-- SettingsFeedbackActivity -->
+    <string name="title_activity_settings_feedback">意见反馈</string>
 
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
+    <string name="img_dsc_ic_add_circle_outline_blue_500_36dp">蓝色圆形添加图标</string>
+    <string name="img_dsc_ic_send_white">白色发送图标</string>
 </resources>

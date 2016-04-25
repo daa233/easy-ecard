@@ -21,11 +21,11 @@
         style="@style/table_view_large_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:maxWidth="180dp"
-        android:textIsSelectable="true" />
+        android:maxWidth="180dp" />
 
 </RelativeLayout>

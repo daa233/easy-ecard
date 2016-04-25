@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
@@ -69,6 +70,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     private int maxPageIndex;  // 最大页码
     private boolean FIRST_TIME_TO_PARSE_FLAG;  // 首次解析标志，默认为true
     private boolean TO_DELETE_FLAG = false;
+    private boolean refreshingFlag = false;  // 正在刷新标志
     private boolean type;
     private final String TAG = "MessagesInboxAndSentActivity";
 
@@ -76,6 +78,19 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages_inbox_and_sent);
+        // 显示对话框
+        if (sweetAlertDialog == null || !sweetAlertDialog.isShowing()) {
+            sweetAlertDialog = new SweetAlertDialog(MessagesInboxAndSentActivity.this,
+                    SweetAlertDialog.PROGRESS_TYPE);
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.loading))
+                    .show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initView();
         initData();
     }
@@ -116,6 +131,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
             @Override
             public void onRefresh() {
                 // 开始刷新
+                refreshingFlag = true;
                 initData();
             }
         });
@@ -138,14 +154,6 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
         // 初始化页码，默认均为1
         pageIndex = 1;
         maxPageIndex = 1;
-        // 显示对话框
-        if (sweetAlertDialog == null || !sweetAlertDialog.isShowing()) {
-            sweetAlertDialog = new SweetAlertDialog(MessagesInboxAndSentActivity.this,
-                    SweetAlertDialog.PROGRESS_TYPE);
-            sweetAlertDialog
-                    .setTitleText(getString(R.string.loading))
-                    .show();
-        }
         sendPreGETRequest();
     }
 
@@ -160,12 +168,12 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                  Throwable error) {
                 // 网络错误
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.network_error))
-                        .setConfirmText(getString(R.string.OK))
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                LogUtil.e(TAG, "Network error");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         });
@@ -197,10 +205,9 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                                   Throwable error) {
                 LogUtil.d(TAG, "GET response failed.");
                 // 网络错误
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.network_error))
-                        .setConfirmText(getString(R.string.OK))
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                LogUtil.e(TAG, "Network error");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
         });
@@ -354,22 +361,19 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                     if (response.getString("ret").equals("true")) {
                         // 删除成功，刷新ListView
                         LogUtil.d(TAG, "Success to delete. msg: " + response.getString("msg"));
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.success_to_delete), Toast.LENGTH_SHORT).show();
                         initData();
                     } else {
                         // 删除失败
-                        sweetAlertDialog
-                                .setTitleText(getString(R.string.operation_failed))
-                                .setContentText(response.getString("msg"))
-                                .setConfirmText(getString(R.string.OK))
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.fail_to_delete), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 删除失败
-                    sweetAlertDialog
-                            .setTitleText(getString(R.string.operation_failed))
-                            .setConfirmText(getString(R.string.OK))
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    Toast.makeText(MyApplication.getContext(),
+                            getString(R.string.fail_to_delete), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -378,12 +382,9 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                                   Throwable throwable) {
                 // 网络错误
                 super.onFailure(statusCode, headers, responseString, throwable);
-                // 网络错误
-                sweetAlertDialog
-                        .setTitleText(getString(R.string.network_error))
-                        .setContentText(responseString)
-                        .setConfirmText(getString(R.string.OK))
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                LogUtil.e(TAG, "Network error");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
                 throwable.printStackTrace();
             }
         });
@@ -553,22 +554,24 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                         R.layout.item_messages_inbox_and_sent_list);
                 mListView.setAdapter(mAdapter);
                 if (TO_DELETE_FLAG) {
-                    // 显示删除成功对话框
-                    sweetAlertDialog
-                            .setTitleText(getString(R.string.success_to_delete))
-                            .setConfirmText(getString(R.string.OK))
-                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                     // 退出删除状态
                     cancelDeleting();
                 } else {
                     // 显示加载成功的对话框
-                    sweetAlertDialog
-                            .setTitleText(getString(R.string.loading_complete))
-                            .setConfirmText(getString(R.string.OK))
-                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    if (refreshingFlag) {
+                        // 正在刷新
+                        Toast.makeText(MyApplication.getContext(),
+                                getString(R.string.refresh_complete), Toast.LENGTH_SHORT).show();
+                    } else {
+                        sweetAlertDialog
+                                .setTitleText(getString(R.string.loading_complete))
+                                .setConfirmText(getString(R.string.OK))
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    }
                 }
                 // 关停PullToRefreshView的刷新
                 mPullToRefreshView.setRefreshing(false);
+                refreshingFlag = false;
                 // 延迟一段时间后，关闭sweetAlertDialog
                 new Handler().postDelayed(new Runnable() {
                     @Override

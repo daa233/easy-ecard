@@ -42,6 +42,7 @@ dependencies {
     compile 'com.yalantis:phoenix:1.2.3'
     compile 'com.baoyz.swipemenulistview:library:1.3.0'
     compile 'com.github.davidpizarro:autolabelui:1.0.1'
+    compile "com.wefika:flowlayout:0.4.1"
     compile('name': 'changeiconcolorwithtext-release', ext: 'aar')
     compile('name': 'android-uitableview-debug', ext: 'aar')
     compile('name': 'mypinnedheaderlistview-release', ext: 'aar')
