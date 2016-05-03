@@ -33,10 +33,12 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
     private SettingsListViewAdapter mAdapter;
 
     private int[] iconImageArray = {
-            R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher
+            R.drawable.ic_assignment_ind_cyan_a700_36dp,
+            R.drawable.ic_share_blue_900_36dp,
+            R.drawable.ic_update_teal_a700_36dp,
+            R.drawable.ic_feedback_amber_a400_36dp,
+            R.drawable.ic_code_pink_500_36dp,
+            R.drawable.ic_exit_to_app_blue_grey_500_36dp
     };
     private String[] titleArray;
     private final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
@@ -67,8 +69,10 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         // ItemTitle
         titleArray = new String[]{
                 getString(R.string.settings_personal_information),
+                getString(R.string.settings_share_app),
+                getString(R.string.settings_update),
                 getString(R.string.settings_feedback),
-                getString(R.string.about),
+                getString(R.string.settings_about),
                 getString(R.string.sign_off)
         };
         dataList = new ArrayList<>();
@@ -95,20 +99,26 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         LogUtil.d(TAG, "onItemClick: " + position);
         switch (position) {
             case 0:
-                // 打开“个人信息”
+                // 个人信息
                 startActivity(new Intent(MyApplication.getContext(),
                         SettingsPersonalInformationActivity.class));
                 break;
             case 1:
-                // 打开“意见反馈”
+                // 分享应用
+                break;
+            case 2:
+                // 检查更新
+                break;
+            case 3:
+                // 意见反馈
                 startActivity(new Intent(MyApplication.getContext(),
                         SettingsFeedbackActivity.class));
                 break;
-            case 2:
-                // 打开“关于软件”
+            case 4:
+                // 关于软件
                 break;
-            case 3:
-                // “退出登录”
+            case 5:
+                // 退出登录
                 new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getString(R.string.sign_off))
                         .setContentText(getString(R.string.sign_off_config))

@@ -56,12 +56,6 @@
     <string name="lost_found">丢失和拾获</string>
     <string name="information">消息通知</string>
     <string name="settings">设置</string>
-    <!-- MainActivity Menu -->
-    <string name="action_search">搜索</string>
-    <string name="menu_add_lost_info">添加丢失信息</string>
-    <string name="menu_add_found_info">添加拾获信息</string>
-    <string name="menu_feedback">意见反馈</string>
-    <string name="menu_exit">退出应用</string>
 
     <!-- ManagementFragment -->
     <string name="basic_information">基本信息</string>
@@ -245,8 +239,10 @@
 
     <!-- SettingsFragment -->
     <string name="settings_personal_information">个人信息</string>
+    <string name="settings_share_app">分享应用</string>
+    <string name="settings_update">检查更新</string>
     <string name="settings_feedback">意见反馈</string>
-    <string name="about">关于软件</string>
+    <string name="settings_about">关于软件</string>
     <string name="sign_off">退出登录</string>
     <string name="sign_off_config">您确定要注销这个账号，重新登录吗？</string>
     <!-- SettingsPersonalInformationActivity -->
