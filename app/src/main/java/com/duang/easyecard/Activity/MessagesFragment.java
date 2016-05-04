@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +110,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 getString(R.string.messages_board),
                 getString(R.string.messages_questions)
         };
+        createList();
         // 发送GET请求到Index，以解析sysUserID，然后获取未读消息数目
         sendGETRequestToIndex();
     }
@@ -122,14 +124,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 item = new MessagesListViewItem(titleArray[i]);
                 item.setIconResId(iconImageArray[i]);
                 item.setArrowResId(arrowResId);
-                if (i == 0 && !newMessagesCount.isEmpty()
-                        && Integer.valueOf(newMessagesCount) != 0) {
-                    // 如果是首项——收件箱，且有新消息，显示新消息按钮
-                    item.setNewMessagesCount(newMessagesCount);
-                    item.setNewMessageVisibility(View.VISIBLE);
-                } else {
-                    item.setNewMessageVisibility(View.INVISIBLE);
-                }
+                item.setNewMessageVisibility(View.INVISIBLE);
                 dataList.add(item);
             }
         } else {
@@ -140,6 +135,20 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 R.layout.item_messages_fragment_list);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
+    }
+
+    // 获取到未读消息数目后更新列表，即在列表中显示未读消息数目
+    private void updateList() {
+        if (!newMessagesCount.isEmpty() && Integer.valueOf(newMessagesCount) != 0) {
+            // 有新消息，显示新消息按钮
+            MessagesListViewItem item = dataList.get(0);
+            item.setNewMessagesCount(newMessagesCount);
+            item.setNewMessageVisibility(View.VISIBLE);
+            dataList.set(0, item);
+        } else {
+            Log.d(TAG, "No new notices.");
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -193,7 +202,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
-                LogUtil.e(TAG, getString(R.string.network_error) + "at sendGETRequestToIndex()");
+                LogUtil.e(TAG, "Network error at sendGETRequestToIndex()");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
@@ -218,8 +227,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 响应成功，获取未读消息数目
                 newMessagesCount = new String(responseBody);
-                // 组建列表
-                createList();
+                // 更新列表
+                updateList();
                 if (refreshingFlag) {
                     Toast.makeText(MyApplication.getContext(), getString(R.string.refresh_complete),
                             Toast.LENGTH_SHORT).show();
@@ -231,7 +240,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 // 网络错误
-                LogUtil.e(TAG, getString(R.string.network_error) + "at getting unread count.");
+                LogUtil.e(TAG, "Network error at getting unread count.");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
