@@ -22,6 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesListViewAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;
@@ -265,6 +266,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                     }
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

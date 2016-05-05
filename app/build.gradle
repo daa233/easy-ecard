@@ -46,6 +46,8 @@ dependencies {
     compile('name': 'changeiconcolorwithtext-release', ext: 'aar')
     compile('name': 'android-uitableview-debug', ext: 'aar')
     compile('name': 'mypinnedheaderlistview-release', ext: 'aar')
+    // pgy
+    compile 'com.pgyersdk:sdk:2.2.2'
     // leakcanary
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1' // or 1.4-beta2
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1' // or 1.4-beta1

@@ -2,6 +2,7 @@ package com.duang.easyecard.Activity;
 
 import com.duang.easyecard.Util.ActivityCollector;
 import com.duang.easyecard.Util.LogUtil;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,6 +15,7 @@ public class BaseActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		LogUtil.d("BaseActivity", getClass().getSimpleName());
+		PgyCrashManager.register(this);  // 蒲公英Crash分析
 		ActivityCollector.addActivity(this);
 	}
 	

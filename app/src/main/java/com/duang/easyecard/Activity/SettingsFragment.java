@@ -14,6 +14,9 @@ import com.duang.easyecard.Model.SettingsListViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.SettingsListViewAdapter;
+import com.pgyersdk.feedback.PgyFeedback;
+import com.pgyersdk.feedback.PgyFeedbackShakeManager;
+import com.pgyersdk.update.PgyUpdateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,11 +111,11 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
                 break;
             case 2:
                 // 检查更新
+                PgyUpdateManager.register(getActivity());
                 break;
             case 3:
                 // 意见反馈
-                startActivity(new Intent(MyApplication.getContext(),
-                        SettingsFeedbackActivity.class));
+                PgyFeedback.getInstance().showDialog(getActivity());
                 break;
             case 4:
                 // 关于软件
@@ -150,4 +153,21 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
         // 销毁MainActivity
         getActivity().finish();
     }
+/**
+    @Override
+    public void onResume() {
+        // 摇一摇用户反馈
+        super.onResume();
+        // 自定义摇一摇的灵敏度，默认为950，数值越小灵敏度越高。
+        PgyFeedbackShakeManager.setShakingThreshold(10000);
+        // 以对话框的形式弹出
+        PgyFeedbackShakeManager.register(MyApplication.getContext());
+    }
+
+    @Override
+    public void onPause() {
+        // 注销摇一摇用户反馈
+        super.onPause();
+        PgyFeedbackShakeManager.unregister();
+    }*/
 }

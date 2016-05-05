@@ -19,6 +19,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -153,6 +154,7 @@ public class MessagesCreateNoticeActivity extends BaseActivity {
                     addReceiverEditText.setError(
                             getString(R.string.add_receiver_failure));
                     LogUtil.e(TAG, "Unexpected exception in JsonResponseHandler.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }

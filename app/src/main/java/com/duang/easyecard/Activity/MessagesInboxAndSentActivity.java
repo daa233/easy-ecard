@@ -33,6 +33,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONObject;
@@ -370,6 +371,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                                 getString(R.string.fail_to_delete), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                     // 删除失败
                     Toast.makeText(MyApplication.getContext(),
@@ -533,6 +535,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                     }
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

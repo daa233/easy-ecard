@@ -18,6 +18,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
@@ -169,6 +170,7 @@ public class ManageChangePasswordActivity extends BaseActivity {
                                         .show();
                             }
                         } catch (Exception e) {
+                            PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                             e.printStackTrace();
                         }
                     }

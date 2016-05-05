@@ -20,6 +20,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesFaqListAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.ProgressView;
 import com.yalantis.phoenix.PullToRefreshView;
 
@@ -229,6 +230,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
                     dataList.add(item);
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

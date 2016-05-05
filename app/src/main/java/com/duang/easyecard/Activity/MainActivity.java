@@ -17,6 +17,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity implements
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
     private List<String> userBasicInformationDataList;
+    private List<String> userBasicInformationDataMobileList;
     private String response;
     private int startManageActivityFlag;
     private final String TAG = "MainActivity";
@@ -190,13 +192,14 @@ public class MainActivity extends BaseActivity implements
             // 解析返回的responseHtml
             Document doc;
             try {
-                userBasicInformationDataList = new ArrayList<>();
+                userBasicInformationDataMobileList = new ArrayList<>();
                 doc = Jsoup.parse(response);
                 Elements contents = doc.getElementsByClass("second");
                 for (Element content : contents) {
                     userBasicInformationDataList.add(content.text());
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;
@@ -205,11 +208,12 @@ public class MainActivity extends BaseActivity implements
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (userBasicInformationDataList.size() >= 10 &&
-                    !userBasicInformationDataList.isEmpty()) {
+            if (userBasicInformationDataMobileList.size() >= 10 &&
+                    !userBasicInformationDataMobileList.isEmpty()) {
                 // 从“掌上校园”成功获得了数据
                 LogUtil.d(TAG, "Success to get UserBasicInformation from Mobile address.");
-                setGlobalUserBasicInformation(true);
+                // 由于网站管理员删除了“掌上校园”的校园卡账户。。。
+                sendPOSTRequestToServicePlatform();
             } else {
                 // 从“掌上校园”获取数据失败，转向校园卡服务平台发送数据
                 LogUtil.e(TAG, "Fail to get UserBasicInformation from Mobile address.");
@@ -233,6 +237,7 @@ public class MainActivity extends BaseActivity implements
                     userBasicInformationDataList.add(e.text());
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;
@@ -243,7 +248,7 @@ public class MainActivity extends BaseActivity implements
             super.onPostExecute(aVoid);
             if (!userBasicInformationDataList.isEmpty()) {
                 // 成功从校园卡服务平台获取数据
-                setGlobalUserBasicInformation(false);
+                setGlobalUserBasicInformation();
             } else {
                 // 意外错误，学校服务器崩了，啥数据都没获得。还是shut down吧。
                 LogUtil.e(TAG, "Fail to get data from ServicePlatform too!!!");
@@ -257,32 +262,43 @@ public class MainActivity extends BaseActivity implements
     }
 
     // 设置全局变量UserBasicInformation
-    private void setGlobalUserBasicInformation(boolean flag) {
+    private void setGlobalUserBasicInformation() {
         // 从userInformationDataList中获取数据
         userBasicInformation = new UserBasicInformation();
-        if (flag) {
-            // 从掌上校园获得的数据
-            userBasicInformation.setName(userBasicInformationDataList.get(0));
-            userBasicInformation.setStuId(userBasicInformationDataList.get(1));
-            userBasicInformation.setCardAccount(userBasicInformationDataList.get(2));
-            userBasicInformation.setBalance(userBasicInformationDataList.get(3));
-            userBasicInformation.setBankAccout(userBasicInformationDataList.get(4));
-            userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(5));
-            userBasicInformation.setLastTransition(userBasicInformationDataList.get(6));
-            userBasicInformation.setReportLossState(userBasicInformationDataList.get(7));
-            userBasicInformation.setFreezeState(userBasicInformationDataList.get(8));
-            userBasicInformation.setIdentityType(userBasicInformationDataList.get(9));
-            userBasicInformation.setDepartment(userBasicInformationDataList.get(10));
+        // 从掌上校园获得的数据
+        if (userBasicInformationDataMobileList.size() >= 10
+                && userBasicInformationDataMobileList != null) {
+            int i = 0;
+            userBasicInformation.setName(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setStuId(userBasicInformationDataMobileList.get(i++));
+            // userBasicInformation.setCardAccount(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setBalance(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setBankAccout(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setCurrentTransition(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setLastTransition(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setReportLossState(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setFreezeState(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setIdentityType(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setDepartment(userBasicInformationDataMobileList.get(i));
         } else {
-            // 从校园卡服务平台获得的数据
-            userBasicInformation.setName(userBasicInformationDataList.get(0));
-            userBasicInformation.setStuId(userBasicInformationDataList.get(1));
-            userBasicInformation.setCardAccount(userBasicInformationDataList.get(2));
-            userBasicInformation.setBalance(userBasicInformationDataList.get(3));
-            userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(4));
-            userBasicInformation.setReportLossState(userBasicInformationDataList.get(5));
-            userBasicInformation.setFreezeState(userBasicInformationDataList.get(6));
+            LogUtil.e(TAG, "Can't get data from mobile data list.");
         }
+
+        // 从校园卡服务平台获得的数据
+        if (userBasicInformationDataList.size() >= 7 && userBasicInformationDataList != null) {
+            int i = 0;
+            userBasicInformation.setName(userBasicInformationDataList.get(i++));
+            userBasicInformation.setStuId(userBasicInformationDataList.get(i++));
+            userBasicInformation.setCardAccount(userBasicInformationDataList.get(i++));
+            LogUtil.d(TAG, "card account = " + userBasicInformationDataList.get(i));
+            userBasicInformation.setBalance(userBasicInformationDataList.get(i++));
+            userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(i++));
+            userBasicInformation.setReportLossState(userBasicInformationDataList.get(i++));
+            userBasicInformation.setFreezeState(userBasicInformationDataList.get(i));
+        } else {
+            LogUtil.e(TAG, "Can't get data from sevice platform data list.");
+        }
+
         // 传递全局变量userBasicInformation
         MyApplication myApp = (MyApplication) getApplication();
         myApp.setUserBasicInformation(userBasicInformation);
@@ -326,5 +342,6 @@ public class MainActivity extends BaseActivity implements
             LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");
             new Throwable().printStackTrace();
         }
+
     }
 }

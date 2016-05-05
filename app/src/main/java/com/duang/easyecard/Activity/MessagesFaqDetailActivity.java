@@ -14,6 +14,7 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
@@ -134,6 +135,7 @@ public class MessagesFaqDetailActivity extends BaseActivity {
                     content = p.text();
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

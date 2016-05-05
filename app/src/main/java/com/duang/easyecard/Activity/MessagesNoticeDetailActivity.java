@@ -24,6 +24,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -280,6 +281,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                 LogUtil.e(TAG, "Jsoup error.");
                 Toast.makeText(MessagesNoticeDetailActivity.this, getString(R.string.network_error),
                         Toast.LENGTH_LONG).show();
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;
@@ -368,6 +370,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                 } catch (Exception e) {
                     // 删除失败
                     LogUtil.e(TAG, "Failed to delete. Caught an exception.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }

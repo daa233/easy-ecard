@@ -20,6 +20,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.json.JSONObject;
 
@@ -57,6 +58,7 @@ public class AppStartActivity extends BaseActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         setContentView(R.layout.activity_app_start);
+        PgyCrashManager.register(this);  // 蒲公英Crash分析
         initView();
         new Handler().postDelayed(new Runnable(){
             @Override
@@ -101,6 +103,7 @@ public class AppStartActivity extends BaseActivity {
                 LogUtil.e(TAG, "Error: when decrypting.");
                 account = "";
                 password = "";
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             if (autoSigninFlag) {
@@ -174,6 +177,7 @@ public class AppStartActivity extends BaseActivity {
                     }
                 } catch (Exception e) {
                     LogUtil.e(TAG, "Auto signin failed.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }

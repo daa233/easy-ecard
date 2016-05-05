@@ -22,6 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 import com.rey.material.widget.Spinner;
@@ -347,6 +348,7 @@ public class SigninActivity extends BaseActivity {
                         Toast.LENGTH_SHORT).show();
                 account = "";
                 password = "";
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             editor.putBoolean(REMEMBER_PASSWORD, rememberPasswordFlag);

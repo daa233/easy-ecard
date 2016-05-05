@@ -22,6 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.LostAndFoundEventAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;
@@ -308,6 +309,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
                 }
             } catch (Exception e) {
                 mProgressDialog.cancel();
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

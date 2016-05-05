@@ -17,6 +17,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
@@ -243,6 +244,7 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
                                 getString(R.string.modify_failed), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                     LogUtil.e(TAG, "Fail to submit. Throwed an exception.");
                 }

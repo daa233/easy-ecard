@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.duang.easyecard.Model.UserBasicInformation;
 import com.loopj.android.http.AsyncHttpClient;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.squareup.leakcanary.LeakCanary;
 
 public class MyApplication extends Application {
@@ -17,7 +18,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         context = getApplicationContext();
         super.onCreate();
-        LeakCanary.install(this);
+        LeakCanary.install(this);  // LeakCanary
+        PgyCrashManager.register(this);  // 蒲公英Crash分析
     }
 
     public static Context getContext() {
