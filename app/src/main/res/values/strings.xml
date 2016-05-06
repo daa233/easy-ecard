@@ -62,12 +62,13 @@
     <string name="trading_inquiry">流水查询</string>
     <string name="report_loss_card">校园卡挂失</string>
     <string name="recharge">转账充值</string>
-    <string name="net_charge">网费</string>
+    <string name="net_charge">网络缴费</string>
     <string name="change_password">修改密码</string>
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
     <string name="hint_start_report_loss_warning_title">您确定要挂失吗？</string>
     <string name="hint_start_report_loss_warning_content">挂失后您将暂时无法登录本应用，解挂后会恢复正常。</string>
+    <string name="charge_is_not_available">抱歉，暂时未开放此项功能。敬请期待。</string>
 
     <!-- ManageViewBasicInformationActivity -->
     <string name="title_activity_manage_basic_information">基本信息</string>
@@ -133,6 +134,18 @@
     <string name="change_password_success">修改成功！</string>
     <string name="change_password_failed">修改失败</string>
     <string name="change_password_password_is_wrong">查询密码错误</string>
+    <!-- ManageNetChargeActivity -->
+    <string name="title_activity_manage_net_charge">网络缴费</string>
+    <string name="net_balance">校园网余额</string>
+    <string name="net_account_is_not_exist">未找到该账号！无法完成缴费！</string>
+    <string name="net_charge_amount_title">缴费金额（元）</string>
+    <string name="net_charge_amount_input_hint">请输入缴费金额（元）</string>
+    <string name="net_charge_amount_input_helper_text">输入金额必须为10的倍数，且不大于120元</string>
+    <string name="net_charge_amount_input_is_null">输入金额不能为空</string>
+    <string name="net_charge_amount_input_is_not_the_multiple_of_ten">输入的金额不正确，请确保输入的金额是10的倍数</string>
+    <string name="net_charge_amount_input_is_invalid">输入金额的范围无效</string>
+    <string name="net_charge_password_is_empty">查询密码不能为空</string>
+    <string name="net_charge_wrong_password">查询密码错误</string>
 
     <!-- LostAndFoundFragment -->
     <string name="lost_and_found_info_browsing">失卡招领信息浏览</string>

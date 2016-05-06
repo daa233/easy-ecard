@@ -23,6 +23,7 @@ import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.pgyersdk.javabean.AppBean;
@@ -38,6 +39,9 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.client.CookieStore;
+import cz.msebera.android.httpclient.client.protocol.ClientContext;
+import cz.msebera.android.httpclient.cookie.ClientCookie;
 
 public class SigninActivity extends BaseActivity {
 

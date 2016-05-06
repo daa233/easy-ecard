@@ -119,6 +119,10 @@ public class ManageChangePasswordActivity extends BaseActivity {
     private void sendPOSTRequest() {
         // 组装POST数据
         RequestParams params = new RequestParams();
+        final String cardNo = "card_" + userBasicInformation.getCardAccount() + "_"
+                + userBasicInformation.getCardAccount();
+        params.put("CardNo", cardNo);
+        params.put("selectCardnos", cardNo);
         params.add(PASSWORD, Base64.encodeToString(passwordEditText.getText().toString().getBytes(),
                 Base64.DEFAULT));
         params.add(NEW_PASSWORD, Base64.encodeToString(

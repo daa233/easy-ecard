@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.duang.easyecard.GlobalData.MyApplication;
@@ -124,8 +125,13 @@ public class ManagementFragment extends Fragment implements
                         MainActivity.CONSTANT_START_REPORT_LOSS);
                 break;
             case R.drawable.manage_recharge:
+                Toast.makeText(MyApplication.getContext(),
+                        getString(R.string.charge_is_not_available),
+                        Toast.LENGTH_SHORT).show();
                 break;
             case R.drawable.manage_net_charge:
+                // 缴网费
+                startActivity(new Intent(this.getContext(), ManageNetChargeActivity.class));
                 break;
             case R.drawable.manage_change_password:
                 // 修改查询密码

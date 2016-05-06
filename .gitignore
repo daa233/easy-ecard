@@ -35,4 +35,7 @@ proguard/
 UrlConstant.java
 
 # EncryptorUtil
-EncryptorUtil.java
+EncryptorUtil.jav
+
+# ManageNetChargeActivity
+ManageNetChargeActivity.java

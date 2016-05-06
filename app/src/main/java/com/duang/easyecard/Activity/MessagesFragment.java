@@ -54,8 +54,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             R.drawable.messages_inbox,
             R.drawable.messages_sent,
             R.drawable.messages_send,
-            R.drawable.messages_board,
-            R.drawable.messages_question
+            R.drawable.ic_assignment_pink_400_48dp,
+            R.drawable.ic_help_outline_blue_a200_48dp
     };
     private String[] titleArray;
     private String newMessagesCount = "";

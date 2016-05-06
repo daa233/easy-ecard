@@ -94,7 +94,10 @@ public class ManageReportLossActivity extends BaseActivity {
     private void sendPOSTRequest(String encodedPassword) {
         RequestParams requestParams = new RequestParams();
         // 添加参数
-        requestParams.put("CardNo", userBasicInformation.getCardAccount());
+        final String cardNo = "card_" + userBasicInformation.getCardAccount() + "_"
+                + userBasicInformation.getCardAccount();
+        requestParams.put("CardNo", cardNo);
+        requestParams.put("selectCardnos", cardNo);
         // 采用Base64对查询密码进行加密
         requestParams.put("Password", encodedPassword);
         httpClient.post(UrlConstant.MOBILE_MANAGE_CARD_LOST,

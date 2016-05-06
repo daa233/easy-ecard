@@ -114,7 +114,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                 // 设置item参数
                 deleteMenuItem.setBackground(new ColorDrawable(Color.rgb(0xF9, 0x3F, 0x25)));
                 deleteMenuItem.setWidth(dp2px(90));
-                deleteMenuItem.setIcon(R.drawable.ic_delete);
+                deleteMenuItem.setIcon(R.drawable.ic_delete_white_48dp);
                 menu.addMenuItem(deleteMenuItem);
             }
         };

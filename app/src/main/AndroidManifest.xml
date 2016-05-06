@@ -4,14 +4,15 @@
     package="com.duang.easyecard">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 获取网络状态 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络通信-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />  <!-- 获取设备信息 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络通信 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 获取设备信息 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
-    <!-- 可选-->
-    <uses-permission android:name="android.permission.READ_LOGS" /> <!-- 获取logcat日志 -->
+    <!-- 可选 -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
+    <!-- 获取logcat日志 -->
     <application
         android:name=".GlobalData.MyApplication"
         android:allowBackup="true"
@@ -25,81 +26,103 @@
         <!-- 蒲公英 -->
         <meta-data
             android:name="PGYER_APPID"
-            android:value="90bdf9fb2df2604ffe4389a89a9d5e69" >
-        </meta-data>
+            android:value="90bdf9fb2df2604ffe4389a89a9d5e69" />
 
         <activity
             android:name=".Activity.AppStartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppStartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Activity.SigninActivity"
-            android:label="@string/title_activity_signin" />
+            android:label="@string/title_activity_signin"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.MainActivity"
-            android:label="@string/title_activity_main" />
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.ManageBasicInformationActivity"
             android:label="@string/title_activity_manage_basic_information"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.ManageTradingInquiryActivity"
             android:label="@string/title_activity_manage_trading_inquiry"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.ManageReportLossActivity"
             android:label="@string/title_activity_manage_report_loss"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.ManageNetChargeActivity"
+            android:label="@string/title_activity_manage_net_charge"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.ManageChangePasswordActivity"
             android:label="@string/title_activity_manage_change_password"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingActivity"
             android:label="@string/title_activity_lost_and_found_information_browsing"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundInformationBrowsingViewDetailActivity"
             android:label="@string/title_activity_lost_and_found_information_browsing_view_detail"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.LostAndFoundRegistrationActivity"
             android:label="@string/title_activity_lost_and_found_registration"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesInboxAndSentActivity"
             android:label="@string/title_activity_messages_inbox"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesCreateNoticeActivity"
             android:label="@string/title_activity_messages_create_notice"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesNoticeDetailActivity"
             android:label="@string/title_activity_messages_notice_detail"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesFaqActivity"
             android:label="@string/title_activity_messages_faq"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesFaqDetailActivity"
             android:label="@string/title_activity_messages_faq_detail"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MessagesBoardActivity"
             android:label="@string/title_activity_messages_board"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.SettingsPersonalInformationActivity"
             android:label="@string/title_activity_settings_personal_information"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.SettingsModifyPersonalInformationActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

@@ -15,10 +15,15 @@ public class BaseActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		LogUtil.d("BaseActivity", getClass().getSimpleName());
-		PgyCrashManager.register(this);  // 蒲公英Crash分析
 		ActivityCollector.addActivity(this);
 	}
-	
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		PgyCrashManager.register(this);  // 蒲公英Crash分析
+	}
+
 	@Override
 	protected void onDestroy()	{
 		super.onDestroy();

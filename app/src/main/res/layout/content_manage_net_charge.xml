@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.duang.easyecard.Activity.ManageNetChargeActivity"
+    tools:showIn="@layout/activity_manage_net_charge">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <br.com.dina.ui.widget.UITableView
+            android:id="@+id/manage_net_charge_table_view"
+            style="@style/UITableView"/>
+
+        <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+        <LinearLayout
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="30dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+            <!-- 查询密码 -->
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/manage_net_charge_amount_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/net_charge_amount_input_hint"
+                android:inputType="number"
+                android:maxLength="3"
+                app:met_clearButton="true"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_helperText="@string/net_charge_amount_input_helper_text"
+                app:met_helperTextColor="@color/orange"
+                app:met_floatingLabelText="@string/net_charge_amount_title"
+                app:met_maxCharacters="3"
+                app:met_primaryColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/table_view_like_linear_layout_style"
+            android:layout_marginTop="20dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/manage_net_charge_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password_input_hint"
+                android:inputType="numberPassword"
+                android:maxLength="6"
+                app:met_clearButton="true"
+                app:met_errorColor="@color/red"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelText="@string/card_query_password"
+                app:met_maxCharacters="6"
+                app:met_primaryColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+
+        <com.rey.material.widget.Button
+            android:onClick="onConfirmButtonClick"
+            style="@style/button_ripple_wave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/green_button_selector"
+            android:text="@string/OK" />
+    </LinearLayout>
+</ScrollView>

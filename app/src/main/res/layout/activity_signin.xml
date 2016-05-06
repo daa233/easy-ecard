@@ -13,7 +13,7 @@
 
         <LinearLayout
             style="@style/table_view_like_linear_layout_style"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="15dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:orientation="vertical">
@@ -24,12 +24,12 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:src="@drawable/signin_type" />
+                    android:src="@drawable/ic_compare_pink_400_36dp" />
 
                 <com.rey.material.widget.Spinner
                     android:id="@+id/signin_type_spinner"
@@ -45,9 +45,9 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/signin_account"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_account_circle_indigo_800_36dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_gravity="center_vertical"/>
@@ -72,9 +72,9 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/signin_password"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_lock_orange_500_36dp"
                     android:layout_marginEnd="12dp"
                     android:layout_marginRight="12dp"
                     android:layout_gravity="center_vertical"/>
@@ -98,9 +98,9 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/signin_checkcode"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_check_circle_teal_a700_36dp"
                     android:layout_marginEnd="12dp"
                     android:layout_marginRight="12dp"
                     android:layout_gravity="center_vertical"/>
