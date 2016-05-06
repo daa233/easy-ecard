@@ -1,10 +1,12 @@
 package com.duang.easyecard.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -23,6 +25,9 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.pgyersdk.crash.PgyCrashManager;
+import com.pgyersdk.javabean.AppBean;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.CheckBox;
 import com.rey.material.widget.Spinner;
@@ -180,6 +185,8 @@ public class SigninActivity extends BaseActivity {
             // 用户没有选择记住密码
             LogUtil.d(TAG, "User did't choose to remember password.");
         }
+        // 检查更新
+        checkForUpdate(false);
     }
 
     // 获取验证码图片
@@ -361,6 +368,51 @@ public class SigninActivity extends BaseActivity {
             // 用户选择不记住密码，清除已经记住的密码
             editor.clear().commit();
         }
+    }
+
+    // 检查更新
+    private void checkForUpdate(final boolean flag) {
+        PgyUpdateManager.register(SigninActivity.this, new UpdateManagerListener() {
+            @Override
+            public void onNoUpdateAvailable() {
+                // 没有可用更新
+                if (flag) {
+                    Toast.makeText(MyApplication.getContext(),
+                            getString(R.string.settings_no_update_available),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onUpdateAvailable(String result) {
+                // 有可用更新
+                // 将新版本信息封装到AppBean中
+                final AppBean appBean = getAppBeanFromString(result);
+                new AlertDialog.Builder(MyApplication.getContext())
+                        .setTitle(getString(R.string.settings_update))
+                        .setMessage(appBean.getVersionCode() + "\n"
+                                + appBean.getVersionName() + "\n" + appBean.getReleaseNote())
+                        .setNegativeButton(
+                                getString(R.string.settings_update_later),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // 以后再说
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setPositiveButton(getString(R.string.settings_update_now),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // 立即下载更新
+                                        startDownloadTask(SigninActivity.this,
+                                                appBean.getDownloadURL());
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+            }
+        });
     }
 
     // 活动即将销毁时调用
