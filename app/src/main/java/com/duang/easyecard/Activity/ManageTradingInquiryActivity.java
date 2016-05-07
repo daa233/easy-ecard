@@ -11,7 +11,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 
@@ -28,6 +30,9 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
     private boolean historyInitFlag = false;
     private boolean todayInitFlag = false;
     private boolean weekInitFlag = false;
+    private boolean historyLoadingFlag = false;
+    private boolean todayLoadingFlag = false;
+    private boolean weekLoadingFlag = false;
     private HashMap<String, String> fragmentTagHashMap;
     private final String TAG = "ManageTradingInquiryActivity";
 
@@ -111,6 +116,25 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         }
     }
 
+    // 设置加载的状态，如果正在加载，就屏蔽Back按键
+    @Override
+    public void setLoadingFlag(int type, boolean flag) {
+        switch (type) {
+            case 0:
+                historyLoadingFlag = flag;
+                break;
+            case 1:
+                todayLoadingFlag = flag;
+                break;
+            case 2:
+                weekLoadingFlag = flag;
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
+    }
+
     // 获得Fragment传递过来的Tag，用于定位Fragment
     @Override
     public void getFragmentTag(int type, String tag) {
@@ -154,29 +178,35 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
      * 如果处于“历史流水”查询状态，切换到时间选择界面
      */
     private void doBack() {
-        switch (tabLayout.getSelectedTabPosition()) {
-            case 0:
-                // 位于“历史流水”查询
-                if (historyInitFlag) {
-                    // 正在显示ListView(查询结果），返回到选择时间界面
-                    ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
-                            getSupportFragmentManager().findFragmentByTag(
-                                    fragmentTagHashMap.get(String.valueOf(0)));
-                    fragment.backToPickDateView();
-                    // 设置初始化标志为false
-                    historyInitFlag = false;
-                } else {
-                    // 正在选择时间，点击直接退出
+        if (historyLoadingFlag || todayLoadingFlag || weekLoadingFlag) {
+            // 正在加载，请稍候
+            Toast.makeText(MyApplication.getContext(), getString(R.string.is_loading),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            switch (tabLayout.getSelectedTabPosition()) {
+                case 0:
+                    // 位于“历史流水”查询
+                    if (historyInitFlag) {
+                        // 正在显示ListView(查询结果），返回到选择时间界面
+                        ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                                getSupportFragmentManager().findFragmentByTag(
+                                        fragmentTagHashMap.get(String.valueOf(0)));
+                        fragment.backToPickDateView();
+                        // 设置初始化标志为false
+                        historyInitFlag = false;
+                    } else {
+                        // 正在选择时间，点击直接退出
+                        finish();
+                    }
+                    break;
+                case 1:
+                case 2:
+                    // 不处于“历史流水”查询状态，则直接退出
                     finish();
-                }
-                break;
-            case 1:
-            case 2:
-                // 不处于“历史流水”查询状态，则直接退出
-                finish();
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
