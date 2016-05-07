@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.duang.easyecard.Model.UserBasicInformation;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.PersistentCookieStore;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -12,6 +13,8 @@ public class MyApplication extends Application {
 
     private static Context context;
     private static AsyncHttpClient httpClient;
+    private static PersistentCookieStore cookieStore;
+
     private static UserBasicInformation userBasicInformation;
 
     @Override
@@ -26,19 +29,40 @@ public class MyApplication extends Application {
         return context;
     }
 
-    public AsyncHttpClient getHttpClient() {
-        return httpClient;
+    public static AsyncHttpClient getHttpClient() {
+        if (httpClient != null) {
+            return httpClient;
+        } else {
+            httpClient = new AsyncHttpClient();
+            return httpClient;
+        }
     }
 
-    public void setHttpClient(AsyncHttpClient httpClient) {
-        MyApplication.httpClient = httpClient;
+    public void setHttpClient(AsyncHttpClient client) {
+        httpClient = client;
     }
 
-    public UserBasicInformation getUserBasicInformation() {
-        return userBasicInformation;
+    public static PersistentCookieStore getCookieStore() {
+        if (cookieStore == null) {
+            cookieStore = new PersistentCookieStore(context);
+        }
+        return cookieStore;
     }
 
-    public void setUserBasicInformation(UserBasicInformation userBasicInformation) {
-        MyApplication.userBasicInformation = userBasicInformation;
+    public void setCookieStore(PersistentCookieStore cookie) {
+        cookieStore = cookie;
+    }
+
+    public static UserBasicInformation getUserBasicInformation() {
+        if (userBasicInformation != null) {
+            return userBasicInformation;
+        } else {
+            userBasicInformation = new UserBasicInformation();
+            return userBasicInformation;
+        }
+    }
+
+    public void setUserBasicInformation(UserBasicInformation information) {
+        userBasicInformation = information;
     }
 }

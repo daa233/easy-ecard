@@ -79,7 +79,7 @@ public class AppStartActivity extends BaseActivity {
 
     private void initData() {
         // 初始化httpClient
-        httpClient = new AsyncHttpClient();
+        httpClient = ((MyApplication) getApplication()).getHttpClient();
         // 初始化USER_SEED，Use ANDROID_ID as the USER_SEED
         USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         // 初始化SharedPreferences

@@ -195,8 +195,10 @@ public class MainActivity extends BaseActivity implements
                 userBasicInformationDataMobileList = new ArrayList<>();
                 doc = Jsoup.parse(response);
                 Elements contents = doc.getElementsByClass("second");
-                for (Element content : contents) {
-                    userBasicInformationDataList.add(content.text());
+                if (contents != null) {
+                    for (Element content : contents) {
+                        userBasicInformationDataList.add(content.text());
+                    }
                 }
             } catch (Exception e) {
                 PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
@@ -290,7 +292,6 @@ public class MainActivity extends BaseActivity implements
             userBasicInformation.setName(userBasicInformationDataList.get(i++));
             userBasicInformation.setStuId(userBasicInformationDataList.get(i++));
             userBasicInformation.setCardAccount(userBasicInformationDataList.get(i++));
-            LogUtil.d(TAG, "card account = " + userBasicInformationDataList.get(i));
             userBasicInformation.setBalance(userBasicInformationDataList.get(i++));
             userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(i++));
             userBasicInformation.setReportLossState(userBasicInformationDataList.get(i++));
@@ -342,6 +343,5 @@ public class MainActivity extends BaseActivity implements
             LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");
             new Throwable().printStackTrace();
         }
-
     }
 }

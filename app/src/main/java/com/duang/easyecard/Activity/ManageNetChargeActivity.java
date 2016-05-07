@@ -18,6 +18,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -30,9 +31,10 @@ import org.jsoup.nodes.Element;
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.client.CookieStore;
+import cz.msebera.android.httpclient.client.config.CookieSpecs;
 import cz.msebera.android.httpclient.client.protocol.ClientContext;
 import cz.msebera.android.httpclient.cookie.ClientCookie;
-import cz.msebera.android.httpclient.cookie.Cookie;
 
 public class ManageNetChargeActivity extends BaseActivity {
 
@@ -42,11 +44,13 @@ public class ManageNetChargeActivity extends BaseActivity {
 
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
+    private PersistentCookieStore cookieStore;
     private String response;
     private String lastTimeNetBalance;
     private boolean netAccountIsExist = false;
 
     private static final String TAG = "ManageNetChargeActivity";
+    private static final String COOKIE_NAME = "iPlanetDirectoryProxzx";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +76,9 @@ public class ManageNetChargeActivity extends BaseActivity {
         MyApplication myApp = (MyApplication) getApplication();
         httpClient = myApp.getHttpClient();
         userBasicInformation = myApp.getUserBasicInformation();
+        cookieStore = new PersistentCookieStore(MyApplication.getContext());
         // 发送GET请求获得网费余额
         sendGETRequest();
-        // 发送POST请求验证是否存在此账户
-        sendPOSTRequestToCheckAccount();
     }
 
     // 发送GET请求获得网费余额
@@ -163,6 +166,10 @@ public class ManageNetChargeActivity extends BaseActivity {
             if (lastTimeNetBalance != null && !lastTimeNetBalance.isEmpty()) {
                 // 已得到网费余额，创建tableView
                 createUITableViewList();
+                // cookieStore = new PersistentCookieStore(ManageNetChargeActivity.this);
+                // httpClient.setCookieStore(cookieStore);
+                // 发送POST请求验证是否存在此账户
+                sendPOSTRequestToCheckAccount();
             } else {
                 LogUtil.e(TAG, "Last time net balance is null or empty.");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
@@ -204,13 +211,18 @@ public class ManageNetChargeActivity extends BaseActivity {
 
     // 发送POST请求缴网费
     private void sendPOSTRequestToDoPay(boolean netAccountExistsFlag) {
+        LogUtil.d(TAG, "Cookies + " + cookieStore.getCookies().toString());
         if (netAccountExistsFlag) {
             // 网络账户存在
             RequestParams params = new RequestParams();
-            params.add("iPlanetDirectoryPro", (String) httpClient.getHttpContext()
-                    .getAttribute(ClientContext.COOKIE_STORE));
-            LogUtil.d(TAG, "iPlanetDirectoryPro =" + httpClient.getHttpContext()
-                    .getAttribute(ClientContext.COOKIE_STORE));
+            // httpClient.setCookieStore(cookieStore);
+            if (cookieStore.getCookies().size() > 1) {
+                params.add(COOKIE_NAME, cookieStore.getCookies().get(1).getValue());
+                LogUtil.d(TAG, COOKIE_NAME + "=" + cookieStore.getCookies().get(1).getValue());
+            } else {
+                LogUtil.e(TAG, "Can't get the cookie to POST.");
+                Toast.makeText(ManageNetChargeActivity.this, "请重试", Toast.LENGTH_SHORT).show();
+            }
             params.add("account", userBasicInformation.getStuId());
             params.add("pwd", passwordEditText.getText().toString());
             params.add("amount", amountEditText.getText().toString());
@@ -218,7 +230,33 @@ public class ManageNetChargeActivity extends BaseActivity {
             params.add("xiaoqu", "Drcom");
             params.add("xiaoquName", "城市热点");
             params.add("clientType", "webapp");
+            httpClient.post(UrlConstant.MOBILE_MANAGE_NET_FEE_DO_PAY, params,
+                    new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            super.onSuccess(statusCode, headers, response);
+                            LogUtil.d(TAG, "Do pay response = " + response.toString());
+                            try {
+                                if (response.getBoolean("success")) {
+                                    LogUtil.d(TAG, "Successed to do pay.");
+                                } else {
+                                    LogUtil.e(TAG, "Failed to do day.");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, String responseString,
+                                              Throwable throwable) {
+                            super.onFailure(statusCode, headers, responseString, throwable);
+                            LogUtil.e(TAG, "Network error when getting response from do pay.");
+                            Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
@@ -228,36 +266,41 @@ public class ManageNetChargeActivity extends BaseActivity {
         params.put("paytype", "Drcom");
         params.put("xiaoqu", "Drcom");
         params.put("account", userBasicInformation.getStuId());
-        httpClient.post(UrlConstant.MOBILE_MANAGE_NET_FEE_IS_EXIST, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // 响应成功
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    LogUtil.d(TAG, "reponse = " + response.toString());
-                    if (response.getBoolean("success")) {
-                        // 存在此用户
-                        netAccountIsExist = true;
-                    } else {
-                        // 不存在此用户
-                        Toast.makeText(MyApplication.getContext(),
-                                getString(R.string.net_account_is_not_exist),
-                                Toast.LENGTH_LONG).show();
-                        // 销毁Activity
-                        // finish();
+        LogUtil.d(TAG, "account = " + userBasicInformation.getStuId());
+        httpClient.post(UrlConstant.MOBILE_MANAGE_NET_FEE_IS_EXIST, params,
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        // 响应成功
+                        super.onSuccess(statusCode, headers, response);
+                        try {
+                            if (response.getBoolean("success")) {
+                                // 存在此用户
+                                netAccountIsExist = true;
+                                LogUtil.d(TAG, "This net account do exist.");
+                            } else {
+                                // 不存在此用户
+                                LogUtil.d(TAG, "This net account does not exist");
+                                Toast.makeText(MyApplication.getContext(),
+                                        getString(R.string.net_account_is_not_exist),
+                                        Toast.LENGTH_LONG).show();
+                                // 销毁Activity
+                                finish();
+                            }
+                        } catch (Exception e) {
+                            PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                            e.printStackTrace();
+                        }
                     }
-                } catch (Exception e) {
-                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
-                    e.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                                  Throwable throwable) {
-                // 网络错误
-                super.onFailure(statusCode, headers, responseString, throwable);
-            }
-        });
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString,
+                                          Throwable throwable) {
+                        // 网络错误
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                        Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

@@ -165,7 +165,7 @@ public class SigninActivity extends BaseActivity {
     // 初始化数据
     private void initData() {
         // 初始化httpClient
-        httpClient = new AsyncHttpClient();
+        httpClient = ((MyApplication) getApplication()).getHttpClient();
         // 初始化USER_SEED，Use ANDROID_ID as the USER_SEED
         USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         // 获取验证码
@@ -280,6 +280,10 @@ public class SigninActivity extends BaseActivity {
         LogUtil.d(TAG, getString(R.string.signin_success));
         // 将signinSuccessFlag置为true
         signinSuccessFlag = true;
+        // PersistentCookieStore cookieStore = new PersistentCookieStore(this);
+        // LogUtil.d(TAG, "cookieStore = " + cookieStore.toString());
+        // LogUtil.d(TAG, "cookieStore.getCookies = " + cookieStore.getCookies().toString());
+        // httpClient.setCookieStore(cookieStore);
         // 刷新全局httpClient
         MyApplication myApp = (MyApplication) getApplication();
         myApp.setHttpClient(httpClient);
@@ -380,6 +384,7 @@ public class SigninActivity extends BaseActivity {
             @Override
             public void onNoUpdateAvailable() {
                 // 没有可用更新
+                LogUtil.d(TAG, "Up to date.");
                 if (flag) {
                     Toast.makeText(MyApplication.getContext(),
                             getString(R.string.settings_no_update_available),
@@ -390,6 +395,7 @@ public class SigninActivity extends BaseActivity {
             @Override
             public void onUpdateAvailable(String result) {
                 // 有可用更新
+                LogUtil.d(TAG, "A new version of this app is available.");
                 // 将新版本信息封装到AppBean中
                 final AppBean appBean = getAppBeanFromString(result);
                 new AlertDialog.Builder(MyApplication.getContext())
