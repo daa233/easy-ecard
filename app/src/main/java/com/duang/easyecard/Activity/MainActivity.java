@@ -189,15 +189,20 @@ public class MainActivity extends BaseActivity implements
 
         @Override
         protected Void doInBackground(Void... arg0) {
+            LogUtil.d(TAG, "doInBackground of JsoupHtmlDataFromMobile.");
             // 解析返回的responseHtml
             Document doc;
             try {
                 userBasicInformationDataMobileList = new ArrayList<>();
                 doc = Jsoup.parse(response);
                 Elements contents = doc.getElementsByClass("second");
-                if (contents != null) {
+                if (contents == null) {
+                    LogUtil.e(TAG, "Can't get contents in JsoupHtmlDataFromMobile.");
+                } else {
                     for (Element content : contents) {
-                        userBasicInformationDataList.add(content.text());
+                        if (content != null) {
+                            userBasicInformationDataMobileList.add(content.text());
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -210,6 +215,7 @@ public class MainActivity extends BaseActivity implements
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            LogUtil.d(TAG, "onPostExcecute of JsoupHtmlDataFromMobile");
             if (userBasicInformationDataMobileList.size() >= 10 &&
                     !userBasicInformationDataMobileList.isEmpty()) {
                 // 从“掌上校园”成功获得了数据

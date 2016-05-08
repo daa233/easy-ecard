@@ -37,7 +37,7 @@
                 app:met_floatingLabel="highlight"
                 app:met_floatingLabelText="@string/net_charge_amount_title"
                 app:met_helperText="@string/net_charge_amount_input_helper_text"
-                app:met_helperTextColor="@color/orange"
+                app:met_helperTextColor="@color/chocolate"
                 app:met_maxCharacters="3"
                 app:met_primaryColor="@color/colorPrimaryDark" />
         </LinearLayout>

@@ -30,7 +30,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="#00C853"
+            tab:item_color="#00A000"
             tab:item_icon="@drawable/ic_credit_card_green_900_48dp"
             tab:item_text="@string/manage"
             tab:item_text_size="14sp" />

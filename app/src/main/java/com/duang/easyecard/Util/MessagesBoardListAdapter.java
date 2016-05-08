@@ -25,7 +25,9 @@ public class MessagesBoardListAdapter extends CommonAdapter<MessageBoardItem> {
                 .setText(R.id.messages_board_list_item_user, messageBoardItem.getUser())
                 .setText(R.id.messages_board_list_item_title, messageBoardItem.getTitle())
                 .setText(R.id.messages_board_list_item_reply, messageBoardItem.getReply())
-                .setImageResource(R.id.messages_board_list_item_user_img, R.mipmap.ic_launcher)
-                .setImageResource(R.id.messages_board_list_item_platform_img, R.mipmap.ic_launcher);
+                .setImageResource(R.id.messages_board_list_item_user_img,
+                        R.drawable.ic_face_blue_grey_800_48dp)
+                .setImageResource(R.id.messages_board_list_item_platform_img,
+                        R.drawable.ic_school_blue_grey_800_48dp);
     }
 }
