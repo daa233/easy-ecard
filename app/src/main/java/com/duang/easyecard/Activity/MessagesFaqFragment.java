@@ -39,11 +39,13 @@ import cz.msebera.android.httpclient.Header;
  */
 public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final String TAG = "MessagesFaqFragment";
+    private static final int CONSTANT_XYKGL = 0, CONSTANT_YYZX = 1, CONSTANT_ZHAQ = 2,
+            CONSTANT_ZXJF = 3;
     private View viewFragment;  // 缓存Fragment的View
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
     private ProgressView mProgressView;
-
     private GetDataListInitFlagListener getDataListInitFlagListener;
     private MessagesFaqListAdapter mAdapter;
     private AsyncHttpClient httpClient;
@@ -51,8 +53,6 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
     private String address;
     private String response;
     private int type;
-    private final String TAG = "MessagesFaqFragment";
-    private final int CONSTANT_XYKGL = 0, CONSTANT_YYZX = 1, CONSTANT_ZHAQ = 2, CONSTANT_ZXJF = 3;
     private boolean refreshingFlag = false;
 
     @Override
@@ -135,8 +135,7 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
             LogUtil.e(TAG, "Can't get arguments: position.");
         }
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getActivity().getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         dataList = new ArrayList<>();
         if (getDataListInitFlagListener.getDataListInitFlag(type)) {
             // 已经初始化，无需操作
@@ -205,6 +204,19 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
         startActivity(intent);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getDataListInitFlagListener = null;
+    }
+
+    // 用于判断对应类型的Fragment是否初始化过
+    public interface GetDataListInitFlagListener {
+        boolean getDataListInitFlag(int type);
+
+        void setDataListInitFlag(int type);
+    }
+
     // 解析响应数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
 
@@ -244,18 +256,5 @@ public class MessagesFaqFragment extends Fragment implements AdapterView.OnItemC
             // 隐藏ProgressView
             mProgressView.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        getDataListInitFlagListener = null;
-    }
-
-    // 用于判断对应类型的Fragment是否初始化过
-    public interface GetDataListInitFlagListener {
-        boolean getDataListInitFlag(int type);
-
-        void setDataListInitFlag(int type);
     }
 }

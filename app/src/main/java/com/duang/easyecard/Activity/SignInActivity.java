@@ -1,12 +1,11 @@
 package com.duang.easyecard.Activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -19,7 +18,6 @@ import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.EncryptorUtil;
 import com.duang.easyecard.Util.ImageUtil;
-import com.duang.easyecard.Util.ImageUtil.OnLoadImageListener;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -39,8 +37,15 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
-public class SigninActivity extends BaseActivity {
+public class SignInActivity extends BaseActivity {
 
+    private static final String SIGNIN_PREFERENCES = "SIGNIN_PREFERENCES";  // Preferences文件的名称
+    private static final String REMEMBER_PASSWORD = "REMEMBER_PASSWORD";
+    private static final String AUTO_SIGNIN = "AUTO_SIGNIN";
+    private static final String SIGNIN_TYPE = "SIGNIN_TYPE";
+    private static final String USER_ACCOUNT = "USER_ACCOUNT";
+    private static final String USER_PASSWORD = "USER_PASSWORD";
+    private final String TAG = "SigninActivity.";
     private Spinner signinTypeSpinner;
     private MaterialEditText accountEditText;
     private MaterialEditText passwordEditText;
@@ -49,39 +54,26 @@ public class SigninActivity extends BaseActivity {
     private CheckBox rememberPasswordCheckBox;
     private CheckBox autoSigninCheckBox;
     private SweetAlertDialog sweetAlertDialog;
-
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private AsyncHttpClient httpClient;
     private List<String> spinnerList = new ArrayList<>();
-    private ArrayAdapter<String> spinnerAdapter;
     private boolean rememberPasswordFlag = false;
     private boolean autoSigninFlag = false;
     private boolean signinSuccessFlag = false;
-    private String signinType;
-    private String account;
-    private String password;
-
-    private String signtype = "SynSno";  // 登录类型，{"SynSno", "SynCard"}，默认为"SynSno"
-    private final String TAG = "SigninActivity.";
-    private static final String SIGNIN_PREFERENCES = "SIGNIN_PREFERENCES";  // Preferences文件的名称
-    private static final String REMEMBER_PASSWORD = "REMEMBER_PASSWORD";
-    private static final String AUTO_SIGNIN = "AUTO_SIGNIN";
-    private static final String SIGNIN_TYPE = "SIGNIN_TYPE";
-    private static final String USER_ACCOUNT = "USER_ACCOUNT";
-    private static final String USER_PASSWORD = "USER_PASSWORD";
-    private String USER_SEED = "USED_SEED";  // 默认为USER_SEED
+    private static String signtype = "SynSno";  // 登录类型，{"SynSno", "SynCard"}，默认为"SynSno"
+    private static String USER_SEED = "USED_SEED";  // 默认为USER_SEED
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
+        setContentView(R.layout.activity_sign_in);
         initView();
         initData();
     }
 
     // 初始化布局
     public void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.sign_in_toolbar);
+        setSupportActionBar(toolbar);
         // 实例化控件
         signinTypeSpinner = (Spinner) findViewById(R.id.signin_type_spinner);
         accountEditText = (MaterialEditText) findViewById(R.id.signin_account_edit_text);
@@ -106,7 +98,7 @@ public class SigninActivity extends BaseActivity {
         spinnerList.add(getResources().getString(R.string.stu_id));
         spinnerList.add(getResources().getString(R.string.card_account));
         // 新建适配器，利用系统内置的layout
-        spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
         // 设置下拉菜单样式，利用系统内置的layout
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // 绑定适配器到控件
@@ -161,7 +153,7 @@ public class SigninActivity extends BaseActivity {
     // 初始化数据
     private void initData() {
         // 初始化httpClient
-        httpClient = ((MyApplication) getApplication()).getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 初始化USER_SEED，Use ANDROID_ID as the USER_SEED
         USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         // 获取验证码
@@ -172,9 +164,9 @@ public class SigninActivity extends BaseActivity {
         if (rememberPasswordFlag) {
             // 用户选择了记住密码
             autoSigninFlag = intent.getBooleanExtra(AUTO_SIGNIN, false);
-            signinType = intent.getStringExtra(SIGNIN_TYPE);
-            account = intent.getStringExtra(USER_ACCOUNT);
-            password = intent.getStringExtra(USER_PASSWORD);
+            String signinType = intent.getStringExtra(SIGNIN_TYPE);
+            String account = intent.getStringExtra(USER_ACCOUNT);
+            String password = intent.getStringExtra(USER_PASSWORD);
             // 根据登录类型选取SigninTypeSpinner应该选取的位置
             signinTypeSpinner.setSelection(signinType.equals("SynSno") ? 0 : 1);
             accountEditText.setText(account);
@@ -191,11 +183,11 @@ public class SigninActivity extends BaseActivity {
 
     // 获取验证码图片
     private void getCheckcodeImage() {
-        ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient, new OnLoadImageListener() {
+        ImageUtil.onLoadImage(UrlConstant.GET_CHECKCODE_IMG, httpClient, new ImageUtil.OnLoadImageListener() {
             @Override
             public void OnLoadImage(byte[] imageBytes) {
                 Glide
-                        .with(SigninActivity.this)
+                        .with(MyApplication.getContext())
                         .load(imageBytes)
                         .into(checkcodeImage);
             }
@@ -222,7 +214,7 @@ public class SigninActivity extends BaseActivity {
             checkcodeEditText.setError(getString(R.string.signin_checkcode_is_empty));
         } else {
             // 所有EditText都有输入，显示SweetAlertDialog，准备发送POST请求
-            sweetAlertDialog = new SweetAlertDialog(SigninActivity.this,
+            sweetAlertDialog = new SweetAlertDialog(SignInActivity.this,
                     SweetAlertDialog.PROGRESS_TYPE);
             sweetAlertDialog
                     .setTitleText(getString(R.string.signin_processing))
@@ -264,7 +256,7 @@ public class SigninActivity extends BaseActivity {
                                   Throwable error) {
                 LogUtil.e(TAG, "Error: In POST Response.");
                 sweetAlertDialog.cancel();
-                Toast.makeText(SigninActivity.this, R.string.network_error,
+                Toast.makeText(MyApplication.getContext(), R.string.network_error,
                         Toast.LENGTH_SHORT).show();
                 error.printStackTrace();
             }
@@ -294,7 +286,7 @@ public class SigninActivity extends BaseActivity {
             public void run() {
                 sweetAlertDialog.dismiss();
                 // 跳转到主界面
-                startActivity(new Intent(SigninActivity.this, MainActivity.class));
+                startActivity(new Intent(MyApplication.getContext(), MainActivity.class));
                 finish();  // 销毁活动
             }
         }, 1000);
@@ -342,9 +334,9 @@ public class SigninActivity extends BaseActivity {
     // 根据用户选择，判断是否记住密码
     private void toRememberPassword(boolean flag) {
         // 获取名字为“SIGNIN_PREFERENCES”的参数文件对象
-        sharedPreferences = this.getSharedPreferences(SIGNIN_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SIGNIN_PREFERENCES, MODE_PRIVATE);
         //使用Editor接口修改SharedPreferences中的值并提交
-        editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if (flag) {
             // 用户选择记住密码
             String account = accountEditText.getText().toString();
@@ -354,7 +346,7 @@ public class SigninActivity extends BaseActivity {
                 account = EncryptorUtil.encrypt(USER_SEED, account);
                 password = EncryptorUtil.encrypt(USER_SEED, password);
             } catch (GeneralSecurityException e) {
-                Toast.makeText(SigninActivity.this,
+                Toast.makeText(MyApplication.getContext(),
                         getString(R.string.signin_error_when_encrypting),
                         Toast.LENGTH_SHORT).show();
                 account = "";
@@ -367,16 +359,16 @@ public class SigninActivity extends BaseActivity {
             editor.putString(SIGNIN_TYPE, signtype);
             editor.putString(USER_ACCOUNT, account);
             editor.putString(USER_PASSWORD, password);
-            editor.commit();
+            editor.apply();
         } else {
             // 用户选择不记住密码，清除已经记住的密码
-            editor.clear().commit();
+            editor.clear().apply();
         }
     }
 
     // 检查更新
     private void checkForUpdate(final boolean flag) {
-        PgyUpdateManager.register(SigninActivity.this, new UpdateManagerListener() {
+        PgyUpdateManager.register(SignInActivity.this, new UpdateManagerListener() {
             @Override
             public void onNoUpdateAvailable() {
                 // 没有可用更新
@@ -392,31 +384,47 @@ public class SigninActivity extends BaseActivity {
             public void onUpdateAvailable(String result) {
                 // 有可用更新
                 LogUtil.d(TAG, "A new version of this app is available.");
+                // 获取当前版本名称
+                String currentVersionName = getString(
+                        R.string.settings_update_current_version_name_default);
+                try {
+                    currentVersionName = getPackageManager().getPackageInfo(
+                            MyApplication.getContext().getPackageName(), 0).versionName;
+                } catch (Exception e) {
+                    LogUtil.e(TAG, "Exception when getting version name.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                    e.printStackTrace();
+                }
                 // 将新版本信息封装到AppBean中
                 final AppBean appBean = getAppBeanFromString(result);
-                new AlertDialog.Builder(MyApplication.getContext())
-                        .setTitle(getString(R.string.settings_update))
-                        .setMessage(appBean.getVersionCode() + "\n"
-                                + appBean.getVersionName() + "\n" + appBean.getReleaseNote())
-                        .setNegativeButton(
-                                getString(R.string.settings_update_later),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // 以后再说
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setPositiveButton(getString(R.string.settings_update_now),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // 立即下载更新
-                                        startDownloadTask(SigninActivity.this,
-                                                appBean.getDownloadURL());
-                                        dialog.dismiss();
-                                    }
-                                }).show();
+                sweetAlertDialog = new SweetAlertDialog(SignInActivity.this,
+                        SweetAlertDialog.NORMAL_TYPE);
+                sweetAlertDialog
+                        .setTitleText(getString(R.string.settings_update_new_version_available))
+                        .setContentText(getString(R.string.settings_update_current_version_name)
+                                + currentVersionName + "\n"
+                                + getString(R.string.settings_update_new_version_name)
+                                + appBean.getVersionName() + "\n"
+                                + getString(R.string.settings_update_new_version_release_note)
+                                + appBean.getReleaseNote())
+                        .setCancelText(getString(R.string.settings_update_later))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                // 以后再说
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .setConfirmText(getString(R.string.settings_update_now))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                // 立即下载更新
+                                startDownloadTask(SignInActivity.this, appBean.getDownloadURL());
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
     }

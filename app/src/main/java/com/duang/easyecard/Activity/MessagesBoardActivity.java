@@ -30,11 +30,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class MessagesBoardActivity extends BaseActivity {
 
+    private final String TAG = "MessagesBoardActivity";
     // private FloatingActionButton fab;
     private ProgressView mProgressView;
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
-
     private MessagesBoardListAdapter mAdapter;
     private List<MessageBoardItem> dataList;
     private AsyncHttpClient httpClient;
@@ -45,8 +45,6 @@ public class MessagesBoardActivity extends BaseActivity {
     private String time;
     private String reply;
     private boolean refreshingFlag = false;
-
-    private final String TAG = "MessagesBoardActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +67,7 @@ public class MessagesBoardActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 初始化数据列表
         dataList = new ArrayList<>();
         // 发送预请求

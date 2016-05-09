@@ -26,9 +26,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class SettingsModifyPersonalInformationActivity extends BaseActivity {
 
+    private final String TAG = "SettingsModifyPersonalInformationActivity";
+    private final int CONSTANT_NICKNAME = 1;
+    private final int CONSTANT_EMAIL = 5;
+    private final int CONSTANT_PHONE = 6;
+    private final int CONSTANT_MSN = 7;
+    private final int CONSTANT_QQ = 8;
     private MaterialEditText editText;
     private Button button;
-
     private AsyncHttpClient httpClient;
     private String id;
     private String account;
@@ -39,14 +44,6 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
     private String phone;
     private String msn;
     private String qq;
-
-    private final String TAG = "SettingsModifyPersonalInformationActivity";
-    private final int CONSTANT_NICKNAME = 1;
-    private final int CONSTANT_EMAIL = 5;
-    private final int CONSTANT_PHONE = 6;
-    private final int CONSTANT_MSN = 7;
-    private final int CONSTANT_QQ = 8;
-
     // EditText的监视器
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -89,8 +86,7 @@ public class SettingsModifyPersonalInformationActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 获得由SettingsPersonalInformationActivity传递来的数据
         Intent intent = getIntent();
         id = intent.getStringExtra("ID");

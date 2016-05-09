@@ -36,16 +36,11 @@ public class CircleTextView extends TextView {
 
     private static final int DEFAULT_FILL_TYPE = 0;
 
-    private float mRadius;
     private int backgroundColor;
     private int borderColor;
     private float borderWidth;
     private float borderAlpha;
     private int ctType;
-
-    private float mCornerRadius = 360;
-    private float mDx = 0;
-    private float mDy = 0;
 
     public CircleTextView(Context context) {
         super(context);
@@ -69,7 +64,7 @@ public class CircleTextView extends TextView {
     @Override
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
-        mRadius = Math.min(getHeight(), getWidth()) / 2;
+        float mRadius = Math.min(getHeight(), getWidth()) / 2;
 
         if (ctType == 1) {
             setBackgroundCompat(getWidth(), getHeight());
@@ -90,6 +85,9 @@ public class CircleTextView extends TextView {
     }
 
     private void setBackgroundCompat(int w, int h) {
+        float mDx = 0;
+        float mDy = 0;
+        float mCornerRadius = 360;
         Bitmap bitmap = createShadowBitmap(w, h, mCornerRadius, borderWidth + 5, mDx, mDy,
                 borderColor);
         BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);

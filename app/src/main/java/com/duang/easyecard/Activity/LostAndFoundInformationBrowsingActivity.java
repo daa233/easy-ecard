@@ -39,15 +39,14 @@ import cz.msebera.android.httpclient.Header;
 public class LostAndFoundInformationBrowsingActivity extends BaseActivity
         implements AdapterView.OnItemClickListener {
 
+    private final String TAG = "LostAndFoundInformationBrowsingActivity";
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
     private CheckBox mNotFoundedCheckBox;
     private CheckBox mFoundedCheckBox;
     private ImageView mImageView;
     private SweetAlertDialog mProgressDialog;
-
     private AsyncHttpClient httpClient;
-    private LostAndFoundEventAdapter mAdapter;
     private String response;  // 服务器响应数据
     private List<LostAndFoundEvent> lostAndFoundEventList;
     private int pageIndex;  // 访问的网页信息的页码
@@ -57,9 +56,6 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
     private int foundedLostAndFoundEvent;
     private boolean DISPLAY_NOT_FOUNDED_EVENTS_FLAG = true;  // 显示未招领事件标志，默认为true
     private boolean DISPLAY_FOUNDED_EVENTS_FLAG = true;  // 显示已招领事件标志，默认为true
-
-    private final String TAG = "LostAndFoundInformationBrowsingActivity";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +111,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 初始化数据List
         lostAndFoundEventList = new ArrayList<>();
         // 初始化网页信息页码，首次解析标志置为true
@@ -137,6 +132,7 @@ public class LostAndFoundInformationBrowsingActivity extends BaseActivity
         LogUtil.d(TAG, "setAdapter");
         List<LostAndFoundEvent> partialLostAndFoundEventList = new ArrayList<>();
         // 根据标志位状态设置Adapter
+        LostAndFoundEventAdapter mAdapter;
         if (DISPLAY_NOT_FOUNDED_EVENTS_FLAG && DISPLAY_FOUNDED_EVENTS_FLAG) {
             // 显示所有事件
             mImageView.setVisibility(View.GONE);

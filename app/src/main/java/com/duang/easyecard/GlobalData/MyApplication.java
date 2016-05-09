@@ -5,15 +5,12 @@ import android.content.Context;
 
 import com.duang.easyecard.Model.UserBasicInformation;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.PersistentCookieStore;
 import com.pgyersdk.crash.PgyCrashManager;
-import com.squareup.leakcanary.LeakCanary;
 
 public class MyApplication extends Application {
 
     private static Context context;
     private static AsyncHttpClient httpClient;
-    private static PersistentCookieStore cookieStore;
 
     private static UserBasicInformation userBasicInformation;
 
@@ -21,7 +18,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         context = getApplicationContext();
         super.onCreate();
-        LeakCanary.install(this);  // LeakCanary
         PgyCrashManager.register(this);  // 蒲公英Crash分析
     }
 
@@ -40,17 +36,6 @@ public class MyApplication extends Application {
 
     public void setHttpClient(AsyncHttpClient client) {
         httpClient = client;
-    }
-
-    public static PersistentCookieStore getCookieStore() {
-        if (cookieStore == null) {
-            cookieStore = new PersistentCookieStore(context);
-        }
-        return cookieStore;
-    }
-
-    public void setCookieStore(PersistentCookieStore cookie) {
-        cookieStore = cookie;
     }
 
     public static UserBasicInformation getUserBasicInformation() {

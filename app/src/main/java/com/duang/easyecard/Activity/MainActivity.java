@@ -38,21 +38,18 @@ import cz.msebera.android.httpclient.Header;
 public class MainActivity extends BaseActivity implements
         ManagementFragment.StartActivitiesCallback {
 
+    protected static final int CONSTANT_START_BASIC_INFORMATION = 1;
+    protected static final int CONSTANT_START_REPORT_LOSS = 3;
+    protected final int CONSTANT_START_NOTHING = 0;
+    private final String TAG = "MainActivity";
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<>();
     private ChangeColorTab changeColorTab;
-
     private AsyncHttpClient httpClient;
-    private UserBasicInformation userBasicInformation;
     private List<String> userBasicInformationDataList;
     private List<String> userBasicInformationDataMobileList;
     private String response;
     private int startManageActivityFlag;
-    private final String TAG = "MainActivity";
-    protected final int CONSTANT_START_NOTHING = 0;
-    protected static final int CONSTANT_START_BASIC_INFORMATION = 1;
-    protected static final int CONSTANT_START_TRADING_INQUIRY = 2;
-    protected static final int CONSTANT_START_REPORT_LOSS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +93,7 @@ public class MainActivity extends BaseActivity implements
             }
         });
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 发送GET请求，获取基本信息
         sendGETRequestToMobile(CONSTANT_START_NOTHING);
     }
@@ -184,6 +180,88 @@ public class MainActivity extends BaseActivity implements
 
     }
 
+    // 设置全局变量UserBasicInformation
+    private void setGlobalUserBasicInformation() {
+        // 从userInformationDataList中获取数据
+        UserBasicInformation userBasicInformation = new UserBasicInformation();
+        // 从掌上校园获得的数据
+        if (userBasicInformationDataMobileList.size() >= 10
+                && userBasicInformationDataMobileList != null) {
+            int i = 0;
+            userBasicInformation.setName(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setStuId(userBasicInformationDataMobileList.get(i++));
+            // userBasicInformation.setCardAccount(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setBalance(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setBankAccout(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setCurrentTransition(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setLastTransition(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setReportLossState(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setFreezeState(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setIdentityType(userBasicInformationDataMobileList.get(i++));
+            userBasicInformation.setDepartment(userBasicInformationDataMobileList.get(i));
+        } else {
+            LogUtil.e(TAG, "Can't get data from mobile data list.");
+        }
+
+        // 从校园卡服务平台获得的数据
+        if (userBasicInformationDataList.size() >= 7 && userBasicInformationDataList != null) {
+            int i = 0;
+            userBasicInformation.setName(userBasicInformationDataList.get(i++));
+            userBasicInformation.setStuId(userBasicInformationDataList.get(i++));
+            userBasicInformation.setCardAccount(userBasicInformationDataList.get(i++));
+            userBasicInformation.setBalance(userBasicInformationDataList.get(i++));
+            userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(i++));
+            userBasicInformation.setReportLossState(userBasicInformationDataList.get(i++));
+            userBasicInformation.setFreezeState(userBasicInformationDataList.get(i));
+        } else {
+            LogUtil.e(TAG, "Can't get data from sevice platform data list.");
+        }
+
+        // 传递全局变量userBasicInformation
+        MyApplication myApp = (MyApplication) getApplication();
+        myApp.setUserBasicInformation(userBasicInformation);
+        if (MyApplication.getUserBasicInformation() != null) {
+            LogUtil.d(TAG, "Add UserBasicInformation to Application successfully.");
+            if (startManageActivityFlag == CONSTANT_START_BASIC_INFORMATION) {
+                // 跳转到基本信息
+                startActivity(new Intent(this, ManageBasicInformationActivity.class));
+            } else if (startManageActivityFlag == CONSTANT_START_REPORT_LOSS) {
+                if (userBasicInformation.getReportLossState().contains("正常卡")) {
+                    // 正常卡，可以挂失
+                    LogUtil.d(TAG, "Report state: Normal.");
+                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(getString(R.string.hint_start_report_loss_warning_title))
+                            .setContentText(getString(
+                                    R.string.hint_start_report_loss_warning_content))
+                            .setConfirmText(getString(R.string.OK))
+                            .setCancelText(getString(R.string.Cancel))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                // 用户确定挂失
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    // 跳转到ManageReportLossActivity
+                                    startActivity(new Intent(MainActivity.this,
+                                            ManageReportLossActivity.class));
+                                    sweetAlertDialog.dismiss();
+                                }
+                            })
+                            .show();
+                } else {
+                    // 已经挂失
+                    LogUtil.d(TAG, "Report state: Loss.");
+                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText(getString(
+                                    R.string.report_loss_the_card_has_been_reported_loss))
+                            .setConfirmText(getString(R.string.OK))
+                            .show();
+                }
+            }
+        } else {
+            LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");
+            new Throwable().printStackTrace();
+        }
+    }
+
     // 通过“掌上校园”网站返回的html文本解析数据
     private class JsoupHtmlDataFromMobile extends AsyncTask<Void, Void, Void> {
 
@@ -266,88 +344,6 @@ public class MainActivity extends BaseActivity implements
                         .setConfirmText(getString(R.string.OK))
                         .show();
             }
-        }
-    }
-
-    // 设置全局变量UserBasicInformation
-    private void setGlobalUserBasicInformation() {
-        // 从userInformationDataList中获取数据
-        userBasicInformation = new UserBasicInformation();
-        // 从掌上校园获得的数据
-        if (userBasicInformationDataMobileList.size() >= 10
-                && userBasicInformationDataMobileList != null) {
-            int i = 0;
-            userBasicInformation.setName(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setStuId(userBasicInformationDataMobileList.get(i++));
-            // userBasicInformation.setCardAccount(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setBalance(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setBankAccout(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setCurrentTransition(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setLastTransition(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setReportLossState(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setFreezeState(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setIdentityType(userBasicInformationDataMobileList.get(i++));
-            userBasicInformation.setDepartment(userBasicInformationDataMobileList.get(i));
-        } else {
-            LogUtil.e(TAG, "Can't get data from mobile data list.");
-        }
-
-        // 从校园卡服务平台获得的数据
-        if (userBasicInformationDataList.size() >= 7 && userBasicInformationDataList != null) {
-            int i = 0;
-            userBasicInformation.setName(userBasicInformationDataList.get(i++));
-            userBasicInformation.setStuId(userBasicInformationDataList.get(i++));
-            userBasicInformation.setCardAccount(userBasicInformationDataList.get(i++));
-            userBasicInformation.setBalance(userBasicInformationDataList.get(i++));
-            userBasicInformation.setCurrentTransition(userBasicInformationDataList.get(i++));
-            userBasicInformation.setReportLossState(userBasicInformationDataList.get(i++));
-            userBasicInformation.setFreezeState(userBasicInformationDataList.get(i));
-        } else {
-            LogUtil.e(TAG, "Can't get data from sevice platform data list.");
-        }
-
-        // 传递全局变量userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        myApp.setUserBasicInformation(userBasicInformation);
-        if (myApp.getUserBasicInformation() != null) {
-            LogUtil.d(TAG, "Add UserBasicInformation to Application successfully.");
-            if (startManageActivityFlag == CONSTANT_START_BASIC_INFORMATION) {
-                // 跳转到基本信息
-                startActivity(new Intent(this, ManageBasicInformationActivity.class));
-            } else if (startManageActivityFlag == CONSTANT_START_REPORT_LOSS) {
-                if (userBasicInformation.getReportLossState().contains("正常卡")) {
-                    // 正常卡，可以挂失
-                    LogUtil.d(TAG, "Report state: Normal.");
-                    new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText(getString(R.string.hint_start_report_loss_warning_title))
-                            .setContentText(getString(
-                                    R.string.hint_start_report_loss_warning_content))
-                            .setConfirmText(getString(R.string.OK))
-                            .setCancelText(getString(R.string.Cancel))
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                // 用户确定挂失
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    // 跳转到ManageReportLossActivity
-                                    startActivity(new Intent(MainActivity.this,
-                                            ManageReportLossActivity.class));
-                                    sweetAlertDialog.dismiss();
-                                }
-                            })
-                            .show();
-                } else {
-                    // 已经挂失
-                    LogUtil.d(TAG, "Report state: Loss.");
-                    new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText(getString(
-                                    R.string.report_loss_the_card_has_been_reported_loss))
-                            .setConfirmText(getString(R.string.OK))
-                            .show();
-                }
-            }
-        } else {
-            LogUtil.e(TAG, "Fail to add UserBasicInformation to Application");
-            new Throwable().printStackTrace();
         }
     }
 }

@@ -17,9 +17,9 @@ import br.com.dina.ui.widget.UITableView;
 
 public class ManageBasicInformationActivity extends BaseActivity {
 
+    private static final String TAG = "ManageBasicInformationActivity";
     private UITableView tableView;
     private UserBasicInformation userBasicInformation;
-    private final String TAG = "ManageBasicInformationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,7 @@ public class ManageBasicInformationActivity extends BaseActivity {
         // 绑定控件
         tableView = (UITableView) findViewById(R.id.manage_basic_information_table_view);
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        userBasicInformation = myApp.getUserBasicInformation();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         if (userBasicInformation == null) {
             // 获取UserBasicInformation失败
             LogUtil.e(TAG, "Fail to get UserBasicInformation.");

@@ -1,11 +1,11 @@
-## Oh, you see!
+# Oh, you see!
 <center>
 	<img src="https://raw.githubusercontent.com/SunGoodBoy/EasyEcard/AS/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" alt="icon"> 
 </center>
 <center>
 	<p>ICON</p>
 </center>
-“Oh, you see!” 是一款第三方开源应用，旨在帮助皇家每羊学院的师生更好的使用[校园卡电子服务平台](http://card.ouc.edu.cn)。能够实现在Android手机客户端查询校园卡余额、流水信息，发布和浏览丢卡、拾卡信息，挂失校园卡等功能。  
+“Oh, you see!” 是一款第三方开源应用，旨在帮助皇家每羊学院的师生更好地使用[校园卡电子服务平台](http://card.ouc.edu.cn)。能够实现在Android手机客户端查询校园卡余额、流水信息，发布和浏览丢卡、拾卡信息，挂失校园卡等功能。  
 Demo下载地址：<https://www.pgyer.com/ohyousee>  
 GitHub源码地址：[EasyEcard](https://github.com/SunGoodBoy/EasyEcard)  
 当前版本：[v1.0.0](https://github.com/SunGoodBoy/EasyEcard/releases)  

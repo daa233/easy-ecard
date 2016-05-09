@@ -30,12 +30,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class ManageReportLossActivity extends BaseActivity {
 
+    private static final String TAG = "ManageReportLossActivity";
     private UITableView userInfoTableView;
     private MaterialEditText passwordEditText;
     private UserBasicInformation userBasicInformation;
     private AsyncHttpClient httpClient;
-    private String password;
-    private final String TAG = "ManageReportLossActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +58,8 @@ public class ManageReportLossActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         // 创建UITableView
         createUITableViewList();
     }
@@ -80,7 +78,7 @@ public class ManageReportLossActivity extends BaseActivity {
     // “挂失”按钮的点击事件
     public void onReportLossButtonClick(View v) {
         LogUtil.d(TAG, "onReportLossButtonClick.");
-        password = passwordEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
         if (password.isEmpty()) {
             // 没有输入密码
             passwordEditText.setError(getString(R.string.report_loss_password_is_empty));

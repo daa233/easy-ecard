@@ -31,26 +31,20 @@ import org.jsoup.nodes.Element;
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.client.CookieStore;
-import cz.msebera.android.httpclient.client.config.CookieSpecs;
-import cz.msebera.android.httpclient.client.protocol.ClientContext;
-import cz.msebera.android.httpclient.cookie.ClientCookie;
 
 public class ManageNetChargeActivity extends BaseActivity {
 
+    private static final String TAG = "ManageNetChargeActivity";
+    private static final String COOKIE_NAME = "iPlanetDirectoryProxzx";
     private UITableView tableView;
     private MaterialEditText amountEditText;
     private MaterialEditText passwordEditText;
-
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
     private PersistentCookieStore cookieStore;
     private String response;
     private String lastTimeNetBalance;
     private boolean netAccountIsExist = false;
-
-    private static final String TAG = "ManageNetChargeActivity";
-    private static final String COOKIE_NAME = "iPlanetDirectoryProxzx";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +67,8 @@ public class ManageNetChargeActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         cookieStore = new PersistentCookieStore(MyApplication.getContext());
         // 发送GET请求获得网费余额
         sendGETRequest();
@@ -133,49 +126,6 @@ public class ManageNetChargeActivity extends BaseActivity {
         ViewItem v = new ViewItem(relativeLayout);
         v.setClickable(false);
         tableView.addViewItem(v);
-    }
-
-    // 解析响应数据
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            // 解析返回的responseString
-            Document doc;
-            try {
-                LogUtil.d(TAG, "JsoupHtmlData: doInBackground called.");
-                doc = Jsoup.parse(response);
-                LogUtil.d(TAG, "ps = " + doc.getElementsByClass("heightauto").text());
-                for (Element p : doc.getElementsByClass("heightauto")) {
-                    LogUtil.d(TAG, "p = " + p.toString());
-                    // 通过字符串截取获得校园网余额
-                    String pString = p.toString();
-                    pString = pString.substring(pString.indexOf("</span>") + 7);
-                    lastTimeNetBalance = pString.substring(0, pString.indexOf('<'));
-                }
-            } catch (Exception e) {
-                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            LogUtil.d(TAG, "JsoupHtmlData: onPostExecuted called.");
-            if (lastTimeNetBalance != null && !lastTimeNetBalance.isEmpty()) {
-                // 已得到网费余额，创建tableView
-                createUITableViewList();
-                // cookieStore = new PersistentCookieStore(ManageNetChargeActivity.this);
-                // httpClient.setCookieStore(cookieStore);
-                // 发送POST请求验证是否存在此账户
-                sendPOSTRequestToCheckAccount();
-            } else {
-                LogUtil.e(TAG, "Last time net balance is null or empty.");
-                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     // Button的点击事件
@@ -302,5 +252,48 @@ public class ManageNetChargeActivity extends BaseActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            // 解析返回的responseString
+            Document doc;
+            try {
+                LogUtil.d(TAG, "JsoupHtmlData: doInBackground called.");
+                doc = Jsoup.parse(response);
+                LogUtil.d(TAG, "ps = " + doc.getElementsByClass("heightauto").text());
+                for (Element p : doc.getElementsByClass("heightauto")) {
+                    LogUtil.d(TAG, "p = " + p.toString());
+                    // 通过字符串截取获得校园网余额
+                    String pString = p.toString();
+                    pString = pString.substring(pString.indexOf("</span>") + 7);
+                    lastTimeNetBalance = pString.substring(0, pString.indexOf('<'));
+                }
+            } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            LogUtil.d(TAG, "JsoupHtmlData: onPostExecuted called.");
+            if (lastTimeNetBalance != null && !lastTimeNetBalance.isEmpty()) {
+                // 已得到网费余额，创建tableView
+                createUITableViewList();
+                // cookieStore = new PersistentCookieStore(ManageNetChargeActivity.this);
+                // httpClient.setCookieStore(cookieStore);
+                // 发送POST请求验证是否存在此账户
+                sendPOSTRequestToCheckAccount();
+            } else {
+                LogUtil.e(TAG, "Last time net balance is null or empty.");
+                Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

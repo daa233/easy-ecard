@@ -1,10 +1,5 @@
 package com.duang.easyecard.Model;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.duang.easyecard.View.CircleTextView;
-
 /**
  * Created by MrD on 2016/3/19.
  */

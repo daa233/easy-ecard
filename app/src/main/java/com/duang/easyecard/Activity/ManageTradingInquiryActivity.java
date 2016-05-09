@@ -24,9 +24,8 @@ import java.util.List;
 public class ManageTradingInquiryActivity extends BaseActivity implements
         ManageTradingInquiryFragment.CommunicateListener {
 
+    private final String TAG = "ManageTradingInquiryActivity";
     private TabLayout tabLayout;
-    private ViewPager viewPager;
-
     private boolean historyInitFlag = false;
     private boolean todayInitFlag = false;
     private boolean weekInitFlag = false;
@@ -34,7 +33,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
     private boolean todayLoadingFlag = false;
     private boolean weekLoadingFlag = false;
     private HashMap<String, String> fragmentTagHashMap;
-    private final String TAG = "ManageTradingInquiryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         // 显示home按钮
         setDisplayHomeButton();
         // 设置ViewPager
-        viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.manage_trading_inquiry_tabs);
@@ -139,36 +137,6 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
     @Override
     public void getFragmentTag(int type, String tag) {
         fragmentTagHashMap.put(String.valueOf(type), tag);
-    }
-
-    // Custom adapter class provides fragments required for the view pager.
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
     }
 
     /**
@@ -277,5 +245,35 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
             return false;
         }
         return false;
+    }
+
+    // Custom adapter class provides fragments required for the view pager.
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }

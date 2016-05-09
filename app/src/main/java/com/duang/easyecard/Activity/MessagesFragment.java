@@ -40,10 +40,11 @@ import cz.msebera.android.httpclient.Header;
  */
 public class MessagesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
+    private static final String TAG = "MessagesFragment";
     private View viewFragment;
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
-
     private AsyncHttpClient httpClient;
     private String response;
     private MessagesListViewAdapter mAdapter;
@@ -59,9 +60,6 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     };
     private String[] titleArray;
     private String newMessagesCount = "";
-    private final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
-
-    private final String TAG = "MessagesFragment";
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -101,8 +99,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getActivity().getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // ItemTitle
         titleArray = new String[]{
                 getString(R.string.messages_inbox),
@@ -277,6 +274,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             super.onPostExecute(aVoid);
             if (sysUserID.isEmpty()) {
                 // 没有解析出sysUserID
+                LogUtil.e(TAG, "Can't get the sysUserID.");
             } else {
                 // 已经解析出sysUserID，发送GET请求获取未读消息数目
                 sendGETRequestToGetAllMyUnreadCount(sysUserID);

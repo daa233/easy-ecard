@@ -36,13 +36,13 @@ import cz.msebera.android.httpclient.Header;
 
 public class LostAndFoundRegistrationActivity extends BaseActivity {
 
+    private final String TAG = "LostAndFoundRegistrationActivity";
     private UITableView tableView;
     private MaterialEditText contactEditText;
     private MaterialEditText lostPlaceEditText;
     private MaterialEditText descriptionEditText;
     private Button button;
     private SweetAlertDialog sweetAlertDialog;
-
     private UserBasicInformation userBasicInformation;
     private AsyncHttpClient httpClient;
     private String response;
@@ -50,8 +50,6 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     private List<String> pList;  // 丢失登记信息
     private boolean registratedFlag = false;
     private String lostAndFoundEventId;
-
-    private final String TAG = "LostAndFoundRegistrationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +80,8 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         // 发送GET请求
         sendGETRequest();
         // 创建UITableView
@@ -267,6 +264,65 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                 });
     }
 
+    // 用户捡到卡后，将卡片标记为招领状态的请求
+    private void sendPickUpCardPOSTRequest() {
+        httpClient.post(UrlConstant.CARD_LOSS_PICK_UP_CARD + lostAndFoundEventId,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // 响应成功
+                        response = new String(responseBody);
+                        if (response.contains("True")) {
+                            // 招领成功
+                            sweetAlertDialog
+                                    .setTitleText(getString(R.string
+                                            .lost_and_found_registration_pick_up_card_title))
+                                    .setContentText(getString(R.string.operaton_successed))
+                                    .setConfirmText(getString(R.string.OK))
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            // 重新载入此界面
+                            initData();
+                        } else {
+                            // 招领失败
+                            sweetAlertDialog
+                                    .setTitleText(getString(R.string
+                                            .lost_and_found_registration_pick_up_card_title))
+                                    .setContentText(getString(R.string.operation_failed))
+                                    .setConfirmText(getString(R.string.OK))
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
+                                          Throwable error) {
+                        // 网络错误
+                        sweetAlertDialog
+                                .setTitleText(getString(
+                                        R.string.lost_and_found_registration_pick_up_card_title))
+                                .setContentText(getString(R.string.network_error))
+                                .setConfirmText(getString(R.string.OK))
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        error.printStackTrace();
+                    }
+                });
+    }
+
+    // 构造UItableView的列表项，传入title和content
+    private void generateCustomItem(UITableView tableView, String title, String content) {
+        LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
+                R.layout.item_table_view_custom, null);
+        TextView titleText = (TextView) relativeLayout.getChildAt(0);
+        titleText.setText(title);
+        TextView contentText = (TextView) relativeLayout.getChildAt(1);
+        contentText.setText(content);
+        ViewItem v = new ViewItem(relativeLayout);
+        v.setClickable(false);
+        tableView.addViewItem(v);
+    }
+
     // 解析响应数据
     private class JsoupGETHtmlData extends AsyncTask<Void, Void, Void> {
         @Override
@@ -358,64 +414,5 @@ public class LostAndFoundRegistrationActivity extends BaseActivity {
                         .changeAlertType(SweetAlertDialog.ERROR_TYPE);
             }
         }
-    }
-
-    // 用户捡到卡后，将卡片标记为招领状态的请求
-    private void sendPickUpCardPOSTRequest() {
-        httpClient.post(UrlConstant.CARD_LOSS_PICK_UP_CARD + lostAndFoundEventId,
-                new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        // 响应成功
-                        response = new String(responseBody);
-                        if (response.contains("True")) {
-                            // 招领成功
-                            sweetAlertDialog
-                                    .setTitleText(getString(R.string
-                                            .lost_and_found_registration_pick_up_card_title))
-                                    .setContentText(getString(R.string.operaton_successed))
-                                    .setConfirmText(getString(R.string.OK))
-                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                            // 重新载入此界面
-                            initData();
-                        } else {
-                            // 招领失败
-                            sweetAlertDialog
-                                    .setTitleText(getString(R.string
-                                            .lost_and_found_registration_pick_up_card_title))
-                                    .setContentText(getString(R.string.operation_failed))
-                                    .setConfirmText(getString(R.string.OK))
-                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
-                                          Throwable error) {
-                        // 网络错误
-                        sweetAlertDialog
-                                .setTitleText(getString(
-                                        R.string.lost_and_found_registration_pick_up_card_title))
-                                .setContentText(getString(R.string.network_error))
-                                .setConfirmText(getString(R.string.OK))
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                        error.printStackTrace();
-                    }
-                });
-    }
-
-    // 构造UItableView的列表项，传入title和content
-    private void generateCustomItem(UITableView tableView, String title, String content) {
-        LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
-                R.layout.item_table_view_custom, null);
-        TextView titleText = (TextView) relativeLayout.getChildAt(0);
-        titleText.setText(title);
-        TextView contentText = (TextView) relativeLayout.getChildAt(1);
-        contentText.setText(content);
-        ViewItem v = new ViewItem(relativeLayout);
-        v.setClickable(false);
-        tableView.addViewItem(v);
     }
 }

@@ -180,8 +180,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             LogUtil.e(TAG, "Can't get arguments: position.");
         }
         // 获得全局变量httpClient，新建dateUtil
-        MyApplication myApp = (MyApplication) getActivity().getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         dateUtil = new TradingInquiryDateUtil(MyApplication.getContext());
         // 初始化数据列表
         dataList = new ArrayList<>();
@@ -589,7 +588,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
      * 首次解析会得到最大页码maxIndex
      * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
      * 结果保存在ManageTradingInquiryActivity中的historyDataList
-     * <p/>
+     * <p>
      * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
      * 所以要通过firstTimeToParseFlag进行标识，仅在首次解析时获取maxIndex
      */

@@ -28,13 +28,8 @@ import java.util.List;
 public class ManagementFragment extends Fragment implements
         AdapterView.OnItemClickListener {
 
-    private View viewFragment;
+    private static final String TAG = "ManagementFragment";
     private StartActivitiesCallback startActivitiesCallback;
-
-    private GridView mGridView;
-    private ImageView mCampusImageView;
-    private ManagementGridViewAdapter mAdapter;
-
     // ItemImage图标封装为一个数组
     private int[] iconImage = {
             R.drawable.manage_basic_info,
@@ -44,9 +39,6 @@ public class ManagementFragment extends Fragment implements
             R.drawable.manage_net_charge,
             R.drawable.manage_change_password,
     };
-    private String[] iconText;
-
-    private final String TAG = "ManagementFragment";
 
     @Override
     public void onAttach(Context context) {
@@ -62,17 +54,17 @@ public class ManagementFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        viewFragment = inflater.inflate(R.layout.fragment_management, null);
+        View viewFragment = inflater.inflate(R.layout.fragment_management, null);
         // 实例化控件
-        mGridView = (GridView) viewFragment.findViewById(R.id.manage_grid_view);
-        mCampusImageView = (ImageView) viewFragment.findViewById(R.id.manage_campus_image_view);
+        GridView mGridView = (GridView) viewFragment.findViewById(R.id.manage_grid_view);
+        ImageView mCampusImageView = (ImageView) viewFragment.findViewById(R.id.manage_campus_image_view);
         // 通过Glide设置mCampusImageView资源
         Glide
                 .with(this)
                 .load(R.drawable.main_campus_scenery)
                 .into(mCampusImageView);
         // ItemText封装数组
-        iconText = new String[]{
+        String[] iconText = new String[]{
                 getResources().getString(R.string.basic_information),
                 getResources().getString(R.string.trading_inquiry),
                 getResources().getString(R.string.report_loss_card),
@@ -80,7 +72,7 @@ public class ManagementFragment extends Fragment implements
                 getResources().getString(R.string.net_charge),
                 getResources().getString(R.string.change_password)
         };
-        mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
+        ManagementGridViewAdapter mAdapter = new ManagementGridViewAdapter(MyApplication.getContext(),
                 getDataLists(iconImage, iconText),
                 R.layout.item_manage_grid_view);
         // 配置适配器
@@ -145,15 +137,16 @@ public class ManagementFragment extends Fragment implements
         }
     }
 
-    // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
-    public interface StartActivitiesCallback {
-        void sendGETRequestToMobile(int openActivityFlag);
-        void sendPrePostRequestForTradingInquiry();
-    }
-
     @Override
     public void onDetach() {
         super.onDetach();
         startActivitiesCallback = null;  // 移除前赋值为空
+    }
+
+    // StartManageBasicInformationCallback接口，为了在打开基本信息界面时及时更新信息
+    public interface StartActivitiesCallback {
+        void sendGETRequestToMobile(int openActivityFlag);
+
+        void sendPrePostRequestForTradingInquiry();
     }
 }

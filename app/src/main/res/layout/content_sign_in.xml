@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_signin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.duang.easyecard.Activity.SignInActivity"
+    tools:showIn="@layout/activity_sign_in"
     android:orientation="vertical">
 
     <LinearLayout
@@ -144,7 +148,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="start">
+                    android:gravity="end">
 
                     <com.rey.material.widget.CheckBox
                         android:id="@+id/signin_remember_password_check_box"
@@ -159,6 +163,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:gravity="end">
 
                     <com.rey.material.widget.CheckBox
@@ -191,4 +196,5 @@
             android:layout_marginTop="10dp"
             android:contentDescription="@string/signin_pic_below" />
     </LinearLayout>
+
 </ScrollView>

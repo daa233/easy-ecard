@@ -38,14 +38,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Activity.BaseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
-            android:name=".Activity.SigninActivity"
-            android:label="@string/title_activity_signin"
-            android:screenOrientation="portrait" />
+            android:name=".Activity.SignInActivity"
+            android:label="@string/title_activity_sign_in"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Activity.ManageBasicInformationActivity"
             android:label="@string/title_activity_manage_basic_information"
@@ -123,6 +129,10 @@
         <activity
             android:name=".Activity.SettingsModifyPersonalInformationActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activity.SettingsAboutActivity"
+            android:label="@string/title_activity_settings_about"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

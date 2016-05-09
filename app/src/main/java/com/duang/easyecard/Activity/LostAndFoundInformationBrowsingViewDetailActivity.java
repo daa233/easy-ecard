@@ -37,19 +37,16 @@ import cz.msebera.android.httpclient.Header;
  */
 public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActivity {
 
+    private final String TAG = "LostAndFoundInformationBrowsingViewDetailActivity";
     private UITableView mTableView;
     private Button button;
     private SweetAlertDialog sweetAlertDialog;
-
     private AsyncHttpClient httpClient;
-    private UserBasicInformation userBasicInformation;
     private String response;
     private LostAndFoundEvent event;
     private String lostPlace;
     private String description;
     private boolean isViewingOwnEventFlag;
-
-    private final String TAG = "LostAndFoundInformationBrowsingViewDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +77,8 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        UserBasicInformation userBasicInformation = MyApplication.getUserBasicInformation();
         // 判断用户是否正在查看自己的丢失信息
         if (userBasicInformation.getStuId().equals(event.getStuId())) {
             // 用户正在查看自己的丢失信息
@@ -215,6 +211,38 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                 });
     }
 
+    // 创建UITableView列表
+    private void createTableViewList() {
+        generateCustomItem(mTableView, getString(R.string.name), event.getName());
+        generateCustomItem(mTableView, getString(R.string.stu_id), event.getStuId());
+        generateCustomItem(mTableView, getString(R.string.card_account), event.getAccount());
+        generateCustomItem(mTableView, getString(R.string.contact), event.getContact());
+        generateCustomItem(mTableView, getString(R.string.publish_time), event.getPublishTime());
+        generateCustomItem(mTableView, getString(R.string.lost_place), lostPlace);
+        generateCustomItem(mTableView, getString(R.string.description), description);
+        generateCustomItem(mTableView, getString(R.string.state), event.getState());
+        generateCustomItem(mTableView, getString(R.string.found_time), event.getFoundTime());
+        // 更新UI
+        mTableView.commit();
+    }
+
+    // 构造UItableView的列表项，传入title和content
+    private void generateCustomItem(UITableView tableView, String title, String content) {
+        LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
+                R.layout.item_table_view_custom, null);
+        TextView titleText = (TextView) relativeLayout.getChildAt(0);
+        titleText.setText(title);
+        TextView contentText = (TextView) relativeLayout.getChildAt(1);
+        // 将contentText设置为可以选择，方便复制联系方式
+        contentText.setTextIsSelectable(true);
+        contentText.setText(content);
+        ViewItem v = new ViewItem(relativeLayout);
+        v.setClickable(false);
+        tableView.addViewItem(v);
+    }
+
     // 解析响应数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
         @Override
@@ -248,37 +276,5 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                     .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
             sweetAlertDialog.dismissWithAnimation();
         }
-    }
-
-    // 创建UITableView列表
-    private void createTableViewList() {
-        generateCustomItem(mTableView, getString(R.string.name), event.getName());
-        generateCustomItem(mTableView, getString(R.string.stu_id), event.getStuId());
-        generateCustomItem(mTableView, getString(R.string.card_account), event.getAccount());
-        generateCustomItem(mTableView, getString(R.string.contact), event.getContact());
-        generateCustomItem(mTableView, getString(R.string.publish_time), event.getPublishTime());
-        generateCustomItem(mTableView, getString(R.string.lost_place), lostPlace);
-        generateCustomItem(mTableView, getString(R.string.description), description);
-        generateCustomItem(mTableView, getString(R.string.state), event.getState());
-        generateCustomItem(mTableView, getString(R.string.found_time), event.getFoundTime());
-        // 更新UI
-        mTableView.commit();
-    }
-
-    // 构造UItableView的列表项，传入title和content
-    private void generateCustomItem(UITableView tableView, String title, String content) {
-        LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout relativeLayout = (RelativeLayout) mLayoutInflater.inflate(
-                R.layout.item_table_view_custom, null);
-        TextView titleText = (TextView) relativeLayout.getChildAt(0);
-        titleText.setText(title);
-        TextView contentText = (TextView) relativeLayout.getChildAt(1);
-        // 将contentText设置为可以选择，方便复制联系方式
-        contentText.setTextIsSelectable(true);
-        contentText.setText(content);
-        ViewItem v = new ViewItem(relativeLayout);
-        v.setClickable(false);
-        tableView.addViewItem(v);
     }
 }

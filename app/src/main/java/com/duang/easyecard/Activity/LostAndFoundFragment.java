@@ -17,12 +17,7 @@ import com.duang.easyecard.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LostAndFoundFragment extends Fragment implements View.OnClickListener{
-
-    private LinearLayout infoBrowsingLinearLayout;
-    private LinearLayout reportLossLinearLayout;
-    private ImageView infoBrowsingImageView;
-    private ImageView reportLossImageView;
+public class LostAndFoundFragment extends Fragment implements View.OnClickListener {
 
     public LostAndFoundFragment() {
         // Required empty public constructor
@@ -40,13 +35,13 @@ public class LostAndFoundFragment extends Fragment implements View.OnClickListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // 实例化控件
-        infoBrowsingLinearLayout = (LinearLayout) getActivity().findViewById(
+        LinearLayout infoBrowsingLinearLayout = (LinearLayout) getActivity().findViewById(
                 R.id.lost_and_found_fragment_info_browsing_linear_layout);
-        reportLossLinearLayout = (LinearLayout) getActivity().findViewById(
+        LinearLayout reportLossLinearLayout = (LinearLayout) getActivity().findViewById(
                 R.id.lost_and_found_fragment_report_loss_linear_layout);
-        infoBrowsingImageView = (ImageView) getActivity().findViewById(
+        ImageView infoBrowsingImageView = (ImageView) getActivity().findViewById(
                 R.id.lost_and_found_fragment_info_browsing_image_view);
-        reportLossImageView = (ImageView) getActivity().findViewById(
+        ImageView reportLossImageView = (ImageView) getActivity().findViewById(
                 R.id.lost_and_found_fragment_report_loss_image_view);
         // 通过Glide加载图片资源
         Glide
@@ -64,7 +59,7 @@ public class LostAndFoundFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.lost_and_found_fragment_info_browsing_linear_layout:
                 // 跳转到失卡信息浏览界面
                 startActivity(new Intent(getActivity(),

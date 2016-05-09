@@ -11,7 +11,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <com.rey.material.widget.ProgressView
             android:id="@+id/settings_personal_information_progress_view"

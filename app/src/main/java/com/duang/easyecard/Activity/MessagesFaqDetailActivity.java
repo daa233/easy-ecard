@@ -25,18 +25,16 @@ import cz.msebera.android.httpclient.Header;
 
 public class MessagesFaqDetailActivity extends BaseActivity {
 
+    private final String TAG = "MessagesFaqDetailActivity";
     private TextView titleTextView;
     private TextView publishTimeTextView;
     private TextView contentTextView;
     private ProgressView progressView;
-
-    private FaqItem faqItem;
     private String publishTime;
     private String content;
     private AsyncHttpClient httpClient;
     private String address;
     private String response;
-    private final String TAG = "MessagesFaqDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +57,10 @@ public class MessagesFaqDetailActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 获得Intent传递的FaqItem对象
         Intent intent = this.getIntent();
-        faqItem = (FaqItem) intent.getSerializableExtra("FaqItem");
+        FaqItem faqItem = (FaqItem) intent.getSerializableExtra("FaqItem");
         address = faqItem.getDetailAddress();
         // 设置问题标题
         titleTextView.setText(faqItem.getTitle());
