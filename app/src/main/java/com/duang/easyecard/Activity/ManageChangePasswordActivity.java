@@ -18,6 +18,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
@@ -29,18 +30,16 @@ import cz.msebera.android.httpclient.Header;
 
 public class ManageChangePasswordActivity extends BaseActivity {
 
+    private static final String TAG = "ManageChangePasswordActivity";
+    private static final String PASSWORD = "Password";
+    private static final String NEW_PASSWORD = "NewPassword";
+    private static final String CONFIRM_PASSWORD = "ConfirmPassword";
     private UITableView userInfoTableView;
     private MaterialEditText passwordEditText;
     private MaterialEditText newPasswordEditText;
     private MaterialEditText confirmNewPasswordEditText;
-
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
-
-    private final String TAG = "ManageChangePasswordActivity";
-    private final String PASSWORD = "Password";
-    private final String NEW_PASSWORD = "NewPassword";
-    private final String CONFIRM_PASSWORD = "ConfirmPassword";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +66,8 @@ public class ManageChangePasswordActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         // 创建UITableView
         createUITableViewList();
     }
@@ -118,6 +116,10 @@ public class ManageChangePasswordActivity extends BaseActivity {
     private void sendPOSTRequest() {
         // 组装POST数据
         RequestParams params = new RequestParams();
+        final String cardNo = "card_" + userBasicInformation.getCardAccount() + "_"
+                + userBasicInformation.getCardAccount();
+        params.put("CardNo", cardNo);
+        params.put("selectCardnos", cardNo);
         params.add(PASSWORD, Base64.encodeToString(passwordEditText.getText().toString().getBytes(),
                 Base64.DEFAULT));
         params.add(NEW_PASSWORD, Base64.encodeToString(
@@ -169,6 +171,7 @@ public class ManageChangePasswordActivity extends BaseActivity {
                                         .show();
                             }
                         } catch (Exception e) {
+                            PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                             e.printStackTrace();
                         }
                     }

@@ -11,7 +11,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 
@@ -22,14 +24,15 @@ import java.util.List;
 public class ManageTradingInquiryActivity extends BaseActivity implements
         ManageTradingInquiryFragment.CommunicateListener {
 
+    private final String TAG = "ManageTradingInquiryActivity";
     private TabLayout tabLayout;
-    private ViewPager viewPager;
-
     private boolean historyInitFlag = false;
     private boolean todayInitFlag = false;
     private boolean weekInitFlag = false;
+    private boolean historyLoadingFlag = false;
+    private boolean todayLoadingFlag = false;
+    private boolean weekLoadingFlag = false;
     private HashMap<String, String> fragmentTagHashMap;
-    private final String TAG = "ManageTradingInquiryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         // 显示home按钮
         setDisplayHomeButton();
         // 设置ViewPager
-        viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.manage_trading_inquiry_viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
         tabLayout = (TabLayout) findViewById(R.id.manage_trading_inquiry_tabs);
@@ -111,40 +114,29 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
         }
     }
 
+    // 设置加载的状态，如果正在加载，就屏蔽Back按键
+    @Override
+    public void setLoadingFlag(int type, boolean flag) {
+        switch (type) {
+            case 0:
+                historyLoadingFlag = flag;
+                break;
+            case 1:
+                todayLoadingFlag = flag;
+                break;
+            case 2:
+                weekLoadingFlag = flag;
+                break;
+            default:
+                LogUtil.e(TAG, "Unexpect type.");
+                break;
+        }
+    }
+
     // 获得Fragment传递过来的Tag，用于定位Fragment
     @Override
     public void getFragmentTag(int type, String tag) {
         fragmentTagHashMap.put(String.valueOf(type), tag);
-    }
-
-    // Custom adapter class provides fragments required for the view pager.
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
     }
 
     /**
@@ -154,29 +146,35 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
      * 如果处于“历史流水”查询状态，切换到时间选择界面
      */
     private void doBack() {
-        switch (tabLayout.getSelectedTabPosition()) {
-            case 0:
-                // 位于“历史流水”查询
-                if (historyInitFlag) {
-                    // 正在显示ListView(查询结果），返回到选择时间界面
-                    ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
-                            getSupportFragmentManager().findFragmentByTag(
-                                    fragmentTagHashMap.get(String.valueOf(0)));
-                    fragment.backToPickDateView();
-                    // 设置初始化标志为false
-                    historyInitFlag = false;
-                } else {
-                    // 正在选择时间，点击直接退出
+        if (historyLoadingFlag || todayLoadingFlag || weekLoadingFlag) {
+            // 正在加载，请稍候
+            Toast.makeText(MyApplication.getContext(), getString(R.string.is_loading),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            switch (tabLayout.getSelectedTabPosition()) {
+                case 0:
+                    // 位于“历史流水”查询
+                    if (historyInitFlag) {
+                        // 正在显示ListView(查询结果），返回到选择时间界面
+                        ManageTradingInquiryFragment fragment = (ManageTradingInquiryFragment)
+                                getSupportFragmentManager().findFragmentByTag(
+                                        fragmentTagHashMap.get(String.valueOf(0)));
+                        fragment.backToPickDateView();
+                        // 设置初始化标志为false
+                        historyInitFlag = false;
+                    } else {
+                        // 正在选择时间，点击直接退出
+                        finish();
+                    }
+                    break;
+                case 1:
+                case 2:
+                    // 不处于“历史流水”查询状态，则直接退出
                     finish();
-                }
-                break;
-            case 1:
-            case 2:
-                // 不处于“历史流水”查询状态，则直接退出
-                finish();
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -247,5 +245,35 @@ public class ManageTradingInquiryActivity extends BaseActivity implements
             return false;
         }
         return false;
+    }
+
+    // Custom adapter class provides fragments required for the view pager.
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }

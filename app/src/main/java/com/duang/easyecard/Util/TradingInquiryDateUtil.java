@@ -1,14 +1,11 @@
 package com.duang.easyecard.Util;
 
 import android.content.Context;
-import android.text.format.Formatter;
 
 import com.duang.easyecard.R;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * TradingInquiryDateUtil

@@ -14,8 +14,8 @@
     <string name="select_nothing">全不选</string>
     <string name="delete">删除</string>
 
-    <!-- SigninActivity -->
-    <string name="title_activity_signin">登录</string>
+    <!-- SignInActivity -->
+    <string name="title_activity_sign_in">登录</string>
     <string name="signin_type">登录类型</string>
     <string name="stu_id">学（工）号</string>
     <string name="card_account">校园卡账号</string>
@@ -56,24 +56,19 @@
     <string name="lost_found">丢失和拾获</string>
     <string name="information">消息通知</string>
     <string name="settings">设置</string>
-    <!-- MainActivity Menu -->
-    <string name="action_search">搜索</string>
-    <string name="menu_add_lost_info">添加丢失信息</string>
-    <string name="menu_add_found_info">添加拾获信息</string>
-    <string name="menu_feedback">意见反馈</string>
-    <string name="menu_exit">退出应用</string>
 
     <!-- ManagementFragment -->
     <string name="basic_information">基本信息</string>
     <string name="trading_inquiry">流水查询</string>
     <string name="report_loss_card">校园卡挂失</string>
     <string name="recharge">转账充值</string>
-    <string name="net_charge">网费</string>
+    <string name="net_charge">网络缴费</string>
     <string name="change_password">修改密码</string>
     <string name="main_top_pic">界面上方展示的图片</string>
     <string name="grid_view_item_img_content_description">grid_view子项的图片</string>
     <string name="hint_start_report_loss_warning_title">您确定要挂失吗？</string>
     <string name="hint_start_report_loss_warning_content">挂失后您将暂时无法登录本应用，解挂后会恢复正常。</string>
+    <string name="charge_is_not_available">抱歉，暂时未开放此项功能。敬请期待。</string>
 
     <!-- ManageViewBasicInformationActivity -->
     <string name="title_activity_manage_basic_information">基本信息</string>
@@ -116,6 +111,7 @@
     <string name="week_total_transaction_amount">本周总消费金额：￥</string>
     <string name="total_transaction_amount">本段时间总消费金额：￥</string>
     <string name="title_menu_info">相关信息</string>
+    <string name="is_loading">正在加载，请稍候&#8230;</string>
     <!-- ManageReportLossActivity -->
     <string name="title_activity_manage_report_loss">挂失校园卡</string>
     <string name="report_loss_password_hint">请输入校园卡查询密码</string>
@@ -139,6 +135,18 @@
     <string name="change_password_success">修改成功！</string>
     <string name="change_password_failed">修改失败</string>
     <string name="change_password_password_is_wrong">查询密码错误</string>
+    <!-- ManageNetChargeActivity -->
+    <string name="title_activity_manage_net_charge">网络缴费</string>
+    <string name="net_balance">校园网余额</string>
+    <string name="net_account_is_not_exist">未找到该账号！无法完成缴费！</string>
+    <string name="net_charge_amount_title">缴费金额（元）</string>
+    <string name="net_charge_amount_input_hint">请输入缴费金额（元）</string>
+    <string name="net_charge_amount_input_helper_text">输入金额必须为10的倍数，且不大于120元</string>
+    <string name="net_charge_amount_input_is_null">输入金额不能为空</string>
+    <string name="net_charge_amount_input_is_not_the_multiple_of_ten">输入的金额不正确，请确保输入的金额是10的倍数</string>
+    <string name="net_charge_amount_input_is_invalid">输入金额的范围无效</string>
+    <string name="net_charge_password_is_empty">查询密码不能为空</string>
+    <string name="net_charge_wrong_password">查询密码错误</string>
 
     <!-- LostAndFoundFragment -->
     <string name="lost_and_found_info_browsing">失卡招领信息浏览</string>
@@ -242,13 +250,26 @@
 
     <!-- MessagesBoardActivity -->
     <string name="title_activity_messages_board">留言板</string>
+    <string name="message_board_school_staff">工作人员</string>
 
     <!-- SettingsFragment -->
     <string name="settings_personal_information">个人信息</string>
+    <string name="settings_share_app">分享应用</string>
+    <string name="settings_update">检查更新</string>
     <string name="settings_feedback">意见反馈</string>
-    <string name="about">关于软件</string>
+    <string name="settings_about">关于软件</string>
     <string name="sign_off">退出登录</string>
     <string name="sign_off_config">您确定要注销这个账号，重新登录吗？</string>
+    <string name="settings_share_app_download_link">“Oh, you see!”一款第三方开源应用，旨在帮助海大师生更方便地使用学校的校园卡电子服务平台。下载链接：https://www.pgyer.com/ohyousee</string>
+    <string name="settings_no_update_available">暂无更新</string>
+    <string name="settings_update_new_version_available">发现新版本！</string>
+    <string name="settings_update_later">以后再说</string>
+    <string name="settings_update_now">立即更新</string>
+    <string name="settings_update_current_version_name">当前版本：</string>
+    <string name="settings_update_current_version_name_default">未知版本</string>
+    <string name="settings_update_new_version_name">新版本：</string>
+    <string name="settings_update_new_version_release_note">更新说明：</string>
+    <string name="settings_feedback_permission_note">提示：如果想发送语音反馈，用户需要授予软件“录制音频”权限。</string>
     <!-- SettingsPersonalInformationActivity -->
     <string name="title_activity_settings_personal_information">个人信息</string>
     <string name="platform_account">平台账号</string>
@@ -275,12 +296,11 @@
     <string name="submit">提交</string>
     <string name="modify_successed">修改成功！</string>
     <string name="modify_failed">修改失败！</string>
-    <!-- SettingsFeedbackActivity -->
-    <string name="title_activity_settings_feedback">意见反馈</string>
 
     <!-- ImageDescription -->
     <string name="img_dsc_ic_keyboard_arrow_right_black">向右的箭头</string>
     <string name="img_dsc_ic_nothing_founded">没有找到</string>
     <string name="img_dsc_ic_add_circle_outline_blue_500_36dp">蓝色圆形添加图标</string>
     <string name="img_dsc_ic_send_white">白色发送图标</string>
+    <string name="title_activity_settings_about">关于软件</string>
 </resources>

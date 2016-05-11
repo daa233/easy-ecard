@@ -31,6 +31,7 @@ import com.duang.easyecard.Util.TradingInquiryExpandableListAdapter;
 import com.duang.mypinnedheaderlistview.PinnedHeaderListView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.ProgressView;
 
 import org.jsoup.Jsoup;
@@ -54,6 +55,10 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         ExpandableListView.OnGroupClickListener, ExpandableListView.OnChildClickListener,
         PinnedHeaderListView.OnHeaderUpdateListener {
 
+    private final String TAG = "ManageTradingInquiryFragment";
+    private final int CONSTANT_HISTORY = 0;
+    private final int CONSTANT_TODAY = 1;
+    private final int CONSTANT_WEEK = 2;
     private View viewFragment;  // 缓存Fragment的View
     // 四个主要视图
     private ScrollView mPickDateView;
@@ -69,7 +74,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     private TextView endDateTextView;
     private TextView endDayTextView;
     private Button queryButton;
-
     private TradingInquiryExpandableListAdapter mAdapter;
     private CommunicateListener communicateListener;
     private int type;
@@ -83,11 +87,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     private int pageIndex;
     private double sumTransaction = 0;
     private boolean firstTimeToParseFlag = true;  // 首次解析标志，用于解析页码
-
-    private final String TAG = "ManageTradingInquiryFragment";
-    private final int CONSTANT_HISTORY = 0;
-    private final int CONSTANT_TODAY = 1;
-    private final int CONSTANT_WEEK = 2;
 
     // Constructor
     public ManageTradingInquiryFragment() {
@@ -181,8 +180,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             LogUtil.e(TAG, "Can't get arguments: position.");
         }
         // 获得全局变量httpClient，新建dateUtil
-        MyApplication myApp = (MyApplication) getActivity().getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         dateUtil = new TradingInquiryDateUtil(MyApplication.getContext());
         // 初始化数据列表
         dataList = new ArrayList<>();
@@ -215,6 +213,8 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
 
     // 发送GET请求
     private void sendGETRequest() {
+        // 置位正在加载标志
+        communicateListener.setLoadingFlag(type, true);
         // 历史流水
         if (type == CONSTANT_HISTORY) {
             // 组装Url地址
@@ -399,87 +399,6 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
     }
 
     /**
-     * 通过网站返回的html文本解析数据
-     * 首次解析会得到最大页码maxIndex
-     * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
-     * 结果保存在ManageTradingInquiryActivity中的historyDataList
-     * <p/>
-     * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
-     * 所以要通过firstTimeToParseFlag进行标识，仅在首次解析时获取maxIndex
-     */
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Document doc;
-            try {
-                doc = Jsoup.parse(response);
-                // 找到表格
-                for (Element table : doc.select("table[class=table_show]")) {
-                    // 找到表格的所有行
-                    for (Element row : table.select("tr:gt(0)")) {
-                        HashMap<String, String> map = new HashMap<>();
-                        // 找到每一行所包含的td
-                        Elements tds = row.select("td");
-                        // tempTradingTime用于打断字符串
-                        String[] tempTradingTime = tds.get(0).text().split(" ");
-                        // 将td添加到arraylist
-                        map.put("TradingDate", tempTradingTime[0]);
-                        map.put("TradingTime", tempTradingTime[1]);
-                        map.put("MerchantName", tds.get(1).text());
-                        map.put("TradingName", tds.get(2).text());
-                        map.put("TransactionAmount", tds.get(3).text());
-                        map.put("Balance", tds.get(4).text());
-                        dataList.add(map);
-                    }
-                }
-                // 首次解析时，获得maxIndex
-                if (firstTimeToParseFlag) {
-                    // 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
-                    String remainString = "";
-                    for (Element page : doc.select("a[data-ajax=true]")) {
-                        remainString = page.attr("href");
-                    }
-                    // 当记录页数少于1时，remainString为空
-                    if (!remainString.isEmpty()) {
-                        // remainString不为空
-                        remainString = remainString.substring(
-                                remainString.indexOf("pageindex=") + 10);
-                        maxPageIndex = Integer.valueOf(remainString);
-                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
-                    } else {
-                        // remainString为空, maxIndex值保持不变
-                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
-                    }
-                    // 将首次解析标志置为false
-                    firstTimeToParseFlag = false;
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 判断是否已经全部解析完成
-            if (pageIndex < maxPageIndex) {
-                // 如果当前页码不是最大页码，再次发送GET请求，获取更多数据
-                pageIndex++;
-                sendGETRequest();
-            } else {
-                /**
-                 * 如果当前页码是最大页码，说明已准备好dataList加载完成
-                 * 通过matchDataWithAdapterLists，准备mAdapter的数据
-                 */
-                matchDataWithAdapterLists();
-            }
-        }
-    }
-
-    /**
      * 从historyDataList中获取数据，配置mGroupList和mChildList
      */
     private void matchDataWithAdapterLists() {
@@ -497,6 +416,8 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
             communicateListener.setDataListInitFlag(type, true);
             // 隐藏ProgressView
             mProgressView.setVisibility(View.GONE);
+            // 清除正在加载标志
+            communicateListener.setLoadingFlag(type, false);
         } else {
             // 有数据
             // 初始化mGroupList和mChildList
@@ -587,6 +508,8 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         mListView.setVisibility(View.VISIBLE);
         // 隐藏ProgressView
         mProgressView.setVisibility(View.GONE);
+        // 清除正在加载标志
+        communicateListener.setLoadingFlag(type, false);
     }
 
     @Override
@@ -653,7 +576,92 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
         // 设置初始化状态
         void setDataListInitFlag(int type, boolean flag);
 
+        // 设置加载状态
+        void setLoadingFlag(int type, boolean flag);
+
         // 传递Tag
         void getFragmentTag(int type, String tag);
+    }
+
+    /**
+     * 通过网站返回的html文本解析数据
+     * 首次解析会得到最大页码maxIndex
+     * 当存在更多页码（pageIndex < maxIndex）时，再次发送GET请求，并进行解析
+     * 结果保存在ManageTradingInquiryActivity中的historyDataList
+     * <p>
+     * 注意：在解析到最大页码（即最后一页 maxIndex）时，html文本中最大页码maxIndex会被替代为“尾页”，
+     * 所以要通过firstTimeToParseFlag进行标识，仅在首次解析时获取maxIndex
+     */
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                // 找到表格
+                for (Element table : doc.select("table[class=table_show]")) {
+                    // 找到表格的所有行
+                    for (Element row : table.select("tr:gt(0)")) {
+                        HashMap<String, String> map = new HashMap<>();
+                        // 找到每一行所包含的td
+                        Elements tds = row.select("td");
+                        // tempTradingTime用于打断字符串
+                        String[] tempTradingTime = tds.get(0).text().split(" ");
+                        // 将td添加到arraylist
+                        map.put("TradingDate", tempTradingTime[0]);
+                        map.put("TradingTime", tempTradingTime[1]);
+                        map.put("MerchantName", tds.get(1).text());
+                        map.put("TradingName", tds.get(2).text());
+                        map.put("TransactionAmount", tds.get(3).text());
+                        map.put("Balance", tds.get(4).text());
+                        dataList.add(map);
+                    }
+                }
+                // 首次解析时，获得maxIndex
+                if (firstTimeToParseFlag) {
+                    // 首次解析时得到最大页码，避免maxPageIndex在解析到最后一页时减小
+                    String remainString = "";
+                    for (Element page : doc.select("a[data-ajax=true]")) {
+                        remainString = page.attr("href");
+                    }
+                    // 当记录页数少于1时，remainString为空
+                    if (!remainString.isEmpty()) {
+                        // remainString不为空
+                        remainString = remainString.substring(
+                                remainString.indexOf("pageindex=") + 10);
+                        maxPageIndex = Integer.valueOf(remainString);
+                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+                    } else {
+                        // remainString为空, maxIndex值保持不变
+                        LogUtil.d("JsoupHtmlData  maxPageIndex", maxPageIndex + "");
+                    }
+                    // 将首次解析标志置为false
+                    firstTimeToParseFlag = false;
+                }
+
+            } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 判断是否已经全部解析完成
+            if (pageIndex < maxPageIndex) {
+                // 如果当前页码不是最大页码，再次发送GET请求，获取更多数据
+                pageIndex++;
+                sendGETRequest();
+            } else {
+                /**
+                 * 如果当前页码是最大页码，说明已准备好dataList加载完成
+                 * 通过matchDataWithAdapterLists，准备mAdapter的数据
+                 */
+                matchDataWithAdapterLists();
+            }
+        }
     }
 }

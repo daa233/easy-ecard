@@ -19,6 +19,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -31,17 +32,15 @@ import cz.msebera.android.httpclient.Header;
 
 public class MessagesCreateNoticeActivity extends BaseActivity {
 
+    private final String TAG = "MessagesCreateNoticeActivity";
     private MaterialEditText titleEditText;
     private MaterialEditText addReceiverEditText;
     private FlowLayout receiverFlowLayout;
     private TextView receiverFlowLayoutHintTextView;
     private EditText contentEditText;
-
     private AsyncHttpClient httpClient;
     private List<String> receiverList;
     private String receiverString;
-
-    private final String TAG = "MessagesCreateNoticeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +68,7 @@ public class MessagesCreateNoticeActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         receiverList = new ArrayList<>();
         // 判断Intent中是否包含数据
         getDataFromIntent();
@@ -153,6 +151,7 @@ public class MessagesCreateNoticeActivity extends BaseActivity {
                     addReceiverEditText.setError(
                             getString(R.string.add_receiver_failure));
                     LogUtil.e(TAG, "Unexpected exception in JsonResponseHandler.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }

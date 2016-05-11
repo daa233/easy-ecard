@@ -33,6 +33,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.json.JSONObject;
@@ -52,6 +53,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
         SwipeMenuListView.OnMenuItemClickListener, AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
 
+    private final String TAG = "MessagesInboxAndSentActivity";
     private SwipeMenuListView mListView;
     private PullToRefreshView mPullToRefreshView;
     private SweetAlertDialog sweetAlertDialog;
@@ -60,7 +62,6 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     private Button mCancelButton;
     private Button mSelectButton;
     private FloatingActionButton mDeleteFab;
-
     private List<Notice> dataList;
     private HashSet<String> checkedToDeleteHashSet;  // 用于存储已经选中的NoticeId，不会重复
     private MessagesNoticeListAdapter mAdapter;
@@ -72,7 +73,6 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
     private boolean TO_DELETE_FLAG = false;
     private boolean refreshingFlag = false;  // 正在刷新标志
     private boolean type;
-    private final String TAG = "MessagesInboxAndSentActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                 // 设置item参数
                 deleteMenuItem.setBackground(new ColorDrawable(Color.rgb(0xF9, 0x3F, 0x25)));
                 deleteMenuItem.setWidth(dp2px(90));
-                deleteMenuItem.setIcon(R.drawable.ic_delete);
+                deleteMenuItem.setIcon(R.drawable.ic_delete_white_48dp);
                 menu.addMenuItem(deleteMenuItem);
             }
         };
@@ -139,8 +139,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 获得Intent传递的类型
         Intent intent = this.getIntent();
         type = intent.getBooleanExtra("TYPE", true);
@@ -370,6 +369,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                                 getString(R.string.fail_to_delete), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                     // 删除失败
                     Toast.makeText(MyApplication.getContext(),
@@ -453,6 +453,12 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
         mAdapter.notifyDataSetChanged();  // 刷新列表
     }
 
+    // 单位转换 dp to px
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
+    }
+
     // 解析响应数据
     private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
         @Override
@@ -533,6 +539,7 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                     }
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;
@@ -581,11 +588,5 @@ public class MessagesInboxAndSentActivity extends BaseActivity implements
                 }, 1200);
             }
         }
-    }
-
-    // 单位转换 dp to px
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 }

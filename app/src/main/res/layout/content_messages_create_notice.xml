@@ -26,7 +26,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:paddingEnd="5dp"
+                android:paddingLeft="0dp"
                 android:paddingRight="5dp"
+                android:paddingStart="0dp"
                 android:text="@string/notice_title"
                 android:textColor="@color/black" />
 
@@ -57,7 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:paddingEnd="5dp"
+                android:paddingLeft="0dp"
                 android:paddingRight="5dp"
+                android:paddingStart="0dp"
                 android:text="@string/send_to"
                 android:textColor="@color/black" />
 

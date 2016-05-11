@@ -2,9 +2,6 @@ package com.duang.easyecard.Activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
@@ -13,19 +10,18 @@ import android.widget.Toast;
 import com.duang.easyecard.GlobalData.MyApplication;
 import com.duang.easyecard.GlobalData.UrlConstant;
 import com.duang.easyecard.Model.MessageBoardItem;
-import com.duang.easyecard.Model.MessagesListViewItem;
 import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesBoardListAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.ProgressView;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +30,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class MessagesBoardActivity extends BaseActivity {
 
-    private FloatingActionButton fab;
+    private final String TAG = "MessagesBoardActivity";
+    // private FloatingActionButton fab;
     private ProgressView mProgressView;
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
-
     private MessagesBoardListAdapter mAdapter;
     private List<MessageBoardItem> dataList;
     private AsyncHttpClient httpClient;
@@ -49,8 +45,6 @@ public class MessagesBoardActivity extends BaseActivity {
     private String time;
     private String reply;
     private boolean refreshingFlag = false;
-
-    private final String TAG = "MessagesBoardActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +67,7 @@ public class MessagesBoardActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 初始化数据列表
         dataList = new ArrayList<>();
         // 发送预请求
@@ -204,6 +197,7 @@ public class MessagesBoardActivity extends BaseActivity {
                     dataList.add(item);
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;

@@ -19,6 +19,7 @@ import com.duang.easyecard.R;
 import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.Button;
 
 import org.jsoup.Jsoup;
@@ -36,19 +37,16 @@ import cz.msebera.android.httpclient.Header;
  */
 public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActivity {
 
+    private final String TAG = "LostAndFoundInformationBrowsingViewDetailActivity";
     private UITableView mTableView;
     private Button button;
     private SweetAlertDialog sweetAlertDialog;
-
     private AsyncHttpClient httpClient;
-    private UserBasicInformation userBasicInformation;
     private String response;
     private LostAndFoundEvent event;
     private String lostPlace;
     private String description;
     private boolean isViewingOwnEventFlag;
-
-    private final String TAG = "LostAndFoundInformationBrowsingViewDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +77,8 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        UserBasicInformation userBasicInformation = MyApplication.getUserBasicInformation();
         // 判断用户是否正在查看自己的丢失信息
         if (userBasicInformation.getStuId().equals(event.getStuId())) {
             // 用户正在查看自己的丢失信息
@@ -214,40 +211,6 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
                 });
     }
 
-    // 解析响应数据
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            // 解析返回的responseString
-            Document doc;
-            try {
-                doc = Jsoup.parse(response);
-                for (Element ps : doc.select("p[class=heightauto]")) {
-                    lostPlace = ps.ownText();
-                }
-                for (Element ps : doc.select("p[class=heightauto clear]")) {
-                    description = ps.ownText();
-                }
-            } catch (Exception e) {
-                sweetAlertDialog.cancel();
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            // 组装UITableView的数据列表
-            createTableViewList();
-            sweetAlertDialog
-                    .setTitleText(getString(R.string.loading_complete))
-                    .setConfirmText(getString(R.string.OK))
-                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-            sweetAlertDialog.dismissWithAnimation();
-        }
-    }
-
     // 创建UITableView列表
     private void createTableViewList() {
         generateCustomItem(mTableView, getString(R.string.name), event.getName());
@@ -278,5 +241,40 @@ public class LostAndFoundInformationBrowsingViewDetailActivity extends BaseActiv
         ViewItem v = new ViewItem(relativeLayout);
         v.setClickable(false);
         tableView.addViewItem(v);
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            // 解析返回的responseString
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                for (Element ps : doc.select("p[class=heightauto]")) {
+                    lostPlace = ps.ownText();
+                }
+                for (Element ps : doc.select("p[class=heightauto clear]")) {
+                    description = ps.ownText();
+                }
+            } catch (Exception e) {
+                sweetAlertDialog.cancel();
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 组装UITableView的数据列表
+            createTableViewList();
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.loading_complete))
+                    .setConfirmText(getString(R.string.OK))
+                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+            sweetAlertDialog.dismissWithAnimation();
+        }
     }
 }

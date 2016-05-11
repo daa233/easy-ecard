@@ -30,19 +30,18 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/dark"
-            tab:item_icon="@drawable/main_tab_manage"
+            tab:item_color="#00A000"
+            tab:item_icon="@drawable/ic_credit_card_green_900_48dp"
             tab:item_text="@string/manage"
             tab:item_text_size="14sp" />
-
         <com.duang.changeiconcolorwithtext.ChangeColorItem
             android:id="@+id/main_indicator_lost_found"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/dark_green"
-            tab:item_icon="@drawable/main_tab_lost_found"
+            tab:item_color="#FF2222"
+            tab:item_icon="@drawable/ic_loyalty_red_800_48dp"
             tab:item_text="@string/lost_found"
             tab:item_text_size="14sp" />
 
@@ -52,8 +51,8 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/blue"
-            tab:item_icon="@drawable/main_tab_information"
+            tab:item_color="#3366FF"
+            tab:item_icon="@drawable/ic_email_indigo_800_48dp"
             tab:item_text="@string/information"
             tab:item_text_size="14sp" />
 
@@ -63,8 +62,8 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            tab:item_color="@color/colorAccent"
-            tab:item_icon="@drawable/main_tab_settings"
+            tab:item_color="#F53357"
+            tab:item_icon="@drawable/ic_settings_pink_800_48dp"
             tab:item_text="@string/settings"
             tab:item_text_size="14sp" />
     </com.duang.changeiconcolorwithtext.ChangeColorTab>

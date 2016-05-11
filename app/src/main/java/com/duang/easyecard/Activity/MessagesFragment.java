@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.duang.easyecard.Util.MessagesListViewAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import org.jsoup.Jsoup;
@@ -38,10 +40,11 @@ import cz.msebera.android.httpclient.Header;
  */
 public class MessagesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
+    private static final String TAG = "MessagesFragment";
     private View viewFragment;
     private PullToRefreshView mPullToRefreshView;
     private ListView mListView;
-
     private AsyncHttpClient httpClient;
     private String response;
     private MessagesListViewAdapter mAdapter;
@@ -52,14 +55,11 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             R.drawable.messages_inbox,
             R.drawable.messages_sent,
             R.drawable.messages_send,
-            R.drawable.messages_board,
-            R.drawable.messages_question
+            R.drawable.ic_assignment_pink_400_48dp,
+            R.drawable.ic_help_outline_blue_a200_48dp
     };
     private String[] titleArray;
     private String newMessagesCount = "";
-    private final int arrowResId = R.drawable.ic_keyboard_arrow_right_black_24dp;
-
-    private final String TAG = "MessagesFragment";
 
     public MessagesFragment() {
         // Required empty public constructor
@@ -99,8 +99,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
     // 初始化数据
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getActivity().getApplication();
-        httpClient = myApp.getHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // ItemTitle
         titleArray = new String[]{
                 getString(R.string.messages_inbox),
@@ -109,6 +108,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 getString(R.string.messages_board),
                 getString(R.string.messages_questions)
         };
+        createList();
         // 发送GET请求到Index，以解析sysUserID，然后获取未读消息数目
         sendGETRequestToIndex();
     }
@@ -122,14 +122,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 item = new MessagesListViewItem(titleArray[i]);
                 item.setIconResId(iconImageArray[i]);
                 item.setArrowResId(arrowResId);
-                if (i == 0 && !newMessagesCount.isEmpty()
-                        && Integer.valueOf(newMessagesCount) != 0) {
-                    // 如果是首项——收件箱，且有新消息，显示新消息按钮
-                    item.setNewMessagesCount(newMessagesCount);
-                    item.setNewMessageVisibility(View.VISIBLE);
-                } else {
-                    item.setNewMessageVisibility(View.INVISIBLE);
-                }
+                item.setNewMessageVisibility(View.INVISIBLE);
                 dataList.add(item);
             }
         } else {
@@ -140,6 +133,20 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                 R.layout.item_messages_fragment_list);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
+    }
+
+    // 获取到未读消息数目后更新列表，即在列表中显示未读消息数目
+    private void updateList() {
+        if (!newMessagesCount.isEmpty() && Integer.valueOf(newMessagesCount) != 0) {
+            // 有新消息，显示新消息按钮
+            MessagesListViewItem item = dataList.get(0);
+            item.setNewMessagesCount(newMessagesCount);
+            item.setNewMessageVisibility(View.VISIBLE);
+            dataList.set(0, item);
+        } else {
+            Log.d(TAG, "No new notices.");
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -193,7 +200,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody,
                                   Throwable error) {
                 // 网络错误
-                LogUtil.e(TAG, getString(R.string.network_error) + "at sendGETRequestToIndex()");
+                LogUtil.e(TAG, "Network error at sendGETRequestToIndex()");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
@@ -218,8 +225,8 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // 响应成功，获取未读消息数目
                 newMessagesCount = new String(responseBody);
-                // 组建列表
-                createList();
+                // 更新列表
+                updateList();
                 if (refreshingFlag) {
                     Toast.makeText(MyApplication.getContext(), getString(R.string.refresh_complete),
                             Toast.LENGTH_SHORT).show();
@@ -231,7 +238,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 // 网络错误
-                LogUtil.e(TAG, getString(R.string.network_error) + "at getting unread count.");
+                LogUtil.e(TAG, "Network error at getting unread count.");
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 停止PullToRefreshView的刷新
@@ -256,6 +263,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
                     }
                 }
             } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             return null;
@@ -266,6 +274,7 @@ public class MessagesFragment extends Fragment implements AdapterView.OnItemClic
             super.onPostExecute(aVoid);
             if (sysUserID.isEmpty()) {
                 // 没有解析出sysUserID
+                LogUtil.e(TAG, "Can't get the sysUserID.");
             } else {
                 // 已经解析出sysUserID，发送GET请求获取未读消息数目
                 sendGETRequestToGetAllMyUnreadCount(sysUserID);

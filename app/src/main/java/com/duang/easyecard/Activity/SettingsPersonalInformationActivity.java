@@ -22,6 +22,7 @@ import com.duang.easyecard.Util.LogUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rey.material.widget.ProgressView;
 
 import org.json.JSONObject;
@@ -35,15 +36,19 @@ import java.util.List;
 
 import br.com.dina.ui.model.ViewItem;
 import br.com.dina.ui.widget.UITableView;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import cz.msebera.android.httpclient.Header;
 
 public class SettingsPersonalInformationActivity extends BaseActivity
         implements UITableView.ClickListener {
 
+    private static final String TAG = "SettingsPersonalInformationActivity";
+    private static final int CONSTANT_NICKNAME = 1;
+    private static final int CONSTANT_EMAIL = 5;
+    private static final int CONSTANT_PHONE = 6;
+    private static final int CONSTANT_MSN = 7;
+    private static final int CONSTANT_QQ = 8;
     ProgressView mProgressView;
     UITableView mTableView;
-
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
     private String response;
@@ -55,13 +60,6 @@ public class SettingsPersonalInformationActivity extends BaseActivity
     private String phone;
     private String msn;
     private String qq;
-
-    private final String TAG = "SettingsPersonalInformationActivity";
-    private final int CONSTANT_NICKNAME = 1;
-    private final int CONSTANT_EMAIL = 5;
-    private final int CONSTANT_PHONE = 6;
-    private final int CONSTANT_MSN = 7;
-    private final int CONSTANT_QQ = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +89,8 @@ public class SettingsPersonalInformationActivity extends BaseActivity
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         account = userBasicInformation.getStuId();
         // 初始化数据列表
         dataList = new ArrayList<>();
@@ -150,7 +147,7 @@ public class SettingsPersonalInformationActivity extends BaseActivity
             case CONSTANT_EMAIL:
                 return email;
             case CONSTANT_PHONE:
-                return  phone;
+                return phone;
             case CONSTANT_MSN:
                 return msn;
             case CONSTANT_QQ:
@@ -158,51 +155,6 @@ public class SettingsPersonalInformationActivity extends BaseActivity
             default:
                 LogUtil.e(TAG, "Unexpected position in dataList.");
                 return null;
-        }
-    }
-
-    // 解析响应数据
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            LogUtil.d(TAG, "Start Jsoup: In doInBackground.");
-            // 解析返回的responseString
-            Document doc;
-            try {
-                doc = Jsoup.parse(response);
-                Elements inputs = doc.select("input");
-                for (Element input : inputs) {
-                    // 获取之前的内容
-                    if (input.attr("type").equals("text")) {
-                        dataList.add(input.attr("value"));
-                    }
-                    // 获取ID
-                    if (input.attr("id").equals("ID")) {
-                        id = input.attr("value");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            LogUtil.d(TAG, "onPostExecute.");
-            nickname = dataList.get(0);
-            email = dataList.get(1);
-            phone = dataList.get(2);
-            msn = dataList.get(3);
-            qq = dataList.get(4);
-            // 先清空TableView
-            mTableView.clear();
-            // 创建TableView
-            createTableViewDataList();
-            // 隐藏ProgressView，显示TableView
-            mProgressView.setVisibility(View.INVISIBLE);
-            mTableView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -300,5 +252,51 @@ public class SettingsPersonalInformationActivity extends BaseActivity
                 throwable.printStackTrace();
             }
         });
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            LogUtil.d(TAG, "Start Jsoup: In doInBackground.");
+            // 解析返回的responseString
+            Document doc;
+            try {
+                doc = Jsoup.parse(response);
+                Elements inputs = doc.select("input");
+                for (Element input : inputs) {
+                    // 获取之前的内容
+                    if (input.attr("type").equals("text")) {
+                        dataList.add(input.attr("value"));
+                    }
+                    // 获取ID
+                    if (input.attr("id").equals("ID")) {
+                        id = input.attr("value");
+                    }
+                }
+            } catch (Exception e) {
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            LogUtil.d(TAG, "onPostExecute.");
+            nickname = dataList.get(0);
+            email = dataList.get(1);
+            phone = dataList.get(2);
+            msn = dataList.get(3);
+            qq = dataList.get(4);
+            // 先清空TableView
+            mTableView.clear();
+            // 创建TableView
+            createTableViewDataList();
+            // 隐藏ProgressView，显示TableView
+            mProgressView.setVisibility(View.INVISIBLE);
+            mTableView.setVisibility(View.VISIBLE);
+        }
     }
 }

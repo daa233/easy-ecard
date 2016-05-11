@@ -20,6 +20,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.json.JSONObject;
 
@@ -29,38 +30,35 @@ import cz.msebera.android.httpclient.Header;
 
 public class AppStartActivity extends BaseActivity {
 
-    private AsyncHttpClient httpClient;
-    private SharedPreferences sharedPreferences;
-
     private static final String SIGNIN_PREFERENCES = "SIGNIN_PREFERENCES";  // Preferences文件的名称
     private static final String REMEMBER_PASSWORD = "REMEMBER_PASSWORD";
     private static final String AUTO_SIGNIN = "AUTO_SIGNIN";
     private static final String SIGNIN_TYPE = "SIGNIN_TYPE";
     private static final String USER_ACCOUNT = "USER_ACCOUNT";
     private static final String USER_PASSWORD = "USER_PASSWORD";
-    private String USER_SEED = "USED_SEED";  // 默认为USER_SEED
+    private final String TAG = "AppStartActivity";
+    private AsyncHttpClient httpClient;
     private boolean rememberPasswordFlag = false;
     private boolean autoSigninFlag = false;
     private String signinType;
     private String account;
     private String password;
 
-    private final String TAG = "AppStartActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //透明导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         setContentView(R.layout.activity_app_start);
+        PgyCrashManager.register(this);  // 蒲公英Crash分析
         initView();
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 LogUtil.d(TAG, "Just for delay.");
                 initData();
             }
@@ -77,11 +75,11 @@ public class AppStartActivity extends BaseActivity {
 
     private void initData() {
         // 初始化httpClient
-        httpClient = new AsyncHttpClient();
+        httpClient = MyApplication.getHttpClient();
         // 初始化USER_SEED，Use ANDROID_ID as the USER_SEED
-        USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String USER_SEED = Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         // 初始化SharedPreferences
-        sharedPreferences = this.getSharedPreferences(SIGNIN_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SIGNIN_PREFERENCES, MODE_PRIVATE);
         // 获取用户设置记住密码及自动登录的选中状态
         rememberPasswordFlag = sharedPreferences.getBoolean(REMEMBER_PASSWORD, false);
         autoSigninFlag = sharedPreferences.getBoolean(AUTO_SIGNIN, false);
@@ -101,6 +99,7 @@ public class AppStartActivity extends BaseActivity {
                 LogUtil.e(TAG, "Error: when decrypting.");
                 account = "";
                 password = "";
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                 e.printStackTrace();
             }
             if (autoSigninFlag) {
@@ -109,18 +108,18 @@ public class AppStartActivity extends BaseActivity {
             } else {
                 // 记住了密码，但没选择自动登录，跳转到SigninActivity，并传递相关数据
                 LogUtil.d(TAG, "User remembered the password. Intent to SigninActivity.");
-                intentToSigninActivity();
+                intentToSignInActivity();
             }
         } else {
             // 用户没有选择记住密码，跳转到SigninActivity
             LogUtil.d(TAG, "User did't choose to remember password. Intent to SigninActivity.");
-            intentToSigninActivity();
+            intentToSignInActivity();
         }
     }
 
     // 跳转到SigninActivity
-    private void intentToSigninActivity() {
-        Intent intent = new Intent(MyApplication.getContext(), SigninActivity.class);
+    private void intentToSignInActivity() {
+        Intent intent = new Intent(MyApplication.getContext(), SignInActivity.class);
         intent.putExtra(REMEMBER_PASSWORD, rememberPasswordFlag);
         if (rememberPasswordFlag) {
             // 用户选择了记住密码
@@ -170,10 +169,11 @@ public class AppStartActivity extends BaseActivity {
                                 getString(R.string.signin_automatically_failed),
                                 Toast.LENGTH_SHORT).show();
                         // 跳转到SigninActivity
-                        intentToSigninActivity();
+                        intentToSignInActivity();
                     }
                 } catch (Exception e) {
                     LogUtil.e(TAG, "Auto signin failed.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }
@@ -186,7 +186,7 @@ public class AppStartActivity extends BaseActivity {
                 Toast.makeText(MyApplication.getContext(), getString(R.string.network_error),
                         Toast.LENGTH_SHORT).show();
                 // 跳转到SigninActivity
-                intentToSigninActivity();
+                intentToSignInActivity();
             }
         });
     }

@@ -17,13 +17,11 @@ import java.util.List;
 public class MessagesFaqActivity extends BaseActivity implements
         MessagesFaqFragment.GetDataListInitFlagListener {
 
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    private static final String TAG = "MessagesFaqActivity";
     private boolean cardManageListInitFlag = false;
     private boolean applicationCenterInitFlag = false;
     private boolean accountSecureListInitFlag = false;
     private boolean onlinePayListInitFlag = false;
-    private final String TAG = "MessagesFaqActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +36,10 @@ public class MessagesFaqActivity extends BaseActivity implements
         setSupportActionBar(toolbar);
         setDisplayHomeButton();  // 显示Back按钮
         // 设置ViewPager
-        viewPager = (ViewPager) findViewById(R.id.messages_faq_viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.messages_faq_viewpager);
         setupViewPager(viewPager);
         // Assigns the ViewPager to TabLayout.
-        tabLayout = (TabLayout) findViewById(R.id.messages_faq_tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.messages_faq_tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 

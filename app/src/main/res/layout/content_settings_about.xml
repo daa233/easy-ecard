@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.duang.easyecard.Activity.SettingsAboutActivity"
+    tools:showIn="@layout/activity_settings_about">
+
+    <com.rey.material.widget.ProgressView
+        android:id="@+id/settings_about_progress_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        app:pv_autostart="true"
+        app:pv_progressMode="indeterminate" />
+
+    <us.feras.mdv.MarkdownView
+        android:id="@+id/settings_about_markdown_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/settings_about_nothing_founded_image_view"
+        android:layout_width="200dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/img_dsc_ic_nothing_founded"
+        android:visibility="gone" />
+
+</FrameLayout>

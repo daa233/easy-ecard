@@ -24,6 +24,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -36,6 +37,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class MessagesNoticeDetailActivity extends BaseActivity {
 
+    private final String TAG = "MessagesNoticeDetailActivity";
     private SweetAlertDialog sweetAlertDialog;
     private FloatingActionButton showMoreFab;
     private TextView titleTextView;
@@ -46,7 +48,6 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
     private TextView operationSystemTextView;
     private TextView categoryTextView;
     private TextView contentTextView;
-
     private Notice notice;
     private AsyncHttpClient httpClient;
     private UserBasicInformation userBasicInformation;
@@ -55,7 +56,6 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
     private String longReceiverName;  // 发送给多人时，详细的接收人信息
     private boolean type;  // 标识消息类型 ｛Notice.SENT_TYPE, Notice.RECEIVED_TYPE}
     private boolean foledFlag = true;  // 折叠标志，默认为true，为折叠状态
-    private final String TAG = "MessagesNoticeDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +94,8 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         // 获得Intent传递的Notice对象
         Intent intent = this.getIntent();
         notice = (Notice) intent.getSerializableExtra("Notice");
@@ -239,69 +238,6 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
         }
     }
 
-    // 解析响应数据
-    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            // 解析返回的responseString
-            Document doc;
-            try {
-                LogUtil.d(TAG, "JsoupHtmlData: doInBackground called.");
-                doc = Jsoup.parse(response);
-                Elements div = doc.getElementsByClass("heightauto").select("div");
-                for (Element divContent : div) {
-                    if (divContent.ownText() != null || !divContent.ownText().isEmpty()) {
-                        content = divContent.ownText();
-                    }
-                }
-                if (!type) {
-                    // 已发送消息，解析出详细的接收人及接收人是否已读消息
-                    Elements ps = doc.select("p");
-                    int pCount = 0;
-                    for (Element p : ps) {
-                        if (pCount == 2) {
-                            Elements spans = p.select("span");
-                            boolean spanFlag = true;
-                            for (Element span : spans) {
-                                if (spanFlag) {
-                                    if (longReceiverName == null || longReceiverName.isEmpty()) {
-                                        longReceiverName = span.text();
-                                    } else {
-                                        longReceiverName = longReceiverName + "，" + span.text();
-                                    }
-                                }
-                                spanFlag = !spanFlag;
-                            }
-                        }
-                        pCount++;
-                    }
-                }
-            } catch (Exception e) {
-                LogUtil.e(TAG, "Jsoup error.");
-                Toast.makeText(MessagesNoticeDetailActivity.this, getString(R.string.network_error),
-                        Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            LogUtil.d(TAG, "JsoupHtmlData: onPostExecuted called.");
-            if (content != null && !content.isEmpty()) {
-                contentTextView.setText(content);
-            } else {
-                LogUtil.e(TAG, "JsoupHtmlData Error. Can't get content.");
-            }
-            sweetAlertDialog
-                    .setTitleText(getString(R.string.loading_complete))
-                    .setConfirmText(getString(R.string.OK))
-                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-            sweetAlertDialog.dismissWithAnimation();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -368,6 +304,7 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                 } catch (Exception e) {
                     // 删除失败
                     LogUtil.e(TAG, "Failed to delete. Caught an exception.");
+                    PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                     e.printStackTrace();
                 }
             }
@@ -381,5 +318,69 @@ public class MessagesNoticeDetailActivity extends BaseActivity {
                 throwable.printStackTrace();
             }
         });
+    }
+
+    // 解析响应数据
+    private class JsoupHtmlData extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            // 解析返回的responseString
+            Document doc;
+            try {
+                LogUtil.d(TAG, "JsoupHtmlData: doInBackground called.");
+                doc = Jsoup.parse(response);
+                Elements div = doc.getElementsByClass("heightauto").select("div");
+                for (Element divContent : div) {
+                    if (divContent.ownText() != null || !divContent.ownText().isEmpty()) {
+                        content = divContent.ownText();
+                    }
+                }
+                if (!type) {
+                    // 已发送消息，解析出详细的接收人及接收人是否已读消息
+                    Elements ps = doc.select("p");
+                    int pCount = 0;
+                    for (Element p : ps) {
+                        if (pCount == 2) {
+                            Elements spans = p.select("span");
+                            boolean spanFlag = true;
+                            for (Element span : spans) {
+                                if (spanFlag) {
+                                    if (longReceiverName == null || longReceiverName.isEmpty()) {
+                                        longReceiverName = span.text();
+                                    } else {
+                                        longReceiverName = longReceiverName + "，" + span.text();
+                                    }
+                                }
+                                spanFlag = !spanFlag;
+                            }
+                        }
+                        pCount++;
+                    }
+                }
+            } catch (Exception e) {
+                LogUtil.e(TAG, "Jsoup error.");
+                Toast.makeText(MessagesNoticeDetailActivity.this, getString(R.string.network_error),
+                        Toast.LENGTH_LONG).show();
+                PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            LogUtil.d(TAG, "JsoupHtmlData: onPostExecuted called.");
+            if (content != null && !content.isEmpty()) {
+                contentTextView.setText(content);
+            } else {
+                LogUtil.e(TAG, "JsoupHtmlData Error. Can't get content.");
+            }
+            sweetAlertDialog
+                    .setTitleText(getString(R.string.loading_complete))
+                    .setConfirmText(getString(R.string.OK))
+                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+            sweetAlertDialog.dismissWithAnimation();
+        }
     }
 }

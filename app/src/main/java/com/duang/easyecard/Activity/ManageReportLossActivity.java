@@ -18,6 +18,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.Base64;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.pgyersdk.crash.PgyCrashManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
@@ -29,12 +30,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class ManageReportLossActivity extends BaseActivity {
 
+    private static final String TAG = "ManageReportLossActivity";
     private UITableView userInfoTableView;
     private MaterialEditText passwordEditText;
     private UserBasicInformation userBasicInformation;
     private AsyncHttpClient httpClient;
-    private String password;
-    private final String TAG = "ManageReportLossActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +58,8 @@ public class ManageReportLossActivity extends BaseActivity {
 
     private void initData() {
         // 获得全局变量httpClient和userBasicInformation
-        MyApplication myApp = (MyApplication) getApplication();
-        httpClient = myApp.getHttpClient();
-        userBasicInformation = myApp.getUserBasicInformation();
+        httpClient = MyApplication.getHttpClient();
+        userBasicInformation = MyApplication.getUserBasicInformation();
         // 创建UITableView
         createUITableViewList();
     }
@@ -79,7 +78,7 @@ public class ManageReportLossActivity extends BaseActivity {
     // “挂失”按钮的点击事件
     public void onReportLossButtonClick(View v) {
         LogUtil.d(TAG, "onReportLossButtonClick.");
-        password = passwordEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
         if (password.isEmpty()) {
             // 没有输入密码
             passwordEditText.setError(getString(R.string.report_loss_password_is_empty));
@@ -93,7 +92,10 @@ public class ManageReportLossActivity extends BaseActivity {
     private void sendPOSTRequest(String encodedPassword) {
         RequestParams requestParams = new RequestParams();
         // 添加参数
-        requestParams.put("CardNo", userBasicInformation.getCardAccount());
+        final String cardNo = "card_" + userBasicInformation.getCardAccount() + "_"
+                + userBasicInformation.getCardAccount();
+        requestParams.put("CardNo", cardNo);
+        requestParams.put("selectCardnos", cardNo);
         // 采用Base64对查询密码进行加密
         requestParams.put("Password", encodedPassword);
         httpClient.post(UrlConstant.MOBILE_MANAGE_CARD_LOST,
@@ -127,6 +129,7 @@ public class ManageReportLossActivity extends BaseActivity {
                             LogUtil.d(TAG, response.getString("success"));
                             LogUtil.d(TAG, response.getString("msg"));
                         } catch (Exception e) {
+                            PgyCrashManager.reportCaughtException(MyApplication.getContext(), e);
                             e.printStackTrace();
                         }
                     }
