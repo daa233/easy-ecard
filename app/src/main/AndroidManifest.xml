@@ -68,10 +68,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.ManageNetChargeActivity"
-            android:label="@string/title_activity_manage_net_charge"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".Activity.ManageChangePasswordActivity"
             android:label="@string/title_activity_manage_change_password"
             android:screenOrientation="portrait"
