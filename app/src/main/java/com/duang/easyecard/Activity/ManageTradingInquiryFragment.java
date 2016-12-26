@@ -151,7 +151,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                 R.id.manage_trading_inquiry_end_date);
         endDayTextView = (TextView) viewFragment.findViewById(
                 R.id.manage_trading_inquiry_end_day);
-        queryButton = (Button) getActivity().findViewById(
+        queryButton = (Button) viewFragment.findViewById(
                 R.id.manage_trading_inquiry_query_button);
     }
 
@@ -353,6 +353,7 @@ public class ManageTradingInquiryFragment extends Fragment implements View.OnCli
                 break;
             case R.id.manage_trading_inquiry_query_button:
                 // 点击确定按钮，切换视图，开始流水查询。
+                LogUtil.i(TAG, "Query button clidked.");
                 mPickDateView.setVisibility(View.INVISIBLE);
                 mProgressView.setVisibility(View.VISIBLE);
                 sendGETRequest();
