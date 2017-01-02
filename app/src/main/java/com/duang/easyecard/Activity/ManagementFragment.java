@@ -126,7 +126,6 @@ public class ManagementFragment extends Fragment implements
                 Toast.makeText(MyApplication.getContext(),
                         getString(R.string.charge_is_not_available),
                         Toast.LENGTH_SHORT).show();
-                // startActivity(new Intent(this.getContext(), ManageNetChargeActivity.class));
                 break;
             case R.drawable.manage_change_password:
                 // 修改查询密码
