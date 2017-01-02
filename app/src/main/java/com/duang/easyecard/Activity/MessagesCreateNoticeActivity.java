@@ -254,6 +254,10 @@ public class MessagesCreateNoticeActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // Back
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.action_messages_create_notice_send:
                 // 发送消息。先验证所有输入是否合法：合法，发送POST请求；不合法，提示错误
                 if (titleEditText.getText().toString().isEmpty()) {
